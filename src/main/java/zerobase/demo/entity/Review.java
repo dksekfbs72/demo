@@ -13,12 +13,13 @@ import lombok.ToString;
 @Setter
 @ToString
 public class Review {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	private int restaurant_id;
-	private int writer_id;
+	private int restaurantId;
+	private int writerId;
 	private String summary;
 	private String content;
-	private String own_reply;
+	private String ownIeply;
 }

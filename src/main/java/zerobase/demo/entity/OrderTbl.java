@@ -14,6 +14,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class OrderTbl {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
@@ -23,11 +24,11 @@ public class OrderTbl {
 	//json 형태로 변경 예정
 	private String menus;
 
-	private int user_id;
+	private int userId;
 	private String status;
-	private int delivery_time;
-	private int restaurant_id;
-	private LocalDateTime order_time;
-	private int use_coupon_id;
+	private int deliveryTime;
+	private int restaurantId;
+	private LocalDateTime orderTime;
+	private int useCouponId;
 
 }

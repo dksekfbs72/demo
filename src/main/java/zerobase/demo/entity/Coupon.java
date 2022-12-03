@@ -13,9 +13,10 @@ import lombok.ToString;
 @Setter
 @ToString
 public class Coupon {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	private int restaurant_id;
-	private int sale_price;
+	private int restaurantId;
+	private int salePrice;
 }

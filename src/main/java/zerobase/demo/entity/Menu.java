@@ -14,14 +14,15 @@ import lombok.ToString;
 @Setter
 @ToString
 public class Menu {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private int price;
 	private String name;
-	private String picture_url;
+	private String pictureUrl;
 	private String summary;
-	private boolean sold_out;
-	private int restaurant_id;
-	private LocalDateTime drop_menu_time;
+	private boolean soldOut;
+	private int restaurantId;
+	private LocalDateTime dropMenuTime;
 }
