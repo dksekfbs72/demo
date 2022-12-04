@@ -57,6 +57,7 @@ public class StoreServiceImpl implements StoreService {
 		if(request.getOpenClose() == nowStore.getOpenClose()) throw new AlreadyOpenClosedException();
 
 		nowStore.setOpenClose(!nowStore.getOpenClose());
+		nowStore.setOpenCloseDt(LocalDateTime.now());
 		storeRepository.save(nowStore);
 	}
 }

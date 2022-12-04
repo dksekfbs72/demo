@@ -34,10 +34,13 @@ public class Store {
 	private Integer deliveryTip;
 	private Double commission;
 
+	private LocalDateTime openCloseDt;
+
 	@ManyToOne
 	private User user;
 
 	private LocalDateTime regDt;
+	private LocalDateTime udtDt;
 
 
 	public static Store from(CreateStore.Request request){
