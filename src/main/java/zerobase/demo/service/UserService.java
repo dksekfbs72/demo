@@ -5,8 +5,10 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
-import zerobase.demo.Input.UserInput;
+import zerobase.demo.model.UserDto;
+import zerobase.demo.model.UserInput;
 import zerobase.demo.entity.User;
+import zerobase.demo.model.ResponseResult;
 import zerobase.demo.repository.UserRepository;
 
 @Service
@@ -15,10 +17,15 @@ public class UserService {
 
 	private final UserRepository userRepository;
 
-	public User createUser(UserInput parameter) {
+	public ResponseResult createUser(UserInput parameter) {
 		Optional<User> optionalMember = userRepository.findByUserId(parameter.getUserId());
 		if (optionalMember.isPresent()) {
-			return null;
+
+			return new ResponseResult(false,"이미 존재하는 아이디입니다.");
+		}
+
+		if (!parameter.getStatus().equals("user") && !parameter.getStatus().equals("owner")) {
+			return new ResponseResult(false, "status 는 user 혹은 owner 만 가능합니다.");
 		}
 
 		String encPassword = BCrypt.hashpw(parameter.getPassword(), BCrypt.gensalt());
@@ -38,6 +45,35 @@ public class UserService {
 
 		userRepository.save(user);
 
-		return user;
+		return new ResponseResult(true,"회원가입에 성공하였습니다.");
+	}
+
+	public ResponseResult adminUpdateUser(UserDto parameter, String myId) {
+		Optional<User> optionalAdmin = userRepository.findByUserId(myId);
+		if (!optionalAdmin.isPresent()) {
+			return new ResponseResult(false,"아이디가 존재하지 않습니다.");
+		}
+
+		System.out.println(optionalAdmin.get().getStatus());
+
+		if (!optionalAdmin.get().getStatus().equals("admin")) {
+			return new ResponseResult(false, "관리자 계정이 아닙니다.");
+		}
+
+		Optional<User> optionalMember = userRepository.findByUserId(parameter.getUserId());
+		if (!optionalMember.isPresent()) {
+			return new ResponseResult(false,"존재하지 않는 회원입니다.");
+		}
+
+		User user = optionalMember.get();
+		user.setUserAddr(parameter.getUserAddr());
+		user.setUserName(parameter.getUserName());
+		user.setPhone(parameter.getPhone());
+		user.setStatus(parameter.getStatus());
+		user.setEmailAuth(parameter.isEmailAuth());
+
+		userRepository.save(user);
+
+		return new ResponseResult(true, "회원 정보를 수정하였습니다.");
 	}
 }

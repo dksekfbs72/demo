@@ -1,18 +1,19 @@
 package zerobase.demo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import zerobase.demo.Input.UserInput;
-import zerobase.demo.entity.User;
+import zerobase.demo.model.ResponseResult;
+import zerobase.demo.model.UserInput;
+import zerobase.demo.repository.UserRepository;
 import zerobase.demo.service.UserService;
 
 
@@ -22,9 +23,12 @@ class DemoApplicationTests {
 	@InjectMocks
 	private UserService userService;
 
+	@Mock
+	private UserRepository userRepository;
+
 	@DisplayName("회원 가입 성공")
 	@Test
-	@Transactional
+	@Transactional(isolation = Isolation.READ_UNCOMMITTED)
 	void createAccountSuccess() {
 		//given
 		UserInput user = UserInput.builder()
@@ -37,19 +41,14 @@ class DemoApplicationTests {
 			.build();
 
 		//when
-		User result = userService.createUser(user);
+		ResponseResult result = userService.createUser(user);
 
 		//then
-		assertEquals(result.getUserId(), "Id");
-		assertEquals(result.getUserAddr(), "addr");
-		assertEquals(result.getUserName(), "name");
-		assertEquals(result.getPhone(), "phone");
-		assertEquals(result.getStatus(), "status");
-		//비밀번호는 암호화되어 같으면 안됨
-		assertNotEquals(result.getPassword(), "password");
-		assertNull(result.getPasswordChangeTime());
-		assertFalse(result.isEmailAuth());
-
+		assertTrue(result.isResult());
+		assertEquals(result.getMessage(), "회원가입에 성공하였습니다.");
+		/*
+		 * 실제로 데이터가 수정되는지 확인하는 테스트 코드가 필요함
+		 */
 	}
 
 }
