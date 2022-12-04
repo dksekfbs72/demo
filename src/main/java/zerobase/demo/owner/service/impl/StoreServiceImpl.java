@@ -17,6 +17,7 @@ import zerobase.demo.exception.NotAuthorizedException;
 import zerobase.demo.owner.dto.CreateStore;
 import zerobase.demo.owner.dto.OpenCloseStore;
 import zerobase.demo.owner.dto.StoreInfo;
+import zerobase.demo.owner.dto.UpdateStore;
 import zerobase.demo.owner.repository.StoreRepository;
 import zerobase.demo.owner.service.StoreService;
 
@@ -79,5 +80,26 @@ public class StoreServiceImpl implements StoreService {
 		if(!Objects.equals(user.getStatus(), "owner")) throw new NotAuthorizedException();
 
 		return StoreInfo.fromEntity(storeRepository.findAllByUser(user));
+	}
+
+	@Override
+	public void updateStore(UpdateStore.Request request) {
+
+		Optional<Store> optionalStore = storeRepository.findById(request.getId());
+
+		if(!optionalStore.isPresent()) throw new NonExistentStoreException();
+
+		Store updateStore = optionalStore.get();
+		updateStore.setName(request.getName());
+		updateStore.setStoreAddr(request.getStoreAddr());
+		updateStore.setPictureUrl(request.getPictureUrl());
+		updateStore.setDeliveryDistanceKm(request.getDeliveryDistanceKm());
+		updateStore.setSummary(request.getSummary());
+		updateStore.setDeliveryTip(request.getDeliveryTip());
+		updateStore.setCommission(request.getCommission());
+
+		updateStore.setUdtDt(LocalDateTime.now());
+
+		storeRepository.save(updateStore);
 	}
 }

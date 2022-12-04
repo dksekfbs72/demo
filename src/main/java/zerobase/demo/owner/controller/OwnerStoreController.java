@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import zerobase.demo.owner.dto.CreateStore;
 import zerobase.demo.owner.dto.OpenCloseStore;
 import zerobase.demo.owner.dto.StoreInfo;
+import zerobase.demo.owner.dto.UpdateStore;
 import zerobase.demo.owner.service.StoreService;
 
 @RestController
@@ -40,5 +41,8 @@ public class OwnerStoreController {
 	}
 
 	//점포 수정
-
+	@PutMapping("/store")
+	public void updateStore(@RequestBody UpdateStore.Request request) {
+		storeService.updateStore(request);
+	}
 }
