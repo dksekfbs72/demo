@@ -12,7 +12,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class Restaurant {
+public class store {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
