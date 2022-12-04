@@ -1,6 +1,7 @@
 package zerobase.demo.owner.service;
 
 import zerobase.demo.owner.dto.CreateStore;
+import zerobase.demo.owner.dto.OpenCloseStore;
 
 public interface StoreService {
 
@@ -9,4 +10,8 @@ public interface StoreService {
 	 */
 	void createStore(CreateStore.Request request);
 
+	/**
+	 * 점포 열기, 닫기
+	 */
+	void openCloseStore(OpenCloseStore.Request request);
 }
