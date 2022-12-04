@@ -105,7 +105,7 @@ public class OwnerStoreTest {
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
-			MockMvcRequestBuilders.put("/store/update/openclose")
+			MockMvcRequestBuilders.put("/store/openclose")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(body)
 		);
@@ -144,7 +144,7 @@ public class OwnerStoreTest {
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
-			MockMvcRequestBuilders.put("/store/update/openclose")
+			MockMvcRequestBuilders.put("/store/openclose")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(body)
 		);
@@ -154,7 +154,22 @@ public class OwnerStoreTest {
 			(rslt) -> assertTrue(rslt.getResolvedException().getClass()
 				.isAssignableFrom(AlreadyOpenClosedException.class))
 		);
+	}
+
+	@Test
+	@DisplayName("점포 조회 테스트 - 성공")
+	void getStoreByOwnerIdSuccessTest() throws Exception {
+
+		//given
+		Integer ownerId = 1; //임시로 user 테이블에 강제 insert
 
 
+		//when
+		ResultActions resultActions = mockMvc.perform(
+			MockMvcRequestBuilders.get("/store?id="+ownerId)
+		);
+
+		//then
+		resultActions.andExpect(status().isOk());
 	}
 }

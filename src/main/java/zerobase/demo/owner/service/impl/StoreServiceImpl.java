@@ -1,6 +1,7 @@
 package zerobase.demo.owner.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ import zerobase.demo.exception.NonExistentUserException;
 import zerobase.demo.exception.NotAuthorizedException;
 import zerobase.demo.owner.dto.CreateStore;
 import zerobase.demo.owner.dto.OpenCloseStore;
+import zerobase.demo.owner.dto.StoreInfo;
 import zerobase.demo.owner.repository.StoreRepository;
 import zerobase.demo.owner.service.StoreService;
 
@@ -59,5 +61,23 @@ public class StoreServiceImpl implements StoreService {
 		nowStore.setOpenClose(!nowStore.getOpenClose());
 		nowStore.setOpenCloseDt(LocalDateTime.now());
 		storeRepository.save(nowStore);
+	}
+
+	@Override
+	public List<StoreInfo> getStoreInfoByOwnerId(int ownerId) {
+
+		//임시 하드코딩
+		User user = new User();
+		user.setId(ownerId);
+		user.setStatus("owner");
+
+		//원래 request.ownerId로 조회 해 와야함
+		Optional<User> optionalUser = Optional.of(user);
+
+		//owner 검증
+		if(!optionalUser.isPresent()) throw new NonExistentUserException();
+		if(!Objects.equals(user.getStatus(), "owner")) throw new NotAuthorizedException();
+
+		return StoreInfo.fromEntity(storeRepository.findAllByUser(user));
 	}
 }
