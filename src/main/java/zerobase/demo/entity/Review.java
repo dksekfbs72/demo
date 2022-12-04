@@ -21,5 +21,5 @@ public class Review {
 	private int writerId;
 	private String summary;
 	private String content;
-	private String ownIeply;
+	private String ownReply;
 }
