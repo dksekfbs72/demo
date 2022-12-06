@@ -28,7 +28,7 @@ public class StoreServiceImpl implements StoreService {
 	private final StoreRepository storeRepository;
 
 	@Override
-	public void createStore(CreateStore.Request request) {
+	public void createStore(CreateStore createStore) {
 
 		//임시 하드코딩
 		User user = new User();
@@ -42,7 +42,7 @@ public class StoreServiceImpl implements StoreService {
 		if(!optionalUser.isPresent()) throw new NonExistentUserException();
 		if(!Objects.equals(user.getStatus(), "owner")) throw new NotAuthorizedException();
 
-		Store newStore = Store.from(request);
+		Store newStore = Store.fromDto(createStore);
 		newStore.setOpenClose(false);
 		newStore.setUser(user);
 		newStore.setRegDt(LocalDateTime.now());
@@ -51,13 +51,13 @@ public class StoreServiceImpl implements StoreService {
 	}
 
 	@Override
-	public void openCloseStore(OpenCloseStore.Request request) {
+	public void openCloseStore(OpenCloseStore openCloseStoret) {
 
-		Optional<Store> optionalStore = storeRepository.findById(request.getId());
+		Optional<Store> optionalStore = storeRepository.findById(openCloseStoret.getId());
 		if(!optionalStore.isPresent()) throw new NonExistentStoreException();
 
 		Store nowStore = optionalStore.get();
-		if(request.getOpenClose() == nowStore.getOpenClose()) throw new AlreadyOpenClosedException();
+		if(openCloseStoret.getOpenClose() == nowStore.getOpenClose()) throw new AlreadyOpenClosedException();
 
 		nowStore.setOpenClose(!nowStore.getOpenClose());
 		nowStore.setOpenCloseDt(LocalDateTime.now());
@@ -83,23 +83,22 @@ public class StoreServiceImpl implements StoreService {
 	}
 
 	@Override
-	public void updateStore(UpdateStore.Request request) {
+	public void updateStore(UpdateStore updateStore) {
 
-		Optional<Store> optionalStore = storeRepository.findById(request.getId());
-
+		Optional<Store> optionalStore = storeRepository.findById(updateStore.getId());
 		if(!optionalStore.isPresent()) throw new NonExistentStoreException();
 
-		Store updateStore = optionalStore.get();
-		updateStore.setName(request.getName());
-		updateStore.setStoreAddr(request.getStoreAddr());
-		updateStore.setPictureUrl(request.getPictureUrl());
-		updateStore.setDeliveryDistanceKm(request.getDeliveryDistanceKm());
-		updateStore.setSummary(request.getSummary());
-		updateStore.setDeliveryTip(request.getDeliveryTip());
-		updateStore.setCommission(request.getCommission());
+		Store store = optionalStore.get();
+		store.setName(updateStore.getName());
+		store.setStoreAddr(updateStore.getStoreAddr());
+		store.setPictureUrl(updateStore.getPictureUrl());
+		store.setDeliveryDistanceKm(updateStore.getDeliveryDistanceKm());
+		store.setSummary(updateStore.getSummary());
+		store.setDeliveryTip(updateStore.getDeliveryTip());
+		store.setCommission(updateStore.getCommission());
 
-		updateStore.setUdtDt(LocalDateTime.now());
+		store.setUdtDt(LocalDateTime.now());
 
-		storeRepository.save(updateStore);
+		storeRepository.save(store);
 	}
 }

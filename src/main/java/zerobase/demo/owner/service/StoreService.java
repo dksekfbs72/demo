@@ -12,12 +12,12 @@ public interface StoreService {
 	/**
 	 * 신규 점포 추가
 	 */
-	void createStore(CreateStore.Request request);
+	void createStore(CreateStore createStore);
 
 	/**
 	 * 점포 열기, 닫기
 	 */
-	void openCloseStore(OpenCloseStore.Request request);
+	void openCloseStore(OpenCloseStore openCloseStore);
 
 	/**
 	 * ownerId로 점포 조회
@@ -27,5 +27,5 @@ public interface StoreService {
 	/**
 	 * 점포 수정
 	 */
-	void updateStore(UpdateStore.Request request);
+	void updateStore(UpdateStore updateStore);
 }

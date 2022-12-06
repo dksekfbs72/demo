@@ -88,7 +88,7 @@ public class OwnerStoreTest {
 		Integer ownerId = 1; //임시로 user 테이블에 강제 insert
 		String name = "특수한 생선가게";
 
-		storeService.createStore(CreateStore.Request.builder()
+		storeService.createStore(CreateStore.builder()
 				.ownerId(ownerId)
 				.name(name)
 				.build());
@@ -125,7 +125,7 @@ public class OwnerStoreTest {
 		Integer ownerId = 1; //임시로 user 테이블에 강제 insert
 		String name = "특수한 생선가게";
 
-		storeService.createStore(CreateStore.Request.builder()
+		storeService.createStore(CreateStore.builder()
 			.ownerId(ownerId)
 			.name(name)
 			.build());

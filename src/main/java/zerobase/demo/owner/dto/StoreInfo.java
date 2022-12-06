@@ -1,8 +1,8 @@
 package zerobase.demo.owner.dto;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,11 +47,25 @@ public class StoreInfo {
 
 	public static List<StoreInfo> fromEntity(List<Store> storeList) {
 
-		List<StoreInfo> list = new ArrayList<>();
-		for(Store store : storeList) {
-			list.add(fromEntity(store));
+		return storeList.stream()
+		.map(store -> fromEntity(store))
+		.collect(Collectors.toList());
+	}
+
+	@Getter
+	@Setter
+	@AllArgsConstructor
+	@NoArgsConstructor
+	@Builder
+	public static class Response {
+		private List<StoreInfo> storeInfoList;
+
+		public static Response fromDtoList(List<StoreInfo> list){
+
+			return Response.builder()
+				.storeInfoList(list)
+				.build();
 		}
-		return list;
 	}
 
 }

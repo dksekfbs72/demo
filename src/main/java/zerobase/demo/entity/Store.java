@@ -21,7 +21,7 @@ import zerobase.demo.owner.dto.CreateStore;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Store {
+public class Store extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
@@ -39,21 +39,16 @@ public class Store {
 	@ManyToOne
 	private User user;
 
-	private LocalDateTime regDt;
-	private LocalDateTime udtDt;
-
-
-	public static Store from(CreateStore.Request request){
+	public static Store fromDto(CreateStore createStore){
 
 		return Store.builder()
-			.name(request.getName())
-			.commission(request.getCommission())
-			.deliveryDistanceKm(request.getDeliveryDistanceKm())
-			.deliveryTip(request.getDeliveryTip())
-			.storeAddr(request.getStoreAddr())
-			.summary(request.getSummary())
-			.pictureUrl(request.getPictureUrl())
+			.name(createStore.getName())
+			.commission(createStore.getCommission())
+			.deliveryDistanceKm(createStore.getDeliveryDistanceKm())
+			.deliveryTip(createStore.getDeliveryTip())
+			.storeAddr(createStore.getStoreAddr())
+			.summary(createStore.getSummary())
+			.pictureUrl(createStore.getPictureUrl())
 			.build();
 	}
-
 }
