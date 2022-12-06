@@ -17,18 +17,18 @@ public class OrderTbl {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
-	private int price;
+	private Integer id;
+	private Integer price;
 
 	//@Type(type = "json")
 	//json 형태로 변경 예정
 	private String menus;
 
-	private int userId;
+	private Integer userId;
 	private String status;
-	private int deliveryTime;
-	private int restaurantId;
+	private Integer deliveryTime;
+	private Integer restaurantId;
 	private LocalDateTime orderTime;
-	private int useCouponId;
+	private Integer useCouponId;
 
 }

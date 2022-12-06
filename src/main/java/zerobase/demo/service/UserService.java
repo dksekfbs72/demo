@@ -1,79 +1,140 @@
 package zerobase.demo.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
-import zerobase.demo.model.UserDto;
-import zerobase.demo.model.UserInput;
+import zerobase.demo.dto.UserDto;
 import zerobase.demo.entity.User;
-import zerobase.demo.model.ResponseResult;
+import zerobase.demo.exception.UserException;
 import zerobase.demo.repository.UserRepository;
+import zerobase.demo.type.ResponseCode;
+import zerobase.demo.type.UserStatus;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
 
 	private final UserRepository userRepository;
 
-	public ResponseResult createUser(UserInput parameter) {
-		Optional<User> optionalMember = userRepository.findByUserId(parameter.getUserId());
+	public boolean createUser(String userId,
+		String password,
+		String userName,
+		String phone,
+		String userAddr,
+		String status) {
+
+		Optional<User> optionalMember = userRepository.findByUserId(userId);
 		if (optionalMember.isPresent()) {
-
-			return new ResponseResult(false,"이미 존재하는 아이디입니다.");
+			throw new UserException(ResponseCode.ALREADY_REGISTERED_ID);
 		}
 
-		if (!parameter.getStatus().equals("user") && !parameter.getStatus().equals("owner")) {
-			return new ResponseResult(false, "status 는 user 혹은 owner 만 가능합니다.");
+		if (!status.equals("user") && !status.equals("owner")) {
+			throw new UserException(ResponseCode.STATUS_INPUT_ERROR);
+		}
+		UserStatus userStatus;
+
+		if (status.equals("user")) {
+			userStatus = UserStatus.user;
+		} else {
+			userStatus = UserStatus.owner;
 		}
 
-		String encPassword = BCrypt.hashpw(parameter.getPassword(), BCrypt.gensalt());
+		String encPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 		String uuid = UUID.randomUUID().toString();
 
 		User user = User.builder()
-			.userId(parameter.getUserId())
+			.userId(userId)
 			.password(encPassword)
-			.userName(parameter.getUserName())
-			.phone(parameter.getPhone())
-			.userAddr(parameter.getUserAddr())
+			.userName(userName)
+			.phone(phone)
+			.userAddr(userAddr)
 			.emailAuthKey(uuid)
 			.emailAuth(false)
-			.status(parameter.getStatus())
+			.status(userStatus)
 			.passwordChangeTime(null)
 			.build();
 
 		userRepository.save(user);
 
-		return new ResponseResult(true,"회원가입에 성공하였습니다.");
+		return true;
 	}
 
-	public ResponseResult adminUpdateUser(UserDto parameter, String myId) {
+	public boolean adminUpdateUser(String userId,
+		String userName,
+		String phone,
+		String userAddr,
+		String status,
+		boolean emailAuth,
+		String myId
+	) {
 		Optional<User> optionalAdmin = userRepository.findByUserId(myId);
 		if (!optionalAdmin.isPresent()) {
-			return new ResponseResult(false,"아이디가 존재하지 않습니다.");
+			throw new UserException(ResponseCode.USER_NOT_FIND);
 		}
 
-		System.out.println(optionalAdmin.get().getStatus());
-
-		if (!optionalAdmin.get().getStatus().equals("admin")) {
-			return new ResponseResult(false, "관리자 계정이 아닙니다.");
+		if (!optionalAdmin.get().getStatus().name().equals("admin")) {
+			throw new UserException(ResponseCode.NOT_ADMIN_ROLL);
 		}
 
-		Optional<User> optionalMember = userRepository.findByUserId(parameter.getUserId());
+		Optional<User> optionalMember = userRepository.findByUserId(userId);
 		if (!optionalMember.isPresent()) {
-			return new ResponseResult(false,"존재하지 않는 회원입니다.");
+			throw new UserException(ResponseCode.USER_NOT_FIND);
 		}
 
 		User user = optionalMember.get();
-		user.setUserAddr(parameter.getUserAddr());
-		user.setUserName(parameter.getUserName());
-		user.setPhone(parameter.getPhone());
-		user.setStatus(parameter.getStatus());
-		user.setEmailAuth(parameter.isEmailAuth());
+		user.setUserAddr(userAddr);
+		user.setUserName(userName);
+		user.setPhone(phone);
+		user.setStatus(status);
+		user.setEmailAuth(emailAuth);
 
 		userRepository.save(user);
 
-		return new ResponseResult(true, "회원 정보를 수정하였습니다.");
+		return true;
+	}
+
+//	public User readMyInfo(String myId) {
+//
+//	}
+
+	@Override
+	public UserDetails loadUserByUsername(String userId) throws UserException {
+
+		Optional<User> optionalMember = userRepository.findByUserId(userId);
+		if (!optionalMember.isPresent()) {
+			throw new UserException(ResponseCode.USER_NOT_FIND);
+		}
+
+		User user = optionalMember.get();
+
+		if (!user.getEmailAuth()) {
+			throw new UserException(ResponseCode.USER_NOT_EMAIL_AUTH);
+		}
+
+		if (user.getStatus().toString().equals("stop")) {
+			throw new UserException(ResponseCode.USER_IS_STOP);
+		}
+
+//		if (Member.MEMBER_STATUS_WITHDRAW.equals(member.getUserStatus())) {
+//			throw new MemberStopUserException("탈퇴된 회원 입니다.");
+//		}
+
+		List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+		grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+
+		if (user.getStatus().toString().equals("admin")) {
+			grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+		}
+
+		return new org.springframework.security.core.userdetails.User(user.getUserId(),
+			user.getPassword(), grantedAuthorities);
 	}
 }

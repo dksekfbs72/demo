@@ -17,12 +17,12 @@ public class Menu {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
-	private int price;
+	private Integer id;
+	private Integer price;
 	private String name;
 	private String pictureUrl;
 	private String summary;
-	private boolean soldOut;
-	private int restaurantId;
+	private Boolean soldOut;
+	private Integer restaurantId;
 	private LocalDateTime dropMenuTime;
 }

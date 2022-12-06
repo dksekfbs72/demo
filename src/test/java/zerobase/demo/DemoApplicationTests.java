@@ -1,6 +1,5 @@
 package zerobase.demo;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.DisplayName;
@@ -11,10 +10,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import zerobase.demo.model.ResponseResult;
 import zerobase.demo.model.UserInput;
 import zerobase.demo.repository.UserRepository;
 import zerobase.demo.service.UserService;
+import zerobase.demo.type.UserStatus;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -36,16 +35,16 @@ class DemoApplicationTests {
 			.userAddr("addr")
 			.userName("name")
 			.phone("phone")
-			.status("status")
+			.status(UserStatus.user)
 			.password("password")
 			.build();
 
 		//when
-		ResponseResult result = userService.createUser(user);
+		boolean result = userService.createUser("Id","password",
+			"name", "phone", "addr", "user");
 
 		//then
-		assertTrue(result.isResult());
-		assertEquals(result.getMessage(), "회원가입에 성공하였습니다.");
+		assertTrue(result);
 		/*
 		 * 실제로 데이터가 수정되는지 확인하는 테스트 코드가 필요함
 		 */

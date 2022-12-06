@@ -14,7 +14,7 @@ import lombok.ToString;
 public class UserCouponTbl {
 
 	@Id
-	private int userId;
-	private int couponId;
+	private Integer userId;
+	private Integer couponId;
 	private LocalDateTime usedTime;
 }

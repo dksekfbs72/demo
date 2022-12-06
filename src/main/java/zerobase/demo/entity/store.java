@@ -16,15 +16,15 @@ public class store {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Integer id;
 	private String name;
 	private String restaurantAddr;
 	private String pictureUrl;
-	private int deliveryDistanceKm;
+	private Integer deliveryDistanceKm;
 	private String summary;
-	private boolean openClose;
-	private int deliveryTip;
-	private int commission;
-	private int ownerId;
+	private Boolean openClose;
+	private Integer deliveryTip;
+	private Integer commission;
+	private Integer ownerId;
 
 }

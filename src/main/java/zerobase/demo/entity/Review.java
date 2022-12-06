@@ -16,9 +16,9 @@ public class Review {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
-	private int restaurantId;
-	private int writerId;
+	private Integer id;
+	private Integer restaurantId;
+	private Integer writerId;
 	private String summary;
 	private String content;
 	private String ownReply;

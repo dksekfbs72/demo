@@ -16,7 +16,7 @@ public class Coupon {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
-	private int restaurantId;
-	private int salePrice;
+	private Integer id;
+	private Integer restaurantId;
+	private Integer salePrice;
 }

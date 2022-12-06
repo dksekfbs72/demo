@@ -1,6 +1,5 @@
-package zerobase.demo.model;
+package zerobase.demo.dto;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 
