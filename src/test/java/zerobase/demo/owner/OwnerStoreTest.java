@@ -24,6 +24,7 @@ import zerobase.demo.owner.dto.CreateStore;
 import zerobase.demo.owner.dto.OpenCloseStore;
 import zerobase.demo.owner.repository.StoreRepository;
 import zerobase.demo.owner.service.StoreService;
+import zerobase.demo.type.StoreOpenCloseStatus;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -99,7 +100,7 @@ public class OwnerStoreTest {
 		String body = mapper.writeValueAsString(
 			OpenCloseStore.Request.builder()
 				.id(store.getId())
-				.openClose(true)
+				.openClose(StoreOpenCloseStatus.OPEN)
 				.build()
 		);
 
@@ -114,7 +115,7 @@ public class OwnerStoreTest {
 		resultActions.andExpect(status().isOk());
 		storeList = storeRepository.findAllByName(name);
 		store = storeList.get(0);
-		assertEquals(store.getOpenClose(), true);
+		assertEquals(store.getOpenClose(), StoreOpenCloseStatus.OPEN);
 	}
 
 	@Test
@@ -132,13 +133,13 @@ public class OwnerStoreTest {
 
 		List<Store> storeList = storeRepository.findAllByName(name);
 		Store store = storeList.get(0);
-		store.setOpenClose(true);
+		store.setOpenClose(StoreOpenCloseStatus.OPEN);
 		storeRepository.save(store);
 
 		String body = mapper.writeValueAsString(
 			OpenCloseStore.Request.builder()
 				.id(store.getId())
-				.openClose(true)
+				.openClose(StoreOpenCloseStatus.OPEN)
 				.build()
 		);
 

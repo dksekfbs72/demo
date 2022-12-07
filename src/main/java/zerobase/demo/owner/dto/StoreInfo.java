@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import zerobase.demo.entity.Store;
+import zerobase.demo.type.StoreOpenCloseStatus;
 
 @Getter
 @Setter
@@ -23,7 +24,7 @@ public class StoreInfo {
 	private String pictureUrl;
 	private Double deliveryDistanceKm;
 	private String summary;
-	private Boolean openClose;
+	private StoreOpenCloseStatus openClose;
 	private Integer deliveryTip;
 	private Double commission;
 	private LocalDateTime openCloseDt;

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import zerobase.demo.type.StoreOpenCloseStatus;
 
 @Getter
 @Setter
@@ -14,7 +15,7 @@ import lombok.Setter;
 public class OpenCloseStore {
 
 	private Integer id;
-	private Boolean openClose;
+	private StoreOpenCloseStatus openClose;
 
 	public static OpenCloseStore fromRequest(OpenCloseStore.Request request) {
 		return OpenCloseStore.builder()
@@ -31,6 +32,6 @@ public class OpenCloseStore {
 	public static class Request {
 
 		private Integer id;
-		private Boolean openClose;
+		private StoreOpenCloseStatus openClose;
 	}
 }

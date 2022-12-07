@@ -3,6 +3,8 @@ package zerobase.demo.entity;
 import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import zerobase.demo.owner.dto.CreateStore;
+import zerobase.demo.type.StoreOpenCloseStatus;
 
 @Entity
 @Getter
@@ -30,7 +33,10 @@ public class Store extends BaseEntity {
 	private String pictureUrl;
 	private Double deliveryDistanceKm;
 	private String summary;
-	private Boolean openClose;
+
+	@Enumerated(EnumType.STRING)
+	private StoreOpenCloseStatus openClose;
+
 	private Integer deliveryTip;
 	private Double commission;
 
