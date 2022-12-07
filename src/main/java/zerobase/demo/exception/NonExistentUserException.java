@@ -1,9 +1,9 @@
 package zerobase.demo.exception;
 
 public class NonExistentUserException extends RuntimeException{
-	private static final String MESSAGE = "존재하지 않는 사용자입니다.";
+	private static String MESSAGE = "존재하지 않는 사용자입니다. 요청한 유저 id : ";
 
-	public NonExistentUserException() {
-		super(MESSAGE);
+	public NonExistentUserException(Integer userId) {
+		super(MESSAGE + userId);
 	}
 }

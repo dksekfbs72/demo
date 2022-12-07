@@ -5,9 +5,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import zerobase.demo.exception.*;
+import zerobase.demo.exception.AlreadyOpenClosedException;
+import zerobase.demo.exception.NonExistentStoreException;
+import zerobase.demo.exception.NonExistentUserException;
+import zerobase.demo.exception.NotAuthorizedException;
 
-
+// @RestControllerAdvice(basePackageClasses = OwnerStoreController.class)
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -18,12 +21,22 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(NonExistentUserException.class)
-	public NonExistentUserException handleNonExistentUserException() {
-		return new NonExistentUserException();
+	public NonExistentUserException handleNonExistentUserException(NonExistentUserException ex) {
+		return ex;
 	}
 
 	@ExceptionHandler(NotAuthorizedException.class)
-	public NotAuthorizedException handleNotAuthorizedException() {
-		return new NotAuthorizedException();
+	public NotAuthorizedException handleNotAuthorizedException(NotAuthorizedException ex) {
+		return ex;
+	}
+
+	@ExceptionHandler(AlreadyOpenClosedException.class)
+	public AlreadyOpenClosedException handleAlreadyOpenClosedException(AlreadyOpenClosedException ex) {
+		return ex;
+	}
+
+	@ExceptionHandler(NonExistentStoreException.class)
+	public NonExistentStoreException handleNonExistentStoreException(NonExistentStoreException ex) {
+		return ex;
 	}
 }

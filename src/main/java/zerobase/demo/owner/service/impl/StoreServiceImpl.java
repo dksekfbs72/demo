@@ -40,7 +40,7 @@ public class StoreServiceImpl implements StoreService {
 		Optional<User> optionalUser = Optional.of(user);
 
 		//owner 검증
-		if(!optionalUser.isPresent()) throw new NonExistentUserException();
+		if(!optionalUser.isPresent()) throw new NonExistentUserException(user.getId());
 		if(user.getStatus() != UserStatus.OWNER) throw new NotAuthorizedException();
 
 		Store newStore = Store.fromDto(createStore);
@@ -55,7 +55,7 @@ public class StoreServiceImpl implements StoreService {
 	public void openCloseStore(OpenCloseStore openCloseStore) {
 
 		Optional<Store> optionalStore = storeRepository.findById(openCloseStore.getId());
-		if(!optionalStore.isPresent()) throw new NonExistentStoreException();
+		if(!optionalStore.isPresent()) throw new NonExistentStoreException(openCloseStore.getId());
 
 		Store nowStore = optionalStore.get();
 		if(openCloseStore.getOpenClose() == nowStore.getOpenClose()) throw new AlreadyOpenClosedException();
@@ -77,7 +77,7 @@ public class StoreServiceImpl implements StoreService {
 		Optional<User> optionalUser = Optional.of(user);
 
 		//owner 검증
-		if(!optionalUser.isPresent()) throw new NonExistentUserException();
+		if(!optionalUser.isPresent()) throw new NonExistentUserException(user.getId());
 		if(user.getStatus() != UserStatus.OWNER) throw new NotAuthorizedException();
 
 		return StoreInfo.fromEntity(storeRepository.findAllByUser(user));
@@ -87,7 +87,7 @@ public class StoreServiceImpl implements StoreService {
 	public void updateStore(UpdateStore updateStore) {
 
 		Optional<Store> optionalStore = storeRepository.findById(updateStore.getId());
-		if(!optionalStore.isPresent()) throw new NonExistentStoreException();
+		if(!optionalStore.isPresent()) throw new NonExistentStoreException(updateStore.getId());
 
 		//현재 로그인 된 유저가 점포 주인인지 확인하는 부분 추가 예정(Spring security 사용 예정)
 
