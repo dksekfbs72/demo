@@ -45,6 +45,7 @@ public class StoreServiceImpl implements StoreService {
 
 		Store newStore = Store.fromDto(createStore);
 		newStore.setOpenClose(StoreOpenCloseStatus.CLOSE);
+		newStore.setOpenCloseDt(LocalDateTime.now());
 		newStore.setUser(user);
 
 		storeRepository.save(newStore);
