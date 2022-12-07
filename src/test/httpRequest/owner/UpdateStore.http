@@ -1,0 +1,15 @@
+PUT http://localhost:8080/store
+Content-Type: application/json
+
+{
+  "id": 6,
+  "name": "수정이름",
+  "storeAddr": "수정주소",
+  "summary": "수정설명",
+  "pictureUrl": "수정url",
+  "commission": 3.3,
+  "deliveryDistanceKm": 4.4,
+  "deliveryTip": 5000
+}
+
+###

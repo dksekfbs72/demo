@@ -1,0 +1,15 @@
+POST http://localhost:8080/store
+Content-Type: application/json
+
+{
+  "ownerId": 123,
+  "name": "nameTest",
+  "storeAddr": "addrTest",
+  "summary": "summaryTest",
+  "pictureUrl": "urlTest",
+  "commission": 5.3,
+  "deliveryDistanceKm": 3.5,
+  "deliveryTip": 3000
+}
+
+###

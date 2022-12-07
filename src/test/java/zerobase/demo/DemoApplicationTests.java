@@ -10,10 +10,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import zerobase.demo.model.UserInput;
-import zerobase.demo.repository.UserRepository;
-import zerobase.demo.service.UserService;
-import zerobase.demo.type.UserStatus;
+import zerobase.demo.common.model.UserInput;
+import zerobase.demo.user.repository.UserRepository;
+import zerobase.demo.user.service.UserService;
+import zerobase.demo.common.type.UserStatus;
 
 
 @ExtendWith(MockitoExtension.class)
