@@ -17,7 +17,9 @@ public enum ResponseCode {
 
 
 	CHANGE_USER_INFO_SUCCESS("유저 정보를 변경하였습니다."),
-	CREATE_USER_SUCCESS("회원가입을 성공했습니다.");
+	CREATE_USER_SUCCESS("회원가입을 성공했습니다."),
+	LOGIN_SUCCESS("로그인 성공"),
+	LOGIN_FAIL("로그인 실패");
 
 	private final String description;
 }

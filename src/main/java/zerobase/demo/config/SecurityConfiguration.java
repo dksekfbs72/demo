@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import zerobase.demo.exception.UserException;
 import zerobase.demo.service.UserService;
 
 @RequiredArgsConstructor
@@ -29,18 +30,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 		http.authorizeRequests()
 			.antMatchers(
-				"/**"
+				"/user/create"
 			)
 			.permitAll();
 
-//		http.authorizeRequests()
-//			.antMatchers("/admin/**")
-//			.hasAuthority("ROLE_ADMIN");
+		http.authorizeRequests()
+			.antMatchers("/admin/**")
+			.hasAuthority("ROLE_ADMIN");
 
 		http.formLogin()
-			.loginProcessingUrl("/user/login")
-			.defaultSuccessUrl("/user/loginSuccess")
-			.failureUrl("/user/loginFail")
+			.usernameParameter("userId")
+			.passwordParameter("password")
+			.successForwardUrl("/login/success")
 			.permitAll();
 
 		super.configure(http);
@@ -48,8 +49,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
+
 		auth.userDetailsService(userService).passwordEncoder(getPasswordEncoder());
 
 		super.configure(auth);
 	}
+
+
 }

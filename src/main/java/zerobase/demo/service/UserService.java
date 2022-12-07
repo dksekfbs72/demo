@@ -9,18 +9,22 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import zerobase.demo.dto.UserDto;
 import zerobase.demo.entity.User;
+import zerobase.demo.exception.StopUserException;
 import zerobase.demo.exception.UserException;
+import zerobase.demo.exception.UserNotEmailAuthException;
+import zerobase.demo.exception.UserNotFindException;
 import zerobase.demo.repository.UserRepository;
 import zerobase.demo.type.ResponseCode;
 import zerobase.demo.type.UserStatus;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+public class UserService extends UserException implements UserDetailsService {
 
 	private final UserRepository userRepository;
 
@@ -80,9 +84,9 @@ public class UserService implements UserDetailsService {
 			throw new UserException(ResponseCode.USER_NOT_FIND);
 		}
 
-		if (!optionalAdmin.get().getStatus().name().equals("admin")) {
-			throw new UserException(ResponseCode.NOT_ADMIN_ROLL);
-		}
+//		if (!optionalAdmin.get().getStatus().name().equals("admin")) {
+//			throw new UserException(ResponseCode.NOT_ADMIN_ROLL);
+//		}
 
 		Optional<User> optionalMember = userRepository.findByUserId(userId);
 		if (!optionalMember.isPresent()) {
@@ -106,31 +110,28 @@ public class UserService implements UserDetailsService {
 //	}
 
 	@Override
-	public UserDetails loadUserByUsername(String userId) throws UserException {
+	public UserDetails loadUserByUsername(String userId) {
 
 		Optional<User> optionalMember = userRepository.findByUserId(userId);
 		if (!optionalMember.isPresent()) {
-			throw new UserException(ResponseCode.USER_NOT_FIND);
+			throw new UserNotFindException("아이디 정보가 존재하지 않습니다.");
 		}
 
 		User user = optionalMember.get();
 
+
 		if (!user.getEmailAuth()) {
-			throw new UserException(ResponseCode.USER_NOT_EMAIL_AUTH);
+			throw new UserNotEmailAuthException("이메일 인증이 필요합니다.");
 		}
 
-		if (user.getStatus().toString().equals("stop")) {
-			throw new UserException(ResponseCode.USER_IS_STOP);
+		if (user.getStatus().name().equals("stop")) {
+			throw new StopUserException("정지된 유저입니다.");
 		}
-
-//		if (Member.MEMBER_STATUS_WITHDRAW.equals(member.getUserStatus())) {
-//			throw new MemberStopUserException("탈퇴된 회원 입니다.");
-//		}
 
 		List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 		grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
-		if (user.getStatus().toString().equals("admin")) {
+		if (user.getStatus().name().equals("admin")) {
 			grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
 		}
 

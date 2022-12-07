@@ -30,6 +30,18 @@ public class UserController extends AllExceptionHandler {
 		return new ResponseResult(ResponseCode.CREATE_USER_SUCCESS);
 	}
 
+	@PostMapping("/login/success")
+	public ResponseResult login() {
+
+		return new ResponseResult(ResponseCode.LOGIN_SUCCESS);
+	}
+
+	@PostMapping("/login/fail")
+	public ResponseResult loginFail(@ModelAttribute UserInput parameter) {
+
+		return new ResponseResult(ResponseCode.LOGIN_FAIL);
+	}
+
 //	@GetMapping("/user/readMyInfo")
 //	User readMyInfo(@RequestParam String myId) {
 //
