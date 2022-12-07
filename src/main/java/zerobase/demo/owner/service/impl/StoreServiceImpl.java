@@ -46,7 +46,6 @@ public class StoreServiceImpl implements StoreService {
 		Store newStore = Store.fromDto(createStore);
 		newStore.setOpenClose(StoreOpenCloseStatus.CLOSE);
 		newStore.setUser(user);
-		newStore.setRegDt(LocalDateTime.now());
 
 		storeRepository.save(newStore);
 	}
@@ -89,6 +88,8 @@ public class StoreServiceImpl implements StoreService {
 		Optional<Store> optionalStore = storeRepository.findById(updateStore.getId());
 		if(!optionalStore.isPresent()) throw new NonExistentStoreException();
 
+		//현재 로그인 된 유저가 점포 주인인지 확인하는 부분 추가 예정(Spring security 사용 예정)
+
 		Store store = optionalStore.get();
 		store.setName(updateStore.getName());
 		store.setStoreAddr(updateStore.getStoreAddr());
@@ -97,8 +98,6 @@ public class StoreServiceImpl implements StoreService {
 		store.setSummary(updateStore.getSummary());
 		store.setDeliveryTip(updateStore.getDeliveryTip());
 		store.setCommission(updateStore.getCommission());
-
-		store.setUdtDt(LocalDateTime.now());
 
 		storeRepository.save(store);
 	}
