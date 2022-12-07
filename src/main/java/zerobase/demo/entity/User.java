@@ -16,7 +16,7 @@ import zerobase.demo.type.UserStatus;
 @ToString
 @Builder
 @AllArgsConstructor
-public class User {
+public class User extends BaseEntity{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +30,7 @@ public class User {
 	private Boolean emailAuth;
 	private UserStatus status;
 	private LocalDateTime passwordChangeTime;
+	private LocalDateTime unregisterTime;
 
 	public User() {
 	}

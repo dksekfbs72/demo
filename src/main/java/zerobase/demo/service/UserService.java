@@ -138,4 +138,21 @@ public class UserService extends UserException implements UserDetailsService {
 		return new org.springframework.security.core.userdetails.User(user.getUserId(),
 			user.getPassword(), grantedAuthorities);
 	}
+
+	public UserDto readMyInfo(String userId) {
+		Optional<User> optionalUser = userRepository.findByUserId(userId);
+		if (!optionalUser.isPresent()) {
+			throw new UserException(ResponseCode.USER_NOT_FIND);
+		}
+		User user = optionalUser.get();
+
+		return UserDto.builder()
+			.userId(user.getUserId())
+			.userName(user.getUserName())
+			.phone(user.getPhone())
+			.userAddr(user.getUserAddr())
+			.status(user.getStatus().name())
+			.emailAuth(user.getEmailAuth())
+			.build();
+	}
 }

@@ -1,10 +1,13 @@
 package zerobase.demo.controller;
 
+import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import zerobase.demo.config.AllExceptionHandler;
+import zerobase.demo.dto.UserDto;
 import zerobase.demo.model.ResponseResult;
 import zerobase.demo.model.UserInput;
 import zerobase.demo.service.UserService;
@@ -36,16 +39,11 @@ public class UserController extends AllExceptionHandler {
 		return new ResponseResult(ResponseCode.LOGIN_SUCCESS);
 	}
 
-	@PostMapping("/login/fail")
-	public ResponseResult loginFail(@ModelAttribute UserInput parameter) {
 
-		return new ResponseResult(ResponseCode.LOGIN_FAIL);
+	@GetMapping("/user/readMyInfo")
+	UserDto readMyInfo(Principal principal) {
+
+		return userService.readMyInfo(principal.getName());
 	}
-
-//	@GetMapping("/user/readMyInfo")
-//	User readMyInfo(@RequestParam String myId) {
-//
-//		return userService.readMyInfo(myId);
-//	}
 
 }
