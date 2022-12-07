@@ -13,21 +13,22 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class OrderTbl {
+public class OrderTbl extends BaseEntity{
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
-	private int price;
+	private Integer id;
+	private Integer price;
 
 	//@Type(type = "json")
 	//json 형태로 변경 예정
 	private String menus;
 
-	private int user_id;
+	private Integer userId;
 	private String status;
-	private int delivery_time;
-	private int restaurant_id;
-	private LocalDateTime order_time;
-	private int use_coupon_id;
+	private Integer deliveryTime;
+	private Integer restaurantId;
+	private LocalDateTime orderTime;
+	private Integer useCouponId;
 
 }

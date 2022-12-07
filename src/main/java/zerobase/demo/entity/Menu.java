@@ -13,15 +13,16 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class Menu {
+public class Menu extends BaseEntity{
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
-	private int price;
+	private Integer id;
+	private Integer price;
 	private String name;
-	private String picture_url;
+	private String pictureUrl;
 	private String summary;
-	private boolean sold_out;
-	private int restaurant_id;
-	private LocalDateTime drop_menu_time;
+	private Boolean soldOut;
+	private Integer restaurantId;
+	private LocalDateTime dropMenuTime;
 }

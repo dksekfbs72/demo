@@ -1,6 +1,5 @@
 package zerobase.demo.entity;
 
-import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,18 +12,19 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class Restaurant {
+public class store extends BaseEntity{
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Integer id;
 	private String name;
-	private String restaurant_addr;
-	private String picture_url;
-	private int delivery_distance_km;
+	private String restaurantAddr;
+	private String pictureUrl;
+	private Integer deliveryDistanceKm;
 	private String summary;
-	private boolean open_close;
-	private int delivery_tip;
-	private int commission;
-	private int owner_id;
+	private Boolean openClose;
+	private Integer deliveryTip;
+	private Integer commission;
+	private Integer ownerId;
 
 }

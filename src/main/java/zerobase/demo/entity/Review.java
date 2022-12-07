@@ -12,13 +12,14 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class Review {
+public class Review extends BaseEntity{
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
-	private int restaurant_id;
-	private int writer_id;
+	private Integer id;
+	private Integer restaurantId;
+	private Integer writerId;
 	private String summary;
 	private String content;
-	private String own_reply;
+	private String ownReply;
 }

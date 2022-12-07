@@ -12,10 +12,11 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class Coupon {
+public class Coupon extends BaseEntity{
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
-	private int restaurant_id;
-	private int sale_price;
+	private Integer id;
+	private Integer restaurantId;
+	private Integer salePrice;
 }
