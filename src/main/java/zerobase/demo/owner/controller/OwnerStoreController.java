@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import zerobase.demo.owner.dto.CreateStore;
 import zerobase.demo.owner.dto.OpenCloseStore;
-import zerobase.demo.owner.dto.StoreInfo;
+import zerobase.demo.owner.dto.StoreInfo.BaseResponse;
 import zerobase.demo.owner.dto.UpdateStore;
 import zerobase.demo.owner.service.StoreService;
 
@@ -36,8 +36,8 @@ public class OwnerStoreController {
 
 	//점포 조회
 	@GetMapping()
-	public StoreInfo.BaseResponse getStoreByOwnerId(@RequestParam int id) {
-		return StoreInfo.BaseResponse.fromDtoList(storeService.getStoreInfoByOwnerId(id));
+	public BaseResponse getStoreByOwnerId(@RequestParam int id) {
+		return BaseResponse.fromDtoList(storeService.getStoreInfoByOwnerId(id));
 	}
 
 	//점포 수정

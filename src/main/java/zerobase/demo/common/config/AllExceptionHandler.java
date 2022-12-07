@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import zerobase.demo.DemoApplication;
 import zerobase.demo.common.exception.UserException;
-import zerobase.demo.common.model.BaseResponse;
+import zerobase.demo.common.model.ErrorResponse;
 
 @Slf4j
 @RestControllerAdvice
@@ -18,15 +18,16 @@ public class AllExceptionHandler {
 	public static final Logger logger = LoggerFactory.getLogger(DemoApplication.class);
 
 	@ExceptionHandler(UserException.class)
-	public BaseResponse handleUserException(UserException ex) {
+	public ErrorResponse handleUserException(UserException ex) {
 		logger.error("{} is occurred.", ex.getResponseCode());
-		return new BaseResponse(ex.getResponseCode());
+		return new ErrorResponse(ex.getResponseCode());
 	}
 
 	@ExceptionHandler(Exception.class)
-	public BaseResponse handleAllException(Exception e) {
+	public ErrorResponse handleAllException(Exception e) {
 		log.error("Exception is occurred.", e);
 
-		return new BaseResponse(INTERNAL_SERVER_ERROR);
+		return new ErrorResponse(INTERNAL_SERVER_ERROR);
+
 	}
 }

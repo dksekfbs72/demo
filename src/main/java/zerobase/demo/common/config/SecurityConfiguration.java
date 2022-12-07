@@ -30,7 +30,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 		http.authorizeRequests()
 			.antMatchers(
-				"/user/create"
+				"/**"
 			)
 			.permitAll();
 

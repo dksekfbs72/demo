@@ -1,16 +1,16 @@
 package zerobase.demo.user.controller;
 
+import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import zerobase.demo.DemoApplication;
-import zerobase.demo.user.dto.UserDto;
 import zerobase.demo.common.config.AllExceptionHandler;
-import zerobase.demo.common.model.BaseResponse;
+import zerobase.demo.user.dto.UserUpdateDto;
+import zerobase.demo.user.dto.UserUpdateDto.BaseResponse;
 import zerobase.demo.user.service.UserService;
 import zerobase.demo.common.type.ResponseCode;
 
@@ -23,18 +23,12 @@ public class AdminUserController extends AllExceptionHandler {
 
 
 	@PutMapping("/admin/userUpdate")
-	BaseResponse userUpdate(@ModelAttribute UserDto parameter,
-		@RequestParam String myId) {
+	BaseResponse userUpdate(@RequestBody UserUpdateDto.Request parameter,
+		Principal principal) {
 		//유저의 아이디와 비밀번호는 변경할 수 없음
-		boolean result = userService.adminUpdateUser(parameter.getUserId(),
-			parameter.getUserName(),
-			parameter.getPhone(),
-			parameter.getUserAddr(),
-			parameter.getStatus(),
-			parameter.isEmailAuth(),
-			myId);
+		boolean result = userService.adminUpdateUser(UserUpdateDto.fromRequest(parameter),
+			principal.getName());
 
-
-		return new BaseResponse(ResponseCode.CHANGE_USER_INFO_SUCCESS);
+		return new UserUpdateDto.BaseResponse(ResponseCode.CHANGE_USER_INFO_SUCCESS);
 	}
 }

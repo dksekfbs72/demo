@@ -4,14 +4,13 @@ import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import zerobase.demo.common.config.AllExceptionHandler;
-import zerobase.demo.user.dto.UserDto;
 import zerobase.demo.common.model.BaseResponse;
-import zerobase.demo.common.model.UserInput;
-import zerobase.demo.user.service.UserService;
 import zerobase.demo.common.type.ResponseCode;
+import zerobase.demo.user.dto.UserDto;
+import zerobase.demo.user.service.UserService;
 
 @Controller
 @RequiredArgsConstructor
@@ -20,23 +19,19 @@ public class UserController extends AllExceptionHandler {
 	private final UserService userService;
 
 	@PostMapping("/user/create")
-	public BaseResponse createUser(@ModelAttribute UserInput parameter) {
+	public UserDto.BaseResponse createUser(@RequestBody UserDto.Request parameter) {
 
-		boolean result = userService.createUser(
-			parameter.getUserId(),
-			parameter.getPassword(),
-			parameter.getUserName(),
-			parameter.getPhone(),
-			parameter.getUserAddr(),
-			parameter.getStatus());
+		System.out.println();
 
-		return new BaseResponse(ResponseCode.CREATE_USER_SUCCESS);
+		boolean result = userService.createUser(UserDto.fromRequest(parameter));
+
+		return new UserDto.BaseResponse(ResponseCode.CREATE_USER_SUCCESS);
 	}
 
 	@PostMapping("/login/success")
-	public BaseResponse login() {
+	public UserDto.BaseResponse login() {
 
-		return new BaseResponse(ResponseCode.LOGIN_SUCCESS);
+		return new UserDto.BaseResponse(ResponseCode.LOGIN_SUCCESS);
 	}
 
 
