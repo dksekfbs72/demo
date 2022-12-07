@@ -1,4 +1,4 @@
-package zerobase.demo.exception;
+package zerobase.demo.common.exception;
 
 public class AlreadyOpenClosedException extends RuntimeException{
 	private static String MESSAGE = "이미 열려있거나 닫혀있습니다.";

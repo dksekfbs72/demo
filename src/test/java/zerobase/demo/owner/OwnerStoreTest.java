@@ -18,13 +18,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import zerobase.demo.entity.Store;
-import zerobase.demo.exception.AlreadyOpenClosedException;
+import zerobase.demo.common.entity.Store;
+import zerobase.demo.common.exception.AlreadyOpenClosedException;
 import zerobase.demo.owner.dto.CreateStore;
 import zerobase.demo.owner.dto.OpenCloseStore;
 import zerobase.demo.owner.repository.StoreRepository;
 import zerobase.demo.owner.service.StoreService;
-import zerobase.demo.type.StoreOpenCloseStatus;
+import zerobase.demo.common.type.StoreOpenCloseStatus;
 
 @SpringBootTest
 @AutoConfigureMockMvc

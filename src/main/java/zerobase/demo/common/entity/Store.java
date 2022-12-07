@@ -1,4 +1,4 @@
-package zerobase.demo.entity;
+package zerobase.demo.common.entity;
 
 import java.time.LocalDateTime;
 
@@ -15,8 +15,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import zerobase.demo.common.type.StoreOpenCloseStatus;
 import zerobase.demo.owner.dto.CreateStore;
-import zerobase.demo.type.StoreOpenCloseStatus;
 
 @Entity
 @Getter

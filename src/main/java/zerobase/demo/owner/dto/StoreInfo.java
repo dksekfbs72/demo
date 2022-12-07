@@ -9,8 +9,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import zerobase.demo.entity.Store;
-import zerobase.demo.type.StoreOpenCloseStatus;
+import zerobase.demo.common.entity.Store;
+import zerobase.demo.common.type.StoreOpenCloseStatus;
 
 @Getter
 @Setter
@@ -58,12 +58,12 @@ public class StoreInfo {
 	@AllArgsConstructor
 	@NoArgsConstructor
 	@Builder
-	public static class Response {
+	public static class BaseResponse extends zerobase.demo.common.model.BaseResponse {
 		private List<StoreInfo> storeInfoList;
 
-		public static Response fromDtoList(List<StoreInfo> list){
+		public static BaseResponse fromDtoList(List<StoreInfo> list){
 
-			return Response.builder()
+			return BaseResponse.builder()
 				.storeInfoList(list)
 				.build();
 		}

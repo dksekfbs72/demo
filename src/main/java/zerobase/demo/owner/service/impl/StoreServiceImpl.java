@@ -7,20 +7,20 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import zerobase.demo.entity.Store;
-import zerobase.demo.entity.User;
-import zerobase.demo.exception.AlreadyOpenClosedException;
-import zerobase.demo.exception.NonExistentStoreException;
-import zerobase.demo.exception.NonExistentUserException;
-import zerobase.demo.exception.NotAuthorizedException;
 import zerobase.demo.owner.dto.CreateStore;
 import zerobase.demo.owner.dto.OpenCloseStore;
 import zerobase.demo.owner.dto.StoreInfo;
 import zerobase.demo.owner.dto.UpdateStore;
+import zerobase.demo.common.entity.Store;
+import zerobase.demo.common.entity.User;
+import zerobase.demo.common.exception.AlreadyOpenClosedException;
+import zerobase.demo.common.exception.NonExistentStoreException;
+import zerobase.demo.common.exception.NonExistentUserException;
+import zerobase.demo.common.exception.NotAuthorizedException;
 import zerobase.demo.owner.repository.StoreRepository;
 import zerobase.demo.owner.service.StoreService;
-import zerobase.demo.type.StoreOpenCloseStatus;
-import zerobase.demo.type.UserStatus;
+import zerobase.demo.common.type.StoreOpenCloseStatus;
+import zerobase.demo.common.type.UserStatus;
 
 @Service
 @RequiredArgsConstructor

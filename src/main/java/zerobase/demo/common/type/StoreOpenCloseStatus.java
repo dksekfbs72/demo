@@ -1,4 +1,4 @@
-package zerobase.demo.type;
+package zerobase.demo.common.type;
 
 public enum StoreOpenCloseStatus {
 	OPEN,

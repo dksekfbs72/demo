@@ -1,4 +1,4 @@
-package zerobase.demo.entity;
+package zerobase.demo.common.entity;
 
 import java.time.LocalDateTime;
 

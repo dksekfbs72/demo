@@ -1,5 +1,6 @@
-package zerobase.demo.entity;
+package zerobase.demo.common.entity;
 
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,13 +13,16 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class Review {
+public class Menu extends BaseEntity{
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
-	private int restaurant_id;
-	private int writer_id;
+	private Integer id;
+	private Integer price;
+	private String name;
+	private String pictureUrl;
 	private String summary;
-	private String content;
-	private String own_reply;
+	private Boolean soldOut;
+	private Integer restaurantId;
+	private LocalDateTime dropMenuTime;
 }

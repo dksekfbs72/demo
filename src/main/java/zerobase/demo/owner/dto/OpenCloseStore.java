@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import zerobase.demo.type.StoreOpenCloseStatus;
+import zerobase.demo.common.type.StoreOpenCloseStatus;
 
 @Getter
 @Setter

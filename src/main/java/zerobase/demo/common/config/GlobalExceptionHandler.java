@@ -1,14 +1,14 @@
-package zerobase.demo.config;
+package zerobase.demo.common.config;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import zerobase.demo.exception.AlreadyOpenClosedException;
-import zerobase.demo.exception.NonExistentStoreException;
-import zerobase.demo.exception.NonExistentUserException;
-import zerobase.demo.exception.NotAuthorizedException;
+import zerobase.demo.common.exception.AlreadyOpenClosedException;
+import zerobase.demo.common.exception.NonExistentStoreException;
+import zerobase.demo.common.exception.NonExistentUserException;
+import zerobase.demo.common.exception.NotAuthorizedException;
 
 // @RestControllerAdvice(basePackageClasses = OwnerStoreController.class)
 @RestControllerAdvice

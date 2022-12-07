@@ -36,8 +36,8 @@ public class OwnerStoreController {
 
 	//점포 조회
 	@GetMapping()
-	public StoreInfo.Response getStoreByOwnerId(@RequestParam int id) {
-		return StoreInfo.Response.fromDtoList(storeService.getStoreInfoByOwnerId(id));
+	public StoreInfo.BaseResponse getStoreByOwnerId(@RequestParam int id) {
+		return StoreInfo.BaseResponse.fromDtoList(storeService.getStoreInfoByOwnerId(id));
 	}
 
 	//점포 수정
