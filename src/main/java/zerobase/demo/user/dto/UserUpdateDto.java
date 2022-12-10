@@ -55,9 +55,11 @@ public class UserUpdateDto {
 	}
 
 
-	public static class BaseResponse extends zerobase.demo.common.model.BaseResponse {
-		public BaseResponse(ResponseCode createUserSuccess) {
-
+	public static class Response extends zerobase.demo.common.model.BaseResponse {
+		public Response(ResponseCode responseCode) {
+			this.setCode(responseCode);
+			this.setMessage(responseCode.getDescription());
+			this.setResult(responseCode.getResult());
 		}
 	}
 

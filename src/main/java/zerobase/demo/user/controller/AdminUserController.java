@@ -9,10 +9,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import zerobase.demo.DemoApplication;
 import zerobase.demo.common.config.AllExceptionHandler;
-import zerobase.demo.user.dto.UserUpdateDto;
-import zerobase.demo.user.dto.UserUpdateDto.BaseResponse;
-import zerobase.demo.user.service.UserService;
 import zerobase.demo.common.type.ResponseCode;
+import zerobase.demo.user.dto.UserUpdateDto;
+import zerobase.demo.user.service.UserService;
 
 @Controller
 @RequiredArgsConstructor
@@ -23,12 +22,12 @@ public class AdminUserController extends AllExceptionHandler {
 
 
 	@PutMapping("/admin/userUpdate")
-	BaseResponse userUpdate(@RequestBody UserUpdateDto.Request parameter,
+	UserUpdateDto.Response userUpdate(@RequestBody UserUpdateDto.Request parameter,
 		Principal principal) {
 		//유저의 아이디와 비밀번호는 변경할 수 없음
 		boolean result = userService.adminUpdateUser(UserUpdateDto.fromRequest(parameter),
 			principal.getName());
 
-		return new UserUpdateDto.BaseResponse(ResponseCode.CHANGE_USER_INFO_SUCCESS);
+		return new UserUpdateDto.Response(ResponseCode.CHANGE_USER_INFO_SUCCESS);
 	}
 }

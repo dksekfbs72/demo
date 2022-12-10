@@ -1,7 +1,5 @@
 package zerobase.demo;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,17 +8,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import zerobase.demo.common.model.UserInput;
 import zerobase.demo.user.repository.UserRepository;
-import zerobase.demo.user.service.UserService;
-import zerobase.demo.common.type.UserStatus;
+import zerobase.demo.user.service.Impl.UserServiceImpl;
 
 
 @ExtendWith(MockitoExtension.class)
 class DemoApplicationTests {
 
 	@InjectMocks
-	private UserService userService;
+	private UserServiceImpl userService;
 
 	@Mock
 	private UserRepository userRepository;
@@ -30,14 +26,7 @@ class DemoApplicationTests {
 	@Transactional(isolation = Isolation.READ_UNCOMMITTED)
 	void createAccountSuccess() {
 		//given
-		UserInput user = UserInput.builder()
-			.userId("Id")
-			.userAddr("addr")
-			.userName("name")
-			.phone("phone")
-			//.status(UserStatus.user)
-			.password("password")
-			.build();
+
 
 		//when
 		//boolean result = userService.createUser("Id","password",

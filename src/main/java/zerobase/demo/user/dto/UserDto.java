@@ -64,12 +64,10 @@ public class UserDto {
 	@NoArgsConstructor
 	@Getter
 	@Setter
-	public static class BaseResponse extends zerobase.demo.common.model.BaseResponse {
+	public static class Response extends zerobase.demo.common.model.BaseResponse {
 
-		ResponseCode code;
-		String message;
-
-		public BaseResponse(ResponseCode responseCode) {
+		public Response(ResponseCode responseCode) {
+			this.result = responseCode.getResult();
 			this.code = responseCode;
 			this.message = responseCode.getDescription();
 		}

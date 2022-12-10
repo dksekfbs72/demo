@@ -10,11 +10,7 @@ import zerobase.demo.common.type.ResponseCode;
 @Getter
 @Setter
 public class ErrorResponse extends BaseResponse{
-	ResponseCode code;
-	String message;
-
 	public ErrorResponse(ResponseCode responseCode) {
-		this.code = responseCode;
-		this.message = responseCode.getDescription();
+		super(responseCode);
 	}
 }
