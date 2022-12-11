@@ -4,9 +4,12 @@ import static zerobase.demo.common.type.ResponseCode.*;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -39,7 +42,8 @@ public class StoreServiceImpl implements StoreService {
 		UserDetails loggedInUser = createStore.getLoggedInUser();
 		if(!loggedInUser.getUsername().equals(createStore.getOwnerId())) throw new OwnerException(NOT_AUTHORIZED);
 
-		if(!loggedInUser.getAuthorities().contains("ROLE_OWNER")) throw new OwnerException(NOT_AUTHORIZED);
+		if(!loggedInUser.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_OWNER")))
+			throw new OwnerException(NOT_AUTHORIZED);
 
 		Store newStore = Store.fromDto(createStore);
 		newStore.setOpenClose(StoreOpenCloseStatus.CLOSE);
