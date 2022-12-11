@@ -25,6 +25,8 @@ public class H2Test {
 
 	@Test
 	public void test() {
+
+
 		System.out.println("test");
 
 		Store newStore = Store.builder()
