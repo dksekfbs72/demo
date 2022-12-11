@@ -2,7 +2,7 @@ POST http://localhost:8080/store
 Content-Type: application/json
 
 {
-  "ownerId": 123,
+  "ownerId": 1,
   "name": "nameTest",
   "storeAddr": "addrTest",
   "summary": "summaryTest",

@@ -9,15 +9,14 @@ import zerobase.demo.common.type.ResponseCode;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserException extends RuntimeException{
-	private ResponseCode responseCode;
-	private String errorMessage;
+public class OwnerException extends RuntimeException{
 
-	public UserException(ResponseCode responseCode) {
+	private ResponseCode responseCode;
+
+	public OwnerException(ResponseCode responseCode) {
+		super(responseCode.getDescription());
 		this.responseCode = responseCode;
-		this.errorMessage = responseCode.getDescription();
 	}
 }

@@ -1,5 +1,7 @@
 package zerobase.demo.owner.controller;
 
+import java.security.Principal;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -24,25 +26,29 @@ public class OwnerStoreController {
 
 	//점포 등록
 	@PostMapping()
-	public void createStore(@RequestBody CreateStore.Request request) {
-		storeService.createStore(CreateStore.fromRequest(request));
+	public CreateStore.Response createStore(@RequestBody CreateStore.Request request, Principal principal) {
+
+		CreateStore dto = CreateStore.fromRequest(request);
+		if(principal != null) dto.setPrincipal(principal);
+
+		return storeService.createStore(dto);
 	}
 
 	//점포 열기/닫기
-	@PutMapping("/openclose")
-	public void openCloseStore(@RequestBody OpenCloseStore.Request request) {
-		storeService.openCloseStore(OpenCloseStore.fromRequest(request));
-	}
-
-	//점포 조회
-	@GetMapping()
-	public BaseResponse getStoreByOwnerId(@RequestParam int id) {
-		return BaseResponse.fromDtoList(storeService.getStoreInfoByOwnerId(id));
-	}
-
-	//점포 수정
-	@PutMapping()
-	public void updateStore(@RequestBody UpdateStore.Request request) {
-		storeService.updateStore(UpdateStore.fromRequest(request));
-	}
+	// @PutMapping("/openclose")
+	// public void openCloseStore(@RequestBody OpenCloseStore.Request request) {
+	// 	storeService.openCloseStore(OpenCloseStore.fromRequest(request));
+	// }
+	//
+	// //점포 조회
+	// @GetMapping()
+	// public BaseResponse getStoreByOwnerId(@RequestParam int id) {
+	// 	return BaseResponse.fromDtoList(storeService.getStoreInfoByOwnerId(id));
+	// }
+	//
+	// //점포 수정
+	// @PutMapping()
+	// public void updateStore(@RequestBody UpdateStore.Request request) {
+	// 	storeService.updateStore(UpdateStore.fromRequest(request));
+	// }
 }
