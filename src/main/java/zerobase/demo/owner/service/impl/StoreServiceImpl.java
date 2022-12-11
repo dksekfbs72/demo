@@ -3,6 +3,7 @@ package zerobase.demo.owner.service.impl;
 import static zerobase.demo.common.type.ResponseCode.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,8 +16,10 @@ import zerobase.demo.common.exception.OwnerException;
 import zerobase.demo.common.exception.UserException;
 import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.common.type.StoreOpenCloseStatus;
+import zerobase.demo.common.type.UserStatus;
 import zerobase.demo.owner.dto.CreateStore;
 import zerobase.demo.owner.dto.OpenCloseStore;
+import zerobase.demo.owner.dto.StoreInfo;
 import zerobase.demo.owner.repository.StoreRepository;
 import zerobase.demo.owner.service.StoreService;
 import zerobase.demo.user.repository.UserRepository;
@@ -53,7 +56,6 @@ public class StoreServiceImpl implements StoreService {
 	@Override
 	public OpenCloseStore.Response openCloseStore(OpenCloseStore dto) {
 
-		if(dto.getLoggedInUser() == null) throw new UserException(NOT_LOGGED_IN);
 
 		Store store = storeRepository.findById(dto.getStoreId()).orElseThrow(() -> new OwnerException(STORE_NOT_FOUND));
 
@@ -76,24 +78,17 @@ public class StoreServiceImpl implements StoreService {
 			return new OpenCloseStore.Response(CLOSE_STORE_SUCCESS);
 	}
 
-	// @Override
-	// public List<StoreInfo> getStoreInfoByOwnerId(int ownerId) {
-	//
-	// 	//임시 하드코딩
-	// 	User user = new User();
-	// 	user.setId(ownerId);
-	// 	user.setStatus(UserStatus.OWNER);
-	//
-	// 	//원래 request.ownerId로 조회 해 와야함
-	// 	Optional<User> optionalUser = Optional.of(user);
-	//
-	// 	//owner 검증
-	// 	if(!optionalUser.isPresent()) throw new NonExistentUserException(user.getId());
-	// 	if(user.getStatus() != UserStatus.OWNER) throw new NotAuthorizedException();
-	//
-	// 	return StoreInfo.fromEntity(storeRepository.findAllByUser(user));
-	// }
-	//
+	@Override
+	public StoreInfo.Response getStoreInfoByOwnerId(String ownerId) {
+
+		User user = userRepository.findByUserId(ownerId).orElseThrow(() -> new UserException(USER_NOT_FIND));
+		if(user.getStatus() != UserStatus.OWNER) throw new OwnerException(NOT_OWNER);
+
+		List<Store> storeList = storeRepository.findAllByUser(user);
+
+		return new StoreInfo.Response(storeList, ResponseCode.SELECT_STORE_SUCCESS);
+	}
+
 	// @Override
 	// public void updateStore(UpdateStore updateStore) {
 	//

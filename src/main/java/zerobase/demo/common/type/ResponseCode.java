@@ -21,6 +21,7 @@ public enum ResponseCode {
 
 	NOT_LOGGED_IN(Result.FAIL, "로그인 정보가 없습니다."),
 
+	NOT_OWNER(Result.FAIL, "해당 유저는 owner가 아닙니다."),
 	CREATE_STORE_SUCCESS(Result.SUCCESS, "가게 등록을 성공했습니다."),
 	OPEN_STORE_SUCCESS(Result.SUCCESS, "가게를 열었습니다."),
 	CLOSE_STORE_SUCCESS(Result.SUCCESS, "가게를 닫았습니다."),
@@ -30,6 +31,7 @@ public enum ResponseCode {
 	ALREADY_CLOSE(Result.FAIL, "가게가 이미 닫혀 있습니다."),
 	STORE_NOT_FOUND(Result.FAIL, "존재하지 않는 가게 입니다."),
 	NOT_AUTHORIZED(Result.FAIL, "권한이 없습니다.");
+
 
 
 

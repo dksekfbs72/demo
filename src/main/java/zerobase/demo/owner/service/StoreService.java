@@ -2,6 +2,8 @@ package zerobase.demo.owner.service;
 
 import java.util.List;
 
+import org.springframework.security.core.userdetails.UserDetails;
+
 import zerobase.demo.owner.dto.CreateStore;
 import zerobase.demo.owner.dto.OpenCloseStore;
 import zerobase.demo.owner.dto.StoreInfo;
@@ -19,11 +21,11 @@ public interface StoreService {
 	 */
 	OpenCloseStore.Response openCloseStore(OpenCloseStore openCloseStore);
 
-	// /**
-	//  * ownerId로 점포 조회
-	//  */
-	// List<StoreInfo> getStoreInfoByOwnerId(int ownerId);
-	//
+	/**
+	 * ownerId로 점포 조회
+	 */
+	StoreInfo.Response getStoreInfoByOwnerId(String ownerId);
+
 	// /**
 	//  * 점포 수정
 	//  */

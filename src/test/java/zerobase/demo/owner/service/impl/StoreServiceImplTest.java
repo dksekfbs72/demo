@@ -22,11 +22,13 @@ import zerobase.demo.common.entity.Store;
 import zerobase.demo.common.entity.User;
 import zerobase.demo.common.exception.OwnerException;
 import zerobase.demo.common.exception.UserException;
+import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.common.type.Result;
 import zerobase.demo.common.type.StoreOpenCloseStatus;
 import zerobase.demo.common.type.UserStatus;
 import zerobase.demo.owner.dto.CreateStore;
 import zerobase.demo.owner.dto.OpenCloseStore;
+import zerobase.demo.owner.dto.StoreInfo;
 import zerobase.demo.owner.repository.StoreRepository;
 import zerobase.demo.owner.service.StoreService;
 import zerobase.demo.user.repository.UserRepository;
@@ -37,12 +39,12 @@ import zerobase.demo.user.service.UserService;
 @TestPropertySource(locations = "classpath:application-test.properties")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class StoreServiceImplTest {
-
-	@Autowired
-	ObjectMapper mapper;
-
-	@Autowired
-	MockMvc mockMvc;
+	//
+	// @Autowired
+	// ObjectMapper mapper;
+	//
+	// @Autowired
+	// MockMvc mockMvc;
 
 	@Autowired
 	private  UserRepository userRepository;
@@ -69,6 +71,7 @@ public class StoreServiceImplTest {
 	public void setRegisteredUser() {
 		createUser("narangd2083", UserStatus.OWNER);
 		createUser("cocacola2083", UserStatus.OWNER);
+		createUser("coffee2083", UserStatus.USER);
 	}
 
 	@Test
@@ -244,7 +247,7 @@ public class StoreServiceImplTest {
 	}
 
 	@Test
-	@DisplayName("점포 닫기 테스트 - 이미 닫혀 있어서 실패")
+	@DisplayName("점포 닫기 실패 - 이미 닫혀 있어서 실패")
 	void openCloseAlreadyOpened() throws Exception {
 
 		//given
@@ -274,7 +277,7 @@ public class StoreServiceImplTest {
 	}
 
 	@Test
-	@DisplayName("점포 닫기 테스트 - 로그인한 유저와 요청한 유저가 다른 경우")
+	@DisplayName("점포 닫기 실패 - 로그인한 유저와 요청한 유저가 다른 경우")
 	void openCloseNotAuthorized() throws Exception {
 
 		//given
@@ -303,59 +306,47 @@ public class StoreServiceImplTest {
 		storeRepository.deleteAll();
 	}
 
-	// @Test
-	// @DisplayName("점포 열기 테스트 - AlreadyOpenClosedException")
-	// void openCloseAlreadyOpenTest() throws Exception {
-	//
-	// 	//given
-	// 	Integer ownerId = 1; //임시로 user 테이블에 강제 insert
-	// 	String name = "특수한 생선가게";
-	//
-	// 	storeService.createStore(CreateStore.builder()
-	// 		.ownerId(ownerId)
-	// 		.name(name)
-	// 		.build());
-	//
-	// 	List<Store> storeList = storeRepository.findAllByName(name);
-	// 	Store store = storeList.get(0);
-	// 	store.setOpenClose(StoreOpenCloseStatus.OPEN);
-	// 	storeRepository.save(store);
-	//
-	// 	String body = mapper.writeValueAsString(
-	// 		OpenCloseStore.Request.builder()
-	// 			.id(store.getId())
-	// 			.openClose(StoreOpenCloseStatus.OPEN)
-	// 			.build()
-	// 	);
-	//
-	// 	//when
-	// 	ResultActions resultActions = mockMvc.perform(
-	// 		MockMvcRequestBuilders.put("/store/openclose")
-	// 			.contentType(MediaType.APPLICATION_JSON)
-	// 			.content(body)
-	// 	);
-	//
-	// 	//then
-	// 	resultActions.andExpect(
-	// 		(rslt) -> assertTrue(rslt.getResolvedException().getClass()
-	// 			.isAssignableFrom(AlreadyOpenClosedException.class))
-	// 	);
-	// }
-	//
-	// @Test
-	// @DisplayName("점포 조회 테스트 - 성공")
-	// void getStoreByOwnerIdSuccessTest() throws Exception {
-	//
-	// 	//given
-	// 	Integer ownerId = 1; //임시로 user 테이블에 강제 insert
-	//
-	//
-	// 	//when
-	// 	ResultActions resultActions = mockMvc.perform(
-	// 		MockMvcRequestBuilders.get("/store?id="+ownerId)
-	// 	);
-	//
-	// 	//then
-	// 	resultActions.andExpect(status().isOk());
-	// }
+	@Test
+	@DisplayName("보유 가게 조회 성공")
+	void getStoreInfoByOwnerIdSuccess() throws Exception {
+
+		//given
+		String ownerId = "narangd2083";
+		Store store = createStore(ownerId);
+
+		//when
+		StoreInfo.Response response = storeService.getStoreInfoByOwnerId(ownerId);
+
+		//then
+		assertEquals(response.getResult(), Result.SUCCESS);
+		assertEquals(response.getCode(), SELECT_STORE_SUCCESS);
+		assertFalse(response.getStoreInfoList().isEmpty());
+
+		// System.out.println("############################################");
+		// System.out.println(response.getStoreInfoList().get(0).getName());
+
+		//delete from h2
+		storeRepository.deleteAll();
+	}
+
+	@Test
+	@DisplayName("보유 가게 조회 실패 - 요청한 유저가 owner가 아닌 경우")
+	void getStoreInfoByOwnerIdNotOwner() throws Exception {
+
+		//given
+		Store store = createStore("narangd2083");
+		String ownerId = "coffee2083";
+
+		//when
+		OwnerException exception = (OwnerException)assertThrows(RuntimeException.class, () -> {
+			storeService.getStoreInfoByOwnerId(ownerId);
+		});
+
+		//then
+		assertEquals(exception.getResponseCode().getResult(), Result.FAIL);
+		assertEquals(exception.getResponseCode(), NOT_OWNER);
+
+		//delete from h2
+		storeRepository.deleteAll();
+	}
 }
