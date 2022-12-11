@@ -1,9 +1,5 @@
 package zerobase.demo.owner.service;
 
-import java.util.List;
-
-import org.springframework.security.core.userdetails.UserDetails;
-
 import zerobase.demo.owner.dto.CreateStore;
 import zerobase.demo.owner.dto.OpenCloseStore;
 import zerobase.demo.owner.dto.StoreInfo;
