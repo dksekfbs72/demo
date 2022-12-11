@@ -1,10 +1,8 @@
 package zerobase.demo.user.service.Impl;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import zerobase.demo.common.entity.OrderTbl;
+import zerobase.demo.common.entity.Review;
 import zerobase.demo.common.entity.User;
 import zerobase.demo.common.exception.StopUserException;
 import zerobase.demo.common.exception.UnregisterUserException;
@@ -22,6 +22,10 @@ import zerobase.demo.common.exception.UserNotEmailAuthException;
 import zerobase.demo.common.exception.UserNotFindException;
 import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.common.type.UserStatus;
+import zerobase.demo.common.components.MailComponents;
+import zerobase.demo.order.repository.OrderRepository;
+import zerobase.demo.review.dto.ReviewDto;
+import zerobase.demo.review.repository.ReviewRepository;
 import zerobase.demo.user.dto.UserDto;
 import zerobase.demo.user.dto.UserUpdateDto;
 import zerobase.demo.user.repository.UserRepository;
@@ -31,7 +35,10 @@ import zerobase.demo.user.service.UserService;
 @RequiredArgsConstructor
 public class UserServiceImpl extends UserException implements UserService,UserDetailsService {
 
+	private final MailComponents mailComponents;
 	private final UserRepository userRepository;
+	private final ReviewRepository reviewRepository;
+	private final OrderRepository orderRepository;
 
 	@Override
 	public boolean createUser(UserDto userDto) {
@@ -61,6 +68,13 @@ public class UserServiceImpl extends UserException implements UserService,UserDe
 			.build();
 
 		userRepository.save(user);
+
+
+		mailComponents.sendMail(user.getUserId(),
+				"[조기요] 회원가입을 축하드립니다.",
+				"<p>회원 가입을 축하드립니다.</p>" +
+				"<p>아래 링크를 클릭하시면 회원 가입이 완료됩니다.</p>" +
+				"<a href='http://localhost:8080/user/emailAuth?emailAuthKey="+uuid+"'>회원가입 완료</a>");
 
 		return true;
 	}
@@ -164,6 +178,55 @@ public class UserServiceImpl extends UserException implements UserService,UserDe
 			case "UN_REGISTER_USER": return ResponseCode.UN_REGISTER_USER;
 		}
 		return ResponseCode.LOGIN_FAIL;
+	}
+
+	@Override
+	public boolean userEmailAuth(String emailAuthKey) {
+		Optional<User> optionalUser = userRepository.findByEmailAuthKey(emailAuthKey);
+		if (!optionalUser.isPresent()) {
+			throw new UserException(ResponseCode.USER_NOT_FIND);
+		}
+		User user = optionalUser.get();
+
+		user.setEmailAuth(true);
+		userRepository.save(user);
+
+		return true;
+	}
+
+	@Override
+	public boolean userAddReview(ReviewDto fromRequest, String userId) {
+		Optional<Review> optionalReview = reviewRepository.findByOrderId(fromRequest.getOrderId());
+		if (optionalReview.isPresent()) {
+			throw new UserException(ResponseCode.ALREADY_ADDED_REVIEW);
+		}
+		Optional<OrderTbl> optionalOrderTbl = orderRepository.findById(fromRequest.getOrderId());
+		if (!optionalOrderTbl.isPresent()) {
+			throw new UserException(ResponseCode.ORDER_NOT_FIND);
+		}
+		OrderTbl order = optionalOrderTbl.get();
+		if (!Objects.equals(order.getRestaurantId(), fromRequest.getRestaurantId())) {
+			throw new UserException(ResponseCode.DIFF_ORDER_ID);
+		}
+		if (order.getOrderTime().plusDays(3).isBefore(LocalDateTime.now())) {
+			throw new UserException(ResponseCode.TOO_OLD_AN_ORDER);
+		}
+		if (!order.getUserId().equals(userRepository.findByUserId(userId).get().getId())) {
+			throw new UserException(ResponseCode.NOT_MY_ORDER);
+		}
+
+		Review review = new Review().builder()
+				.writerId(userRepository.findByUserId(userId).get().getId())
+				.orderId(fromRequest.getOrderId())
+				.restaurantId(fromRequest.getRestaurantId())
+				.summary(fromRequest.getSummary())
+				.content(fromRequest.getContent())
+				.reviewAddTime(LocalDateTime.now())
+				.build();
+
+		reviewRepository.save(review);
+
+		return false;
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package zerobase.demo.user.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import zerobase.demo.common.type.ResponseCode;
+import zerobase.demo.review.dto.ReviewDto;
 import zerobase.demo.user.dto.UserDto;
 import zerobase.demo.user.dto.UserUpdateDto;
 
@@ -36,4 +37,14 @@ public interface UserService {
 	 * 로그인 에러 코드 찾기
 	 */
 	ResponseCode getErrorCode(String errorCode);
+
+	/**
+	 * 이메일 인증
+	 */
+	boolean userEmailAuth(String emailAuthKey);
+
+	/**
+	 * 리뷰 남기기
+	 */
+    boolean userAddReview(ReviewDto fromRequest, String userId);
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import zerobase.demo.common.config.AllExceptionHandler;
 import zerobase.demo.common.exception.UserException;
 import zerobase.demo.common.type.ResponseCode;
+import zerobase.demo.review.dto.ReviewDto;
 import zerobase.demo.user.dto.UserDto;
 import zerobase.demo.user.dto.UserDto.Response;
 import zerobase.demo.user.service.UserService;
@@ -66,9 +67,20 @@ public class UserController extends AllExceptionHandler {
 		return new Response(responseCode);
 	}
 
-	@GetMapping("/user/logout")
-	void logoutSuccess() {
+	@PostMapping("/user/emailAuth")
+	UserDto.Response userEmailAuth(@RequestParam String emailAuthKey) {
+		boolean result = userService.userEmailAuth(emailAuthKey);
+		return new Response(ResponseCode.EMAIL_AUTH_SUCCESS);
 	}
+
+	@PostMapping("/user/addReview")
+	UserDto.Response userAddReview(@RequestBody ReviewDto.Request request, Principal principal) {
+		if (principal == null) throw new UserException(ResponseCode.NOT_LOGGED);
+		boolean result = userService.userAddReview(ReviewDto.fromRequest(request), principal.getName());
+
+		return new Response(ResponseCode.ADD_REVIEW_SUCCESS);
+	}
+
 
 	//@GetMapping("/user/getMyOrders")
 
