@@ -3,6 +3,8 @@ package zerobase.demo.owner.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 import static zerobase.demo.common.type.ResponseCode.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,12 +18,15 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import zerobase.demo.common.entity.Store;
 import zerobase.demo.common.entity.User;
 import zerobase.demo.common.exception.OwnerException;
 import zerobase.demo.common.exception.UserException;
 import zerobase.demo.common.type.Result;
+import zerobase.demo.common.type.StoreOpenCloseStatus;
 import zerobase.demo.common.type.UserStatus;
 import zerobase.demo.owner.dto.CreateStore;
+import zerobase.demo.owner.dto.OpenCloseStore;
 import zerobase.demo.owner.repository.StoreRepository;
 import zerobase.demo.owner.service.StoreService;
 import zerobase.demo.user.repository.UserRepository;
@@ -68,7 +73,7 @@ public class StoreServiceImplTest {
 
 	@Test
 	@DisplayName("점포생성 성공")
-	void createStoreSuccessTest() throws Exception {
+	void createStoreSuccess() throws Exception {
 
 		//given
 		String userId = "narangd2083";
@@ -83,7 +88,7 @@ public class StoreServiceImplTest {
 		Double deliveryDistanceKm = 5.0;
 		Integer deliveryTip = 3000;
 
-		CreateStore request = CreateStore.builder()
+		CreateStore dto = CreateStore.builder()
 			.loggedInUser(loggedUser)
 			.ownerId(ownerId)
 			.name(name)
@@ -96,7 +101,7 @@ public class StoreServiceImplTest {
 			.build();
 
 		//when
-		CreateStore.Response response = storeService.createStore(request);
+		CreateStore.Response response = storeService.createStore(dto);
 
 		//then
 		assertEquals(response.getResult(), Result.SUCCESS);
@@ -118,7 +123,7 @@ public class StoreServiceImplTest {
 		Double deliveryDistanceKm = 5.0;
 		Integer deliveryTip = 3000;
 
-		CreateStore request = CreateStore.builder()
+		CreateStore dto = CreateStore.builder()
 			.loggedInUser(loggedUser)
 			.ownerId(ownerId)
 			.name(name)
@@ -132,7 +137,7 @@ public class StoreServiceImplTest {
 
 		//when
 		UserException exception = (UserException)assertThrows(RuntimeException.class, () -> {
-			storeService.createStore(request);
+			storeService.createStore(dto);
 		});
 
 		//then
@@ -156,7 +161,7 @@ public class StoreServiceImplTest {
 		Double deliveryDistanceKm = 5.0;
 		Integer deliveryTip = 3000;
 
-		CreateStore request = CreateStore.builder()
+		CreateStore dto = CreateStore.builder()
 			.loggedInUser(loggedUser)
 			.ownerId(ownerId)
 			.name(name)
@@ -170,7 +175,7 @@ public class StoreServiceImplTest {
 
 		//when
 		OwnerException exception = (OwnerException)assertThrows(RuntimeException.class, () -> {
-			storeService.createStore(request);
+			storeService.createStore(dto);
 		});
 
 		//then
@@ -179,43 +184,125 @@ public class StoreServiceImplTest {
 	}
 
 
-	// @Test
-	// @DisplayName("점포 열기 테스트 - 성공")
-	// void openCloseSuccessTest() throws Exception {
-	//
-	// 	//given
-	// 	Integer ownerId = 1; //임시로 user 테이블에 강제 insert
-	// 	String name = "특수한 생선가게";
-	//
-	// 	storeService.createStore(CreateStore.builder()
-	// 		.ownerId(ownerId)
-	// 		.name(name)
-	// 		.build());
-	//
-	// 	List<Store> storeList = storeRepository.findAllByName(name);
-	// 	Store store = storeList.get(0);
-	//
-	// 	String body = mapper.writeValueAsString(
-	// 		OpenCloseStore.Request.builder()
-	// 			.id(store.getId())
-	// 			.openClose(StoreOpenCloseStatus.OPEN)
-	// 			.build()
-	// 	);
-	//
-	// 	//when
-	// 	ResultActions resultActions = mockMvc.perform(
-	// 		MockMvcRequestBuilders.put("/store/openclose")
-	// 			.contentType(MediaType.APPLICATION_JSON)
-	// 			.content(body)
-	// 	);
-	//
-	// 	//then
-	// 	resultActions.andExpect(status().isOk());
-	// 	storeList = storeRepository.findAllByName(name);
-	// 	store = storeList.get(0);
-	// 	assertEquals(store.getOpenClose(), StoreOpenCloseStatus.OPEN);
-	// }
-	//
+	Store createStore(String ownerId) {
+
+		UserDetails loggedUser = userService.loadUserByUsername(ownerId);
+
+		String name = "생선가게";
+		String storeAddr = "대구 남구";
+		String summary = "생선가게입니다.";
+		String pictureUrl = "https://naver.com";
+		Double commission = 3.5;
+		Double deliveryDistanceKm = 5.0;
+		Integer deliveryTip = 3000;
+
+		CreateStore dto = CreateStore.builder()
+			.loggedInUser(loggedUser)
+			.ownerId(ownerId)
+			.name(name)
+			.storeAddr(storeAddr)
+			.summary(summary)
+			.pictureUrl(pictureUrl)
+			.commission(commission)
+			.deliveryDistanceKm(deliveryDistanceKm)
+			.deliveryTip(deliveryTip)
+			.build();
+
+		storeService.createStore(dto);
+
+		List<Store> storeList = storeRepository.findAllByName("생선가게");
+		return storeList.get(0);
+	}
+
+	@Test
+	@DisplayName("점포 열기 성공")
+	void openCloseSuccess() throws Exception {
+
+		//given
+		Store store = createStore("narangd2083");
+
+		UserDetails loggedUser = userService.loadUserByUsername("narangd2083");
+		StoreOpenCloseStatus newOpenCloseStatus = StoreOpenCloseStatus.OPEN;
+
+		OpenCloseStore dto = OpenCloseStore.builder()
+			.storeId(store.getId())
+			.openClose(newOpenCloseStatus)
+			.build();
+
+		dto.setLoggedInUser(loggedUser);
+
+
+		//when
+		OpenCloseStore.Response response = storeService.openCloseStore(dto);
+
+		//then
+		assertEquals(response.getResult(), Result.SUCCESS);
+		assertEquals(response.getCode(), OPEN_STORE_SUCCESS);
+
+		//delete from h2
+		storeRepository.deleteAll();
+	}
+
+	@Test
+	@DisplayName("점포 닫기 테스트 - 이미 닫혀 있어서 실패")
+	void openCloseAlreadyOpened() throws Exception {
+
+		//given
+		Store store = createStore("narangd2083");
+
+		UserDetails loggedUser = userService.loadUserByUsername("narangd2083");
+		StoreOpenCloseStatus newOpenCloseStatus = StoreOpenCloseStatus.CLOSE;
+
+		OpenCloseStore dto = OpenCloseStore.builder()
+			.storeId(store.getId())
+			.openClose(newOpenCloseStatus)
+			.build();
+
+		dto.setLoggedInUser(loggedUser);
+
+		//when
+		OwnerException exception = (OwnerException)assertThrows(RuntimeException.class, () -> {
+			storeService.openCloseStore(dto);
+		});
+
+		//then
+		assertEquals(exception.getResponseCode().getResult(), Result.FAIL);
+		assertEquals(exception.getResponseCode(), ALREADY_CLOSE);
+
+		//delete from h2
+		storeRepository.deleteAll();
+	}
+
+	@Test
+	@DisplayName("점포 닫기 테스트 - 로그인한 유저와 요청한 유저가 다른 경우")
+	void openCloseNotAuthorized() throws Exception {
+
+		//given
+		Store store = createStore("narangd2083");
+
+		UserDetails loggedUser = userService.loadUserByUsername("cocacola2083");
+		StoreOpenCloseStatus newOpenCloseStatus = StoreOpenCloseStatus.CLOSE;
+
+		OpenCloseStore dto = OpenCloseStore.builder()
+			.storeId(store.getId())
+			.openClose(newOpenCloseStatus)
+			.build();
+
+		dto.setLoggedInUser(loggedUser);
+
+		//when
+		OwnerException exception = (OwnerException)assertThrows(RuntimeException.class, () -> {
+			storeService.openCloseStore(dto);
+		});
+
+		//then
+		assertEquals(exception.getResponseCode().getResult(), Result.FAIL);
+		assertEquals(exception.getResponseCode(), NOT_AUTHORIZED);
+
+		//delete from h2
+		storeRepository.deleteAll();
+	}
+
 	// @Test
 	// @DisplayName("점포 열기 테스트 - AlreadyOpenClosedException")
 	// void openCloseAlreadyOpenTest() throws Exception {

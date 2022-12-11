@@ -2,15 +2,9 @@ package zerobase.demo.owner.service.impl;
 
 import static zerobase.demo.common.type.ResponseCode.*;
 
-import java.security.Principal;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Optional;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +13,10 @@ import zerobase.demo.common.entity.Store;
 import zerobase.demo.common.entity.User;
 import zerobase.demo.common.exception.OwnerException;
 import zerobase.demo.common.exception.UserException;
+import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.common.type.StoreOpenCloseStatus;
 import zerobase.demo.owner.dto.CreateStore;
+import zerobase.demo.owner.dto.OpenCloseStore;
 import zerobase.demo.owner.repository.StoreRepository;
 import zerobase.demo.owner.service.StoreService;
 import zerobase.demo.user.repository.UserRepository;
@@ -33,19 +29,19 @@ public class StoreServiceImpl implements StoreService {
 	private final UserRepository userRepository;
 
 	@Override
-	public CreateStore.Response createStore(CreateStore createStore) {
+	public CreateStore.Response createStore(CreateStore dto) {
 
-		if(createStore.getLoggedInUser() == null) throw new UserException(NOT_LOGGED_IN);
+		if(dto.getLoggedInUser() == null) throw new UserException(NOT_LOGGED_IN);
 
-		User user = userRepository.findByUserId(createStore.getOwnerId()).orElseThrow(() -> new UserException(USER_NOT_FIND));
+		User user = userRepository.findByUserId(dto.getOwnerId()).orElseThrow(() -> new UserException(USER_NOT_FIND));
 
-		UserDetails loggedInUser = createStore.getLoggedInUser();
-		if(!loggedInUser.getUsername().equals(createStore.getOwnerId())) throw new OwnerException(NOT_AUTHORIZED);
+		UserDetails loggedInUser = dto.getLoggedInUser();
+		if(!loggedInUser.getUsername().equals(dto.getOwnerId())) throw new OwnerException(NOT_AUTHORIZED);
 
 		if(!loggedInUser.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_OWNER")))
 			throw new OwnerException(NOT_AUTHORIZED);
 
-		Store newStore = Store.fromDto(createStore);
+		Store newStore = Store.fromDto(dto);
 		newStore.setOpenClose(StoreOpenCloseStatus.CLOSE);
 		newStore.setOpenCloseDt(LocalDateTime.now());
 		newStore.setUser(user);
@@ -54,20 +50,32 @@ public class StoreServiceImpl implements StoreService {
 		return new CreateStore.Response(CREATE_STORE_SUCCESS);
 	}
 
-	// @Override
-	// public void openCloseStore(OpenCloseStore openCloseStore) {
-	//
-	// 	Optional<Store> optionalStore = storeRepository.findById(openCloseStore.getId());
-	// 	if(!optionalStore.isPresent()) throw new NonExistentStoreException(openCloseStore.getId());
-	//
-	// 	Store nowStore = optionalStore.get();
-	// 	if(openCloseStore.getOpenClose() == nowStore.getOpenClose()) throw new AlreadyOpenClosedException();
-	//
-	// 	nowStore.setOpenClose(openCloseStore.getOpenClose());
-	// 	nowStore.setOpenCloseDt(LocalDateTime.now());
-	// 	storeRepository.save(nowStore);
-	// }
-	//
+	@Override
+	public OpenCloseStore.Response openCloseStore(OpenCloseStore dto) {
+
+		if(dto.getLoggedInUser() == null) throw new UserException(NOT_LOGGED_IN);
+
+		Store store = storeRepository.findById(dto.getStoreId()).orElseThrow(() -> new OwnerException(STORE_NOT_FOUND));
+
+		if(!store.getUser().getUserId().equals(dto.getLoggedInUser().getUsername()))
+			throw new OwnerException(NOT_AUTHORIZED);
+
+		if(store.getOpenClose() == dto.getOpenClose()) {
+			if(store.getOpenClose() == StoreOpenCloseStatus.OPEN) throw new OwnerException(ALREADY_OPEN);
+			if(store.getOpenClose() == StoreOpenCloseStatus.CLOSE) throw new OwnerException(ALREADY_CLOSE);
+		}
+
+		store.setOpenClose(dto.getOpenClose());
+		store.setOpenCloseDt(LocalDateTime.now());
+
+		storeRepository.save(store);
+
+		if(dto.getOpenClose() == StoreOpenCloseStatus.OPEN)
+			return new OpenCloseStore.Response(OPEN_STORE_SUCCESS);
+		else
+			return new OpenCloseStore.Response(CLOSE_STORE_SUCCESS);
+	}
+
 	// @Override
 	// public List<StoreInfo> getStoreInfoByOwnerId(int ownerId) {
 	//

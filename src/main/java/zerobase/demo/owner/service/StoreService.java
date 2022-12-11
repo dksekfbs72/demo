@@ -16,9 +16,9 @@ public interface StoreService {
 
 	/**
 	 * 점포 열기, 닫기
-	//  */
-	// void openCloseStore(OpenCloseStore openCloseStore);
-	//
+	 */
+	OpenCloseStore.Response openCloseStore(OpenCloseStore openCloseStore);
+
 	// /**
 	//  * ownerId로 점포 조회
 	//  */

@@ -22,6 +22,8 @@ public enum ResponseCode {
 	NOT_LOGGED_IN(Result.FAIL, "로그인 정보가 없습니다."),
 
 	CREATE_STORE_SUCCESS(Result.SUCCESS, "가게 등록을 성공했습니다."),
+	OPEN_STORE_SUCCESS(Result.SUCCESS, "가게를 열었습니다."),
+	CLOSE_STORE_SUCCESS(Result.SUCCESS, "가게를 닫았습니다."),
 	UPDATE_STORE_SUCCESS(Result.SUCCESS, "가게 정보를 변경하였습니다."),
 	SELECT_STORE_SUCCESS(Result.SUCCESS, "가게 조회를 성공했습니다."),
 	ALREADY_OPEN(Result.FAIL, "가게가 이미 열려 있습니다."),

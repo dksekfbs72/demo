@@ -29,7 +29,8 @@ public class OwnerStoreController {
 
 	//점포 등록
 	@PostMapping()
-	public CreateStore.Response createStore(@RequestBody CreateStore.Request request, @AuthenticationPrincipal UserDetails loggedInUser) {
+	public CreateStore.Response createStore(@RequestBody CreateStore.Request request,
+		@AuthenticationPrincipal UserDetails loggedInUser) {
 
 		CreateStore dto = CreateStore.fromRequest(request);
 		if(loggedInUser != null) dto.setLoggedInUser(loggedInUser);
@@ -38,11 +39,16 @@ public class OwnerStoreController {
 	}
 
 	//점포 열기/닫기
-	// @PutMapping("/openclose")
-	// public void openCloseStore(@RequestBody OpenCloseStore.Request request) {
-	// 	storeService.openCloseStore(OpenCloseStore.fromRequest(request));
-	// }
-	//
+	@PutMapping("/openclose")
+	public void openCloseStore(@RequestBody OpenCloseStore.Request request,
+		@AuthenticationPrincipal UserDetails loggedInUser) {
+
+		OpenCloseStore dto = OpenCloseStore.fromRequest(request);
+		if(loggedInUser != null) dto.setLoggedInUser(loggedInUser);
+
+		storeService.openCloseStore(OpenCloseStore.fromRequest(request));
+	}
+
 	// //점포 조회
 	// @GetMapping()
 	// public BaseResponse getStoreByOwnerId(@RequestParam int id) {
