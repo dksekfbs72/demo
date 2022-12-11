@@ -2,6 +2,8 @@ package zerobase.demo.owner.dto;
 
 import java.security.Principal;
 
+import org.springframework.security.core.userdetails.UserDetails;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +20,7 @@ import zerobase.demo.common.type.Result;
 @Builder
 public class CreateStore {
 
-	private Principal principal;
+	private UserDetails loggedInUser;
 	private String ownerId;
 	private String name;
 	private String storeAddr;

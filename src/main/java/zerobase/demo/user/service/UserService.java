@@ -112,7 +112,11 @@ public class UserService extends UserException implements UserDetailsService {
 		List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 		grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
-		if (user.getStatus().name().equals("admin")) {
+		if (user.getStatus().name().equals("OWNER")) {
+			grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_OWNER"));
+		}
+
+		if (user.getStatus().name().equals("ADMIN")) {
 			grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
 		}
 

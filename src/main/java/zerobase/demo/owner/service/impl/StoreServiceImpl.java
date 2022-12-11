@@ -32,12 +32,14 @@ public class StoreServiceImpl implements StoreService {
 	@Override
 	public CreateStore.Response createStore(CreateStore createStore) {
 
-		if(createStore.getPrincipal() == null) throw new UserException(NOT_LOGGED_IN);
+		if(createStore.getLoggedInUser() == null) throw new UserException(NOT_LOGGED_IN);
 
 		User user = userRepository.findByUserId(createStore.getOwnerId()).orElseThrow(() -> new UserException(USER_NOT_FIND));
 
-		String loggedUserId = createStore.getPrincipal().getName();
-		if(!loggedUserId.equals(createStore.getOwnerId())) throw new OwnerException(NOT_AUTHORIZED);
+		UserDetails loggedInUser = createStore.getLoggedInUser();
+		if(!loggedInUser.getUsername().equals(createStore.getOwnerId())) throw new OwnerException(NOT_AUTHORIZED);
+
+		if(!loggedInUser.getAuthorities().contains("ROLE_OWNER")) throw new OwnerException(NOT_AUTHORIZED);
 
 		Store newStore = Store.fromDto(createStore);
 		newStore.setOpenClose(StoreOpenCloseStatus.CLOSE);
