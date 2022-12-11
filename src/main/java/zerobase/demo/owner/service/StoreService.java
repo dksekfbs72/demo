@@ -26,8 +26,8 @@ public interface StoreService {
 	 */
 	StoreInfo.Response getStoreInfoByOwnerId(String ownerId);
 
-	// /**
-	//  * 점포 수정
-	//  */
-	// void updateStore(UpdateStore updateStore);
+	/**
+	 * 점포 수정
+	 */
+	UpdateStore.Response updateStore(UpdateStore updateStore);
 }

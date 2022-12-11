@@ -20,6 +20,7 @@ import zerobase.demo.common.type.UserStatus;
 import zerobase.demo.owner.dto.CreateStore;
 import zerobase.demo.owner.dto.OpenCloseStore;
 import zerobase.demo.owner.dto.StoreInfo;
+import zerobase.demo.owner.dto.UpdateStore;
 import zerobase.demo.owner.repository.StoreRepository;
 import zerobase.demo.owner.service.StoreService;
 import zerobase.demo.user.repository.UserRepository;
@@ -56,7 +57,6 @@ public class StoreServiceImpl implements StoreService {
 	@Override
 	public OpenCloseStore.Response openCloseStore(OpenCloseStore dto) {
 
-
 		Store store = storeRepository.findById(dto.getStoreId()).orElseThrow(() -> new OwnerException(STORE_NOT_FOUND));
 
 		if(!store.getUser().getUserId().equals(dto.getLoggedInUser().getUsername()))
@@ -89,23 +89,19 @@ public class StoreServiceImpl implements StoreService {
 		return new StoreInfo.Response(storeList, ResponseCode.SELECT_STORE_SUCCESS);
 	}
 
-	// @Override
-	// public void updateStore(UpdateStore updateStore) {
-	//
-	// 	Optional<Store> optionalStore = storeRepository.findById(updateStore.getId());
-	// 	if(!optionalStore.isPresent()) throw new NonExistentStoreException(updateStore.getId());
-	//
-	// 	//현재 로그인 된 유저가 점포 주인인지 확인하는 부분 추가 예정(Spring security 사용 예정)
-	//
-	// 	Store store = optionalStore.get();
-	// 	store.setName(updateStore.getName());
-	// 	store.setStoreAddr(updateStore.getStoreAddr());
-	// 	store.setPictureUrl(updateStore.getPictureUrl());
-	// 	store.setDeliveryDistanceKm(updateStore.getDeliveryDistanceKm());
-	// 	store.setSummary(updateStore.getSummary());
-	// 	store.setDeliveryTip(updateStore.getDeliveryTip());
-	// 	store.setCommission(updateStore.getCommission());
-	//
-	// 	storeRepository.save(store);
-	// }
+	@Override
+	public UpdateStore.Response updateStore(UpdateStore dto) {
+
+		if(dto.getLoggedInUser() == null) throw new UserException(NOT_LOGGED_IN);
+
+		Store store = storeRepository.findById(dto.getStoreId()).orElseThrow(() -> new OwnerException(STORE_NOT_FOUND));
+
+		UserDetails loggedInUser = dto.getLoggedInUser();
+		if(!loggedInUser.getUsername().equals(store.getUser().getUserId())) throw new OwnerException(NOT_AUTHORIZED);
+
+		store.setFromUpdateStoreDto(dto);
+		storeRepository.save(store);
+
+		return new UpdateStore.Response(UPDATE_STORE_SUCCESS);
+	}
 }

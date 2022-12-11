@@ -4,38 +4,36 @@ import static org.junit.jupiter.api.Assertions.*;
 import static zerobase.demo.common.type.ResponseCode.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.web.servlet.MockMvc;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import zerobase.demo.common.entity.Store;
 import zerobase.demo.common.entity.User;
 import zerobase.demo.common.exception.OwnerException;
 import zerobase.demo.common.exception.UserException;
-import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.common.type.Result;
 import zerobase.demo.common.type.StoreOpenCloseStatus;
 import zerobase.demo.common.type.UserStatus;
 import zerobase.demo.owner.dto.CreateStore;
 import zerobase.demo.owner.dto.OpenCloseStore;
 import zerobase.demo.owner.dto.StoreInfo;
+import zerobase.demo.owner.dto.UpdateStore;
 import zerobase.demo.owner.repository.StoreRepository;
 import zerobase.demo.owner.service.StoreService;
 import zerobase.demo.user.repository.UserRepository;
 import zerobase.demo.user.service.UserService;
 
+
+// @AutoConfigureMockMvc
 @SpringBootTest
-@AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application-test.properties")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class StoreServiceImplTest {
@@ -345,6 +343,96 @@ public class StoreServiceImplTest {
 		//then
 		assertEquals(exception.getResponseCode().getResult(), Result.FAIL);
 		assertEquals(exception.getResponseCode(), NOT_OWNER);
+
+		//delete from h2
+		storeRepository.deleteAll();
+	}
+
+	@Test
+	@DisplayName("가게정보 수정 성공")
+	void updateStoreSuccess() throws Exception {
+
+		//given
+		String userId = "narangd2083";
+		Store store = createStore(userId);
+
+		UserDetails loggedUser = userService.loadUserByUsername(userId);
+
+		UpdateStore dto = UpdateStore.builder()
+			.storeId(store.getId())
+			.loggedInUser(loggedUser)
+			.name("과일가게")
+			.summary("과일가게 입니다.")
+			.build();
+
+		//when
+		UpdateStore.Response response = storeService.updateStore(dto);
+
+		//then
+		assertEquals(response.getResult(), Result.SUCCESS);
+
+		Optional<Store> optionalStore = storeRepository.findById(store.getId());
+		assertEquals(optionalStore.get().getName(), "과일가게");
+		assertEquals(optionalStore.get().getSummary(), "과일가게 입니다.");
+
+		//delete from h2
+		storeRepository.deleteAll();
+	}
+
+	@Test
+	@DisplayName("가게정보 수정 실패 - 존재하지 않는 가게")
+	void updateStoreNotExistStore() throws Exception {
+
+		//given
+		String userId = "narangd2083";
+		Store store = createStore(userId);
+
+		UserDetails loggedUser = userService.loadUserByUsername(userId);
+
+		UpdateStore dto = UpdateStore.builder()
+			.storeId(99)
+			.loggedInUser(loggedUser)
+			.name("과일가게")
+			.summary("과일가게 입니다.")
+			.build();
+
+		//when
+		OwnerException exception = (OwnerException)assertThrows(RuntimeException.class, () -> {
+			storeService.updateStore(dto);
+		});
+
+		//then
+		assertEquals(exception.getResponseCode().getResult(), Result.FAIL);
+		assertEquals(exception.getResponseCode(), STORE_NOT_FOUND);
+
+		//delete from h2
+		storeRepository.deleteAll();
+	}
+
+	@Test
+	@DisplayName("가게정보 수정 실패 - 로그인한 유저가 주인이 아님")
+	void updateStoreNotAuthorized() throws Exception {
+
+		//given
+		Store store = createStore("narangd2083");
+
+		UserDetails loggedUser = userService.loadUserByUsername("cocacola2083");
+
+		UpdateStore dto = UpdateStore.builder()
+			.storeId(store.getId())
+			.loggedInUser(loggedUser)
+			.name("과일가게")
+			.summary("과일가게 입니다.")
+			.build();
+
+		//when
+		OwnerException exception = (OwnerException)assertThrows(RuntimeException.class, () -> {
+			storeService.updateStore(dto);
+		});
+
+		//then
+		assertEquals(exception.getResponseCode().getResult(), Result.FAIL);
+		assertEquals(exception.getResponseCode(), NOT_AUTHORIZED);
 
 		//delete from h2
 		storeRepository.deleteAll();

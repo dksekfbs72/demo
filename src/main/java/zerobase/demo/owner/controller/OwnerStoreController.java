@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import zerobase.demo.owner.dto.CreateStore;
 import zerobase.demo.owner.dto.OpenCloseStore;
 import zerobase.demo.owner.dto.StoreInfo;
+import zerobase.demo.owner.dto.UpdateStore;
 import zerobase.demo.owner.service.StoreService;
 
 @RestController
@@ -52,9 +53,14 @@ public class OwnerStoreController {
 		return storeService.getStoreInfoByOwnerId(ownerId);
 	}
 
-	// //점포 수정
-	// @PutMapping()
-	// public void updateStore(@RequestBody UpdateStore.Request request) {
-	// 	storeService.updateStore(UpdateStore.fromRequest(request));
-	// }
+	//점포 수정
+	@PutMapping()
+	public UpdateStore.Response updateStore(@RequestBody UpdateStore.Request request,
+		@AuthenticationPrincipal UserDetails loggedInUser) {
+
+		UpdateStore dto = UpdateStore.fromRequest(request);
+		if(loggedInUser != null) dto.setLoggedInUser(loggedInUser);
+
+		return storeService.updateStore(UpdateStore.fromRequest(request));
+	}
 }
