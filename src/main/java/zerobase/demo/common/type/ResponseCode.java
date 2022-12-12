@@ -36,7 +36,8 @@ public enum ResponseCode {
 	CHANGE_USER_INFO_SUCCESS(Result.SUCCESS,"유저 정보를 변경하였습니다."),
 	CREATE_USER_SUCCESS(Result.SUCCESS,"회원가입을 성공했습니다. 이메일 인증 후 로그인 가능합니다"),
 	USER_UNREGISTER(Result.SUCCESS,"회원 탈퇴에 성공하였습니다."),
-	LOGIN_SUCCESS(Result.SUCCESS,"로그인 성공");
+	LOGIN_SUCCESS(Result.SUCCESS,"로그인 성공"),
+	THERE_IS_NO_ORDER(Result.SUCCESS,"주문내역이 없습니다.");
 
 	private final Result result;
 	private final String description;

@@ -15,15 +15,13 @@ import org.springframework.stereotype.Service;
 import zerobase.demo.common.entity.OrderTbl;
 import zerobase.demo.common.entity.Review;
 import zerobase.demo.common.entity.User;
-import zerobase.demo.common.exception.StopUserException;
-import zerobase.demo.common.exception.UnregisterUserException;
-import zerobase.demo.common.exception.UserException;
-import zerobase.demo.common.exception.UserNotEmailAuthException;
-import zerobase.demo.common.exception.UserNotFindException;
+import zerobase.demo.common.exception.*;
 import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.common.type.UserStatus;
 import zerobase.demo.common.components.MailComponents;
+import zerobase.demo.order.dto.OrderDto;
 import zerobase.demo.order.repository.OrderRepository;
+import zerobase.demo.owner.dto.StoreInfo;
 import zerobase.demo.review.dto.ReviewDto;
 import zerobase.demo.review.repository.ReviewRepository;
 import zerobase.demo.user.dto.UserDto;
@@ -33,7 +31,7 @@ import zerobase.demo.user.service.UserService;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl extends UserException implements UserService,UserDetailsService {
+public class UserServiceImpl implements UserService {
 
 	private final MailComponents mailComponents;
 	private final UserRepository userRepository;
@@ -43,10 +41,8 @@ public class UserServiceImpl extends UserException implements UserService,UserDe
 	@Override
 	public boolean createUser(UserDto userDto) {
 
-		Optional<User> optionalMember = userRepository.findByUserId(userDto.getUserId());
-		if (optionalMember.isPresent()) {
-			throw new UserException(ResponseCode.ALREADY_REGISTERED_ID);
-		}
+		userRepository.findByUserId(userDto.getUserId())
+				.ifPresent(t -> {throw new UserException(ResponseCode.ALREADY_REGISTERED_ID);});
 
 		if (userDto.getStatus()!=UserStatus.USER && userDto.getStatus()!=UserStatus.OWNER) {
 			throw new UserException(ResponseCode.STATUS_INPUT_ERROR);
@@ -81,21 +77,9 @@ public class UserServiceImpl extends UserException implements UserService,UserDe
 
 	@Override
 	public boolean adminUpdateUser(UserUpdateDto userDto, String myId) {
-		Optional<User> optionalAdmin = userRepository.findByUserId(myId);
-		if (!optionalAdmin.isPresent()) {
-			throw new UserException(ResponseCode.USER_NOT_FIND);
-		}
+		User user = userRepository.findByUserId(myId)
+				.orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FIND));
 
-//		if (!optionalAdmin.get().getStatus().name().equals("admin")) {
-//			throw new UserException(ResponseCode.NOT_ADMIN_ROLL);
-//		}
-
-		Optional<User> optionalMember = userRepository.findByUserId(userDto.getUserId());
-		if (!optionalMember.isPresent()) {
-			throw new UserException(ResponseCode.USER_NOT_FIND);
-		}
-
-		User user = optionalMember.get();
 		user.setUserAddr(userDto.getUserAddr());
 		user.setUserName(userDto.getUserName());
 		user.setPhone(userDto.getPhone());
@@ -109,11 +93,8 @@ public class UserServiceImpl extends UserException implements UserService,UserDe
 
 	@Override
 	public UserDto readMyInfo(String userId) {
-		Optional<User> optionalUser = userRepository.findByUserId(userId);
-		if (!optionalUser.isPresent()) {
-			throw new UserException(ResponseCode.USER_NOT_FIND);
-		}
-		User user = optionalUser.get();
+		User user = userRepository.findByUserId(userId)
+				.orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FIND));
 
 		return UserDto.builder()
 			.userId(user.getUserId())
@@ -128,11 +109,9 @@ public class UserServiceImpl extends UserException implements UserService,UserDe
 
 	@Override
 	public boolean changePassword(String myId, String password, String newPassword) {
-		Optional<User> user = userRepository.findByUserId(myId);
-		if (!user.isPresent()) {
-			throw new UserException(ResponseCode.USER_NOT_FIND);
-		}
-		User newUser = user.get();
+		User newUser = userRepository.findByUserId(myId)
+				.orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FIND));
+
 		if (newUser.getPasswordChangeDt() != null && newUser.getPasswordChangeDt().plusMonths(1).isAfter(
 			LocalDateTime.now())) {
 			throw new UserException(ResponseCode.TOO_OFTEN_PASSWORD_CHANGE);
@@ -152,20 +131,14 @@ public class UserServiceImpl extends UserException implements UserService,UserDe
 
 	@Override
 	public boolean userUnregister(String myId, String password) {
-		Optional<User> user = userRepository.findByUserId(myId);
-		if (!user.isPresent()) {
-			throw new UserException(ResponseCode.USER_NOT_FIND);
-		}
-		User newUser = user.get();
-		if (newUser.getPasswordChangeDt() != null && newUser.getPasswordChangeDt().plusMonths(1).isAfter(
-			LocalDateTime.now())) {
-			throw new UserException(ResponseCode.TOO_OFTEN_PASSWORD_CHANGE);
-		}
+		User newUser = userRepository.findByUserId(myId)
+				.orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FIND));
 		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		if (!passwordEncoder.matches(password, newUser.getPassword())) {
 			throw new UserException(ResponseCode.WRONG_PASSWORD);
 		}
 		newUser.setUnregisterTime(LocalDateTime.now());
+		userRepository.save(newUser);
 		return true;
 	}
 
@@ -182,11 +155,8 @@ public class UserServiceImpl extends UserException implements UserService,UserDe
 
 	@Override
 	public boolean userEmailAuth(String emailAuthKey) {
-		Optional<User> optionalUser = userRepository.findByEmailAuthKey(emailAuthKey);
-		if (!optionalUser.isPresent()) {
-			throw new UserException(ResponseCode.USER_NOT_FIND);
-		}
-		User user = optionalUser.get();
+		User user = userRepository.findByEmailAuthKey(emailAuthKey)
+				.orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FIND));
 
 		user.setEmailAuth(true);
 		userRepository.save(user);
@@ -197,14 +167,11 @@ public class UserServiceImpl extends UserException implements UserService,UserDe
 	@Override
 	public boolean userAddReview(ReviewDto fromRequest, String userId) {
 		Optional<Review> optionalReview = reviewRepository.findByOrderId(fromRequest.getOrderId());
-		if (optionalReview.isPresent()) {
-			throw new UserException(ResponseCode.ALREADY_ADDED_REVIEW);
-		}
-		Optional<OrderTbl> optionalOrderTbl = orderRepository.findById(fromRequest.getOrderId());
-		if (!optionalOrderTbl.isPresent()) {
-			throw new UserException(ResponseCode.ORDER_NOT_FIND);
-		}
-		OrderTbl order = optionalOrderTbl.get();
+		optionalReview.ifPresent(t -> {throw new UserException(ResponseCode.ALREADY_ADDED_REVIEW);});
+
+		OrderTbl order = orderRepository.findById(fromRequest.getOrderId())
+				.orElseThrow(() -> new UserException(ResponseCode.ORDER_NOT_FIND));
+
 		if (!Objects.equals(order.getRestaurantId(), fromRequest.getRestaurantId())) {
 			throw new UserException(ResponseCode.DIFF_ORDER_ID);
 		}
@@ -232,12 +199,8 @@ public class UserServiceImpl extends UserException implements UserService,UserDe
 	@Override
 	public UserDetails loadUserByUsername(String userId) {
 
-		Optional<User> optionalMember = userRepository.findByUserId(userId);
-		if (!optionalMember.isPresent()) {
-			throw new UserNotFindException("USER_NOT_FIND");
-		}
-
-		User user = optionalMember.get();
+		User user = userRepository.findByUserId(userId)
+				.orElseThrow(() -> new UserNotFindException("USER_NOT_FIND"));
 
 		if (!user.getEmailAuth()) {
 			throw new UserNotEmailAuthException("USER_NOT_EMAIL_AUTH");
@@ -262,5 +225,15 @@ public class UserServiceImpl extends UserException implements UserService,UserDe
 			user.getPassword(), grantedAuthorities);
 	}
 
+	@Override
+	public List<OrderDto> getMyOrderList(String userId) {
+
+		Optional<List<OrderTbl>> orderDtoList = orderRepository
+				.findAllByUserId(userRepository.findByUserId(userId).get().getId());
+		if (orderDtoList.get().size() < 1) throw new UserException(ResponseCode.THERE_IS_NO_ORDER);
+
+
+		return OrderDto.fromEntity(orderDtoList.get());
+	}
 
 }

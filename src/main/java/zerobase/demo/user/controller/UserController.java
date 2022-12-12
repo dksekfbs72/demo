@@ -1,6 +1,7 @@
 package zerobase.demo.user.controller;
 
 import java.security.Principal;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import zerobase.demo.common.config.AllExceptionHandler;
 import zerobase.demo.common.exception.UserException;
 import zerobase.demo.common.type.ResponseCode;
+import zerobase.demo.order.dto.OrderDto;
+import zerobase.demo.owner.dto.StoreInfo;
 import zerobase.demo.review.dto.ReviewDto;
 import zerobase.demo.user.dto.UserDto;
 import zerobase.demo.user.dto.UserDto.Response;
@@ -79,6 +82,12 @@ public class UserController extends AllExceptionHandler {
 		boolean result = userService.userAddReview(ReviewDto.fromRequest(request), principal.getName());
 
 		return new Response(ResponseCode.ADD_REVIEW_SUCCESS);
+	}
+
+	@GetMapping("/user/getMyOrder")
+	public OrderDto.Response getMyOrderList(Principal principal) {
+
+		return OrderDto.Response.fromDtoList(userService.getMyOrderList(principal.getName()));
 	}
 
 

@@ -1,8 +1,12 @@
 package zerobase.demo.order.dto;
 
 import lombok.*;
+import zerobase.demo.common.entity.OrderTbl;
+import zerobase.demo.common.model.BaseResponse;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -21,23 +25,39 @@ public class OrderDto {
     private LocalDateTime orderTime;
     private Integer useCouponId;
 
+    public static OrderDto request(OrderTbl request) {
+        return OrderDto.builder()
+                .price(request.getPrice())
+                .menus(request.getMenus())
+                .userId(request.getUserId())
+                .status(request.getStatus())
+                .deliveryTime(request.getDeliveryTime())
+                .restaurantId(request.getRestaurantId())
+                .orderTime(request.getOrderTime())
+                .useCouponId(request.getUseCouponId())
+                .build();
+    }
+
+    public static List<OrderDto> fromEntity(List<OrderTbl> orderTbls) {
+
+        return orderTbls.stream()
+                .map(OrderDto::request)
+                .collect(Collectors.toList());
+    }
 
     @Getter
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class Request {
-        private Integer price;
+    public static class Response extends BaseResponse {
+        private List<OrderDto> orderDtoList;
 
-        private String menus;
+        public static OrderDto.Response fromDtoList(List<OrderDto> list){
 
-        private Integer userId;
-        private String status;
-        private Integer deliveryTime;
-        private Integer restaurantId;
-        private LocalDateTime orderTime;
-        private Integer useCouponId;
+            return OrderDto.Response.builder()
+                    .orderDtoList(list)
+                    .build();
+        }
     }
-
 }

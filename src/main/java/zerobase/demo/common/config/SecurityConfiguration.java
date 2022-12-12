@@ -9,13 +9,13 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import zerobase.demo.user.service.Impl.UserServiceImpl;
+import zerobase.demo.user.service.UserService;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-	private final UserServiceImpl userService;
+	private final UserService userService;
 
 	@Bean
 	PasswordEncoder getPasswordEncoder() {
@@ -68,6 +68,4 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 		super.configure(auth);
 	}
-
-
 }
