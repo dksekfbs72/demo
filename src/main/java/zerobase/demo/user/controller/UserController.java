@@ -19,6 +19,7 @@ import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.order.dto.OrderDto;
 import zerobase.demo.owner.dto.StoreInfo;
 import zerobase.demo.review.dto.ReviewDto;
+import zerobase.demo.review.dto.ReviewRequest;
 import zerobase.demo.user.dto.UserDto;
 import zerobase.demo.user.dto.UserDto.Response;
 import zerobase.demo.user.service.UserService;
@@ -77,8 +78,7 @@ public class UserController extends AllExceptionHandler {
 	}
 
 	@PostMapping("/user/addReview")
-	UserDto.Response userAddReview(@RequestBody ReviewDto.Request request, Principal principal) {
-		if (principal == null) throw new UserException(ResponseCode.NOT_LOGGED);
+	UserDto.Response userAddReview(@RequestBody ReviewRequest request, Principal principal) {
 		boolean result = userService.userAddReview(ReviewDto.fromRequest(request), principal.getName());
 
 		return new Response(ResponseCode.ADD_REVIEW_SUCCESS);

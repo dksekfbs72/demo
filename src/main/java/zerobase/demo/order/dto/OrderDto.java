@@ -1,7 +1,7 @@
 package zerobase.demo.order.dto;
 
 import lombok.*;
-import zerobase.demo.common.entity.OrderTbl;
+import zerobase.demo.common.entity.Order;
 import zerobase.demo.common.model.BaseResponse;
 
 import java.time.LocalDateTime;
@@ -25,7 +25,7 @@ public class OrderDto {
     private LocalDateTime orderTime;
     private Integer useCouponId;
 
-    public static OrderDto request(OrderTbl request) {
+    public static OrderDto request(Order request) {
         return OrderDto.builder()
                 .price(request.getPrice())
                 .menus(request.getMenus())
@@ -38,9 +38,9 @@ public class OrderDto {
                 .build();
     }
 
-    public static List<OrderDto> fromEntity(List<OrderTbl> orderTbls) {
+    public static List<OrderDto> fromEntity(List<Order> orders) {
 
-        return orderTbls.stream()
+        return orders.stream()
                 .map(OrderDto::request)
                 .collect(Collectors.toList());
     }

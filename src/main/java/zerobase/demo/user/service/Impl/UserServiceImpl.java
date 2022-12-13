@@ -7,12 +7,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import zerobase.demo.common.entity.OrderTbl;
+import zerobase.demo.common.entity.Order;
 import zerobase.demo.common.entity.Review;
 import zerobase.demo.common.entity.User;
 import zerobase.demo.common.exception.*;
@@ -21,7 +20,6 @@ import zerobase.demo.common.type.UserStatus;
 import zerobase.demo.common.components.MailComponents;
 import zerobase.demo.order.dto.OrderDto;
 import zerobase.demo.order.repository.OrderRepository;
-import zerobase.demo.owner.dto.StoreInfo;
 import zerobase.demo.review.dto.ReviewDto;
 import zerobase.demo.review.repository.ReviewRepository;
 import zerobase.demo.user.dto.UserDto;
@@ -166,10 +164,10 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean userAddReview(ReviewDto fromRequest, String userId) {
-		Optional<Review> optionalReview = reviewRepository.findByOrderId(fromRequest.getOrderId());
-		optionalReview.ifPresent(t -> {throw new UserException(ResponseCode.ALREADY_ADDED_REVIEW);});
+		reviewRepository.findByOrderId(fromRequest.getOrderId())
+				.ifPresent(t -> {throw new UserException(ResponseCode.ALREADY_ADDED_REVIEW);});
 
-		OrderTbl order = orderRepository.findById(fromRequest.getOrderId())
+		Order order = orderRepository.findById(fromRequest.getOrderId())
 				.orElseThrow(() -> new UserException(ResponseCode.ORDER_NOT_FIND));
 
 		if (!Objects.equals(order.getRestaurantId(), fromRequest.getRestaurantId())) {
@@ -228,12 +226,12 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<OrderDto> getMyOrderList(String userId) {
 
-		Optional<List<OrderTbl>> orderDtoList = orderRepository
+		List<Order> orderDtoList = orderRepository
 				.findAllByUserId(userRepository.findByUserId(userId).get().getId());
-		if (orderDtoList.get().size() < 1) throw new UserException(ResponseCode.THERE_IS_NO_ORDER);
+		if (orderDtoList.isEmpty()) throw new UserException(ResponseCode.THERE_IS_NO_ORDER);
 
 
-		return OrderDto.fromEntity(orderDtoList.get());
+		return OrderDto.fromEntity(orderDtoList);
 	}
 
 }
