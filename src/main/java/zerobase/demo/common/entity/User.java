@@ -44,7 +44,13 @@ public class User {
 	private LocalDateTime passwordChangeDt;
 	private LocalDateTime unregisterTime;
 
+	private double lat;
+	private double lng;
+
 	//for owner
 	@OneToMany
 	private List<Store> storeList;
+
+	@OneToMany
+	private List<Order> orderList;
 }

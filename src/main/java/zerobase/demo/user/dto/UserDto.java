@@ -9,7 +9,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import zerobase.demo.common.model.BaseResponse;
 import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.common.type.UserStatus;
 
@@ -72,5 +71,4 @@ public class UserDto {
 			this.message = responseCode.getDescription();
 		}
 	}
-
 }
