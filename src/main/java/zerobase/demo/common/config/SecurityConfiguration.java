@@ -8,7 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import zerobase.demo.user.service.UserService;
 
 @RequiredArgsConstructor
@@ -20,6 +20,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Bean
 	PasswordEncoder getPasswordEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
+	UserAuthenticationFailureHandler getFailureHandler() {
+		return new UserAuthenticationFailureHandler();
 	}
 
 	@Override
@@ -41,8 +46,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		http.formLogin()
 			.usernameParameter("userId")
 			.passwordParameter("password")
+			.failureHandler(getFailureHandler())
 			.successForwardUrl("/login/success")
 			.permitAll();
+
+		http.logout()
+			.logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
+			//.logoutSuccessUrl("/user/readMyInfo") 로그아웃 후 url 설정 가능
+			.invalidateHttpSession(true);
+
+		http.exceptionHandling()
+			.accessDeniedPage("/error/denied");
 
 		super.configure(http);
 	}
@@ -54,6 +68,4 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 		super.configure(auth);
 	}
-
-
 }

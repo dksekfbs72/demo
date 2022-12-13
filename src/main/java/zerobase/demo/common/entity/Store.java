@@ -43,6 +43,9 @@ public class Store extends BaseEntity {
 
 	private LocalDateTime openCloseDt;
 
+	private double lat;
+	private double lng;
+
 	@ManyToOne
 	private User user;
 

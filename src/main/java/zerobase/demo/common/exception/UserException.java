@@ -7,12 +7,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import zerobase.demo.common.type.ResponseCode;
 
+import java.util.function.Supplier;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserException extends RuntimeException{
+public class UserException extends RuntimeException {
 	private ResponseCode responseCode;
 	private String errorMessage;
 

@@ -2,15 +2,19 @@ package zerobase.demo.common.config;
 
 import static zerobase.demo.common.type.ResponseCode.INTERNAL_SERVER_ERROR;
 
+import java.util.NoSuchElementException;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import zerobase.demo.DemoApplication;
 import zerobase.demo.common.exception.OwnerException;
 import zerobase.demo.common.exception.UserException;
+import zerobase.demo.common.exception.UserNotFindException;
 import zerobase.demo.common.model.ErrorResponse;
+import zerobase.demo.common.type.ResponseCode;
 
 @Slf4j
 @RestControllerAdvice

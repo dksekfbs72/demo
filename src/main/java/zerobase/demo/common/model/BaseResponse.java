@@ -1,7 +1,6 @@
 package zerobase.demo.common.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,10 +11,10 @@ import zerobase.demo.common.type.Result;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public abstract class BaseResponse {
-	Result result;
-	ResponseCode code;
-	String message;
+public abstract class BaseResponse { //모든 Response가 상속한다.
+	protected Result result;
+	protected ResponseCode code;
+	protected String message;
 
 	public BaseResponse(ResponseCode responseCode) {
 		this.result = responseCode.getResult();
