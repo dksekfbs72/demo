@@ -1,11 +1,17 @@
 package zerobase.demo.owner.dto;
 
+import java.security.Principal;
+
+import org.springframework.security.core.userdetails.UserDetails;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+import zerobase.demo.common.model.BaseResponse;
+import zerobase.demo.common.type.ResponseCode;
+import zerobase.demo.common.type.Result;
 
 @Getter
 @Setter
@@ -14,7 +20,8 @@ import lombok.Setter;
 @Builder
 public class CreateStore {
 
-	private Integer ownerId;
+	private UserDetails loggedInUser;
+	private String ownerId;
 	private String name;
 	private String storeAddr;
 	private String summary;
@@ -44,7 +51,7 @@ public class CreateStore {
 	@Builder
 	public static class Request {
 
-		private Integer ownerId;
+		private String ownerId;
 		private String name;
 		private String storeAddr;
 		private String summary;
@@ -52,5 +59,11 @@ public class CreateStore {
 		private Double commission;
 		private Double deliveryDistanceKm;
 		private Integer deliveryTip;
+	}
+
+	public static class Response extends BaseResponse {
+		public Response(ResponseCode code) {
+			super(code);
+		}
 	}
 }

@@ -9,14 +9,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import zerobase.demo.user.repository.UserRepository;
-import zerobase.demo.user.service.Impl.UserServiceImpl;
+// import zerobase.demo.user.service.Impl.UserServiceImpl;
 
 
 @ExtendWith(MockitoExtension.class)
 class DemoApplicationTests {
 
 	@InjectMocks
-	private UserServiceImpl userService;
+	// private UserServiceImpl userService;
 
 	@Mock
 	private UserRepository userRepository;

@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import zerobase.demo.common.type.StoreOpenCloseStatus;
 import zerobase.demo.owner.dto.CreateStore;
+import zerobase.demo.owner.dto.UpdateStore;
 
 @Entity
 @Getter
@@ -48,7 +49,7 @@ public class Store extends BaseEntity {
 	@ManyToOne
 	private User user;
 
-	public static Store fromDto(CreateStore createStore){
+	public static Store fromDto(CreateStore createStore) {
 
 		return Store.builder()
 			.name(createStore.getName())
@@ -59,5 +60,15 @@ public class Store extends BaseEntity {
 			.summary(createStore.getSummary())
 			.pictureUrl(createStore.getPictureUrl())
 			.build();
+	}
+
+	public void setFromUpdateStoreDto(UpdateStore dto) {
+		this.name = dto.getName();
+		this.storeAddr = dto.getStoreAddr();
+		this.pictureUrl = dto.getPictureUrl();
+		this.deliveryDistanceKm = dto.getDeliveryDistanceKm();
+		this.summary = dto.getSummary();
+		this.deliveryTip = dto.getDeliveryTip();
+		this.commission = dto.getCommission();
 	}
 }

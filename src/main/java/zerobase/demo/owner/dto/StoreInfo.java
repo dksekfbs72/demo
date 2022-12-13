@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import zerobase.demo.common.entity.Store;
+import zerobase.demo.common.model.BaseResponse;
+import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.common.type.StoreOpenCloseStatus;
 
 @Getter
@@ -46,27 +48,21 @@ public class StoreInfo {
 			.build();
 	}
 
-	public static List<StoreInfo> fromEntity(List<Store> storeList) {
-
-		return storeList.stream()
-		.map(store -> fromEntity(store))
-		.collect(Collectors.toList());
-	}
-
 	@Getter
 	@Setter
 	@AllArgsConstructor
 	@NoArgsConstructor
 	@Builder
-	public static class BaseResponse extends zerobase.demo.common.model.BaseResponse {
+	public static class Response extends BaseResponse {
 		private List<StoreInfo> storeInfoList;
 
-		public static BaseResponse fromDtoList(List<StoreInfo> list){
+		public Response(List<Store> storeList, ResponseCode responseCode){
 
-			return BaseResponse.builder()
-				.storeInfoList(list)
-				.build();
+			super(responseCode);
+
+			storeInfoList = storeList.stream()
+				.map(store -> fromEntity(store))
+				.collect(Collectors.toList());
 		}
 	}
-
 }

@@ -1,9 +1,10 @@
 package zerobase.demo.user.dto;
 
-import com.sun.istack.NotNull;
-
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+
+import com.sun.istack.NotNull;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
