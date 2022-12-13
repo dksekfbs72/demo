@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean adminUpdateUser(UserUpdateDto userDto, String myId) {
 		User user = userRepository.findByUserId(myId)
-				.orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FIND));
+				.orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
 
 		user.setUserAddr(userDto.getUserAddr());
 		user.setUserName(userDto.getUserName());
@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDto readMyInfo(String userId) {
 		User user = userRepository.findByUserId(userId)
-				.orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FIND));
+				.orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
 
 		return UserDto.builder()
 			.userId(user.getUserId())
@@ -108,7 +108,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean changePassword(String myId, String password, String newPassword) {
 		User newUser = userRepository.findByUserId(myId)
-				.orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FIND));
+				.orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
 
 		if (newUser.getPasswordChangeDt() != null && newUser.getPasswordChangeDt().plusMonths(1).isAfter(
 			LocalDateTime.now())) {
@@ -130,7 +130,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean userUnregister(String myId, String password) {
 		User newUser = userRepository.findByUserId(myId)
-				.orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FIND));
+				.orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
 		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		if (!passwordEncoder.matches(password, newUser.getPassword())) {
 			throw new UserException(ResponseCode.WRONG_PASSWORD);
@@ -143,7 +143,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ResponseCode getErrorCode(String errorCode) {
 		switch (errorCode) {
-			case "USER_NOT_FIND": return ResponseCode.USER_NOT_FIND;
+			case "USER_NOT_FIND": return ResponseCode.USER_NOT_FOUND;
 			case "USER_NOT_EMAIL_AUTH": return ResponseCode.USER_NOT_EMAIL_AUTH;
 			case "USER_IS_STOP": return ResponseCode.USER_IS_STOP;
 			case "UN_REGISTER_USER": return ResponseCode.UN_REGISTER_USER;
@@ -154,7 +154,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean userEmailAuth(String emailAuthKey) {
 		User user = userRepository.findByEmailAuthKey(emailAuthKey)
-				.orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FIND));
+				.orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
 
 		user.setEmailAuth(true);
 		userRepository.save(user);
@@ -168,7 +168,7 @@ public class UserServiceImpl implements UserService {
 				.ifPresent(t -> {throw new UserException(ResponseCode.ALREADY_ADDED_REVIEW);});
 
 		Order order = orderRepository.findById(fromRequest.getOrderId())
-				.orElseThrow(() -> new UserException(ResponseCode.ORDER_NOT_FIND));
+				.orElseThrow(() -> new UserException(ResponseCode.ORDER_NOT_FOUND));
 
 		if (!Objects.equals(order.getRestaurantId(), fromRequest.getRestaurantId())) {
 			throw new UserException(ResponseCode.DIFF_ORDER_ID);
@@ -214,6 +214,10 @@ public class UserServiceImpl implements UserService {
 
 		List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 		grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+
+		if (user.getStatus().name().equals("OWNER")) {
+			grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_OWNER"));
+		}
 
 		if (user.getStatus()==UserStatus.ADMIN) {
 			grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));

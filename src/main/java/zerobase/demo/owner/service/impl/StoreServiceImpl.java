@@ -35,9 +35,9 @@ public class StoreServiceImpl implements StoreService {
 	@Override
 	public CreateStore.Response createStore(CreateStore dto) {
 
-		if(dto.getLoggedInUser() == null) throw new UserException(NOT_LOGGED_IN);
+		if(dto.getLoggedInUser() == null) throw new UserException(ResponseCode.NOT_LOGGED);
 
-		User user = userRepository.findByUserId(dto.getOwnerId()).orElseThrow(() -> new UserException(USER_NOT_FIND));
+		User user = userRepository.findByUserId(dto.getOwnerId()).orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
 		UserDetails loggedInUser = dto.getLoggedInUser();
 		if(!loggedInUser.getUsername().equals(dto.getOwnerId())) throw new OwnerException(NOT_AUTHORIZED);
@@ -81,7 +81,7 @@ public class StoreServiceImpl implements StoreService {
 	@Override
 	public StoreInfo.Response getStoreInfoByOwnerId(String ownerId) {
 
-		User user = userRepository.findByUserId(ownerId).orElseThrow(() -> new UserException(USER_NOT_FIND));
+		User user = userRepository.findByUserId(ownerId).orElseThrow(() -> new UserException(USER_NOT_FOUND));
 		if(user.getStatus() != UserStatus.OWNER) throw new OwnerException(NOT_OWNER);
 
 		List<Store> storeList = storeRepository.findAllByUser(user);
@@ -92,7 +92,7 @@ public class StoreServiceImpl implements StoreService {
 	@Override
 	public UpdateStore.Response updateStore(UpdateStore dto) {
 
-		if(dto.getLoggedInUser() == null) throw new UserException(NOT_LOGGED_IN);
+		if(dto.getLoggedInUser() == null) throw new UserException(ResponseCode.NOT_LOGGED);
 
 		Store store = storeRepository.findById(dto.getStoreId()).orElseThrow(() -> new OwnerException(STORE_NOT_FOUND));
 

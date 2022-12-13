@@ -143,7 +143,7 @@ public class StoreServiceImplTest {
 
 		//then
 		assertEquals(exception.getResponseCode().getResult(), Result.FAIL);
-		assertEquals(exception.getResponseCode(), USER_NOT_FIND);
+		assertEquals(exception.getResponseCode(), USER_NOT_FOUND);
 	}
 
 	@Test
