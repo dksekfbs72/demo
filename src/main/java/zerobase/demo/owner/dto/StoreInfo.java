@@ -31,6 +31,8 @@ public class StoreInfo {
 	private Double commission;
 	private LocalDateTime openCloseDt;
 	private LocalDateTime regDt;
+	private Double lat;
+	private Double lon;
 
 	public static StoreInfo fromEntity(Store store) {
 
@@ -44,7 +46,8 @@ public class StoreInfo {
 			.deliveryTip(store.getDeliveryTip())
 			.commission(store.getCommission())
 			.openCloseDt(store.getOpenCloseDt())
-			.regDt(store.getRegDt())
+			.lat(store.getLat())
+			.lon(store.getLon())
 			.build();
 	}
 

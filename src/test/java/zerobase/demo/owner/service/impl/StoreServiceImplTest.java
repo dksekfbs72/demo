@@ -88,6 +88,9 @@ public class StoreServiceImplTest {
 		Double commission = 3.5;
 		Double deliveryDistanceKm = 5.0;
 		Integer deliveryTip = 3000;
+		Double lat = 123.4545;
+		Double lon = 92.332;
+
 
 		CreateStore dto = CreateStore.builder()
 			.loggedInUser(loggedUser)
@@ -99,6 +102,8 @@ public class StoreServiceImplTest {
 			.commission(commission)
 			.deliveryDistanceKm(deliveryDistanceKm)
 			.deliveryTip(deliveryTip)
+			.lat(lat)
+			.lon(lon)
 			.build();
 
 		//when
