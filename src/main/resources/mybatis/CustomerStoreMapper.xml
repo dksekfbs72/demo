@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="zerobase.demo.customer.mapper.CustomerStoreMapper">
+
+    <select id="selectList" resultType="zerobase.demo.customer.dto.CustomerStoreInfo">
+        SELECT
+        * , (
+        6371 * acos (cos( RADIANS(#{userLat}))
+        * cos(radians(lat))
+        * cos(radians(lon) - RADIANS(#{userLon}))
+        + sin (radians(#{userLat})) * sin( radians(lat))
+            )
+        ) AS distanceKm
+        FROM store
+        HAVING distanceKm &lt; #{maxDistanceKm}
+        ORDER BY distanceKm
+    </select>
+
+    <select id="selectTest" resultType="zerobase.demo.customer.dto.CustomerStoreInfo">
+        SELECT * FROM store
+        where lon = #{userLon}
+    </select>
+</mapper>

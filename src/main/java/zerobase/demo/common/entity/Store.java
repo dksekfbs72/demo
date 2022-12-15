@@ -47,7 +47,7 @@ public class Store extends BaseEntity {
 	private Double lon; //경도
 
 	@ManyToOne
-	private User user;
+	private User user; //owner
 
 	public static Store fromDto(CreateStore createStore) {
 
