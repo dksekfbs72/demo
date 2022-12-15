@@ -77,20 +77,4 @@ public class UserController extends AllExceptionHandler {
 		return new Response(ResponseCode.EMAIL_AUTH_SUCCESS);
 	}
 
-	@PostMapping("/user/addReview")
-	UserDto.Response userAddReview(@RequestBody ReviewRequest request, Principal principal) {
-		boolean result = userService.userAddReview(ReviewDto.fromRequest(request), principal.getName());
-
-		return new Response(ResponseCode.ADD_REVIEW_SUCCESS);
-	}
-
-	@GetMapping("/user/getMyOrder")
-	public OrderDto.Response getMyOrderList(Principal principal) {
-
-		return OrderDto.Response.fromDtoList(userService.getMyOrderList(principal.getName()));
-	}
-
-
-	//@GetMapping("/user/getMyOrders")
-
 }
