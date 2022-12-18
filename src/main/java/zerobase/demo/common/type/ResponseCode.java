@@ -45,7 +45,9 @@ public enum ResponseCode {
 	EMAIL_AUTH_SUCCESS(Result.SUCCESS, "이메일 인증에 성공하셨습니다."),
 	LOGOUT_SUCCESS(Result.SUCCESS, "로그아웃에 성공했습니다."),
 	USER_UNREGISTER(Result.SUCCESS,"회원 탈퇴에 성공하였습니다."),
-	THERE_IS_NO_ORDER(Result.SUCCESS,"주문내역이 없습니다.");
+	THERE_IS_NO_ORDER(Result.SUCCESS,"주문내역이 없습니다."),
+
+	CREATE_MENU_SUCCESS(Result.SUCCESS, "메뉴 등록을 성공했습니다.");
 
 
 	private final Result result;

@@ -45,7 +45,7 @@ public class StoreServiceImpl implements StoreService {
 		if(!loggedInUser.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_OWNER")))
 			throw new OwnerException(NOT_AUTHORIZED);
 
-		Store newStore = Store.fromDto(dto);
+		Store newStore = Store.fromCreateStore(dto);
 		newStore.setOpenClose(StoreOpenCloseStatus.CLOSE);
 		newStore.setOpenCloseDt(LocalDateTime.now());
 		newStore.setUser(user);

@@ -1,6 +1,7 @@
 package zerobase.demo.common.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -9,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -49,7 +51,10 @@ public class Store extends BaseEntity {
 	@ManyToOne
 	private User user; //owner
 
-	public static Store fromDto(CreateStore createStore) {
+	@OneToMany
+	private List<Menu> menuList; //보유 메뉴
+
+	public static Store fromCreateStore(CreateStore createStore) {
 
 		return Store.builder()
 			.name(createStore.getName())
