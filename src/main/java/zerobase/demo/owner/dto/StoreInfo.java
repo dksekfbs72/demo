@@ -21,6 +21,7 @@ import zerobase.demo.common.type.StoreOpenCloseStatus;
 @Builder
 public class StoreInfo {
 
+	private Integer id;
 	private String name;
 	private String storeAddr;
 	private String pictureUrl;
@@ -37,6 +38,7 @@ public class StoreInfo {
 	public static StoreInfo fromEntity(Store store) {
 
 		return StoreInfo.builder()
+			.id(store.getId())
 			.name(store.getName())
 			.storeAddr(store.getStoreAddr())
 			.pictureUrl(store.getPictureUrl())

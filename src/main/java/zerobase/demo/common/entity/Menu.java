@@ -2,6 +2,8 @@ package zerobase.demo.common.entity;
 
 import java.time.LocalDateTime;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -33,10 +35,11 @@ public class Menu extends BaseEntity{
 	private String name;
 	private String pictureUrl;
 	private String summary;
+
+	@Enumerated(EnumType.STRING)
 	private SoldOutStatus soldOutStatus;
 
 	@ManyToOne
-	@JoinColumn(name = "store_id")
 	private Store store;
 
 	public static Menu fromCreateMenu(CreateMenu dto) {

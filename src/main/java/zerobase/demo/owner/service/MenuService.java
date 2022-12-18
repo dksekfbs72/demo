@@ -1,12 +1,9 @@
 package zerobase.demo.owner.service;
 
 import zerobase.demo.owner.dto.CreateMenu;
-import zerobase.demo.owner.dto.CreateStore;
-import zerobase.demo.owner.dto.OpenCloseStore;
+import zerobase.demo.owner.dto.MenuInfo;
 import zerobase.demo.owner.dto.SetSoldOutStatus;
-import zerobase.demo.owner.dto.StoreInfo;
 import zerobase.demo.owner.dto.UpdateMenu;
-import zerobase.demo.owner.dto.UpdateStore;
 
 public interface MenuService {
 
@@ -25,9 +22,9 @@ public interface MenuService {
 	 */
 	UpdateMenu.Response updateMenu(UpdateMenu updateMenu);
 
-	// /**
-	//  * ownerId로 점포 조회
-	//  */
-	// StoreInfo.Response getStoreInfoByOwnerId(String ownerId);
+	/**
+	 * storeId로 메뉴 목록 조회
+	 */
+	MenuInfo.Response getMenuInfoByStoreId(Integer storeId);
 }
 

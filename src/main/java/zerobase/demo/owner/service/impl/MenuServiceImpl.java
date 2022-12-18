@@ -2,7 +2,7 @@ package zerobase.demo.owner.service.impl;
 
 import static zerobase.demo.common.type.ResponseCode.*;
 
-import java.util.Optional;
+import java.util.List;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -10,12 +10,13 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import zerobase.demo.common.entity.Menu;
 import zerobase.demo.common.entity.Store;
-import zerobase.demo.common.entity.User;
+import zerobase.demo.common.exception.CustomerException;
 import zerobase.demo.common.exception.OwnerException;
 import zerobase.demo.common.exception.UserException;
 import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.common.type.SoldOutStatus;
 import zerobase.demo.owner.dto.CreateMenu;
+import zerobase.demo.owner.dto.MenuInfo;
 import zerobase.demo.owner.dto.SetSoldOutStatus;
 import zerobase.demo.owner.dto.UpdateMenu;
 import zerobase.demo.owner.repository.MenuRepository;
@@ -28,7 +29,6 @@ import zerobase.demo.user.repository.UserRepository;
 public class MenuServiceImpl implements MenuService {
 
 	private final MenuRepository menuRepository;
-	private final UserRepository userRepository;
 	private final StoreRepository storeRepository;
 
 	@Override
@@ -96,5 +96,16 @@ public class MenuServiceImpl implements MenuService {
 		menuRepository.save(menu);
 
 		return new UpdateMenu.Response(UPDATE_MENU_SUCCESS);
+	}
+
+	@Override
+	public MenuInfo.Response getMenuInfoByStoreId(Integer storeId) {
+
+		//존재하지 않는 가게인 경우
+		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomerException(STORE_NOT_FOUND));
+
+		List<Menu> menuList = menuRepository.findAllByStore(store);
+
+		return new MenuInfo.Response(SELECT_MENU_SUCCESS, menuList);
 	}
 }

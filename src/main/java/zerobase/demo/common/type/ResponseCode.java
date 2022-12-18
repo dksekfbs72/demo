@@ -52,7 +52,8 @@ public enum ResponseCode {
 	ALREADY_SOLD_OUT(Result.FAIL, "이미 품절처리된 메뉴입니다."),
 	ALREADY_FOR_SAIL(Result.FAIL, "이미 판매중인 메뉴입니다."),
 	SET_SOLD_OUT_STATUS_SUCCESS(Result.SUCCESS, "메뉴 품절상태 변경 성공"),
-	UPDATE_MENU_SUCCESS(Result.SUCCESS, "메뉴 수정을 성공했습니다.");
+	UPDATE_MENU_SUCCESS(Result.SUCCESS, "메뉴 수정을 성공했습니다."),
+	SELECT_MENU_SUCCESS(Result.SUCCESS, "메뉴 조회를 성공했습니다.");
 
 
 	private final Result result;

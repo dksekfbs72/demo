@@ -2,6 +2,7 @@ package zerobase.demo.owner.service.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.annotation.Transactional;
 
 import zerobase.demo.common.entity.Menu;
 import zerobase.demo.common.entity.Store;
@@ -24,6 +26,7 @@ import zerobase.demo.common.type.SoldOutStatus;
 import zerobase.demo.common.type.UserStatus;
 import zerobase.demo.owner.dto.CreateMenu;
 import zerobase.demo.owner.dto.CreateStore;
+import zerobase.demo.owner.dto.MenuInfo;
 import zerobase.demo.owner.dto.SetSoldOutStatus;
 import zerobase.demo.owner.dto.UpdateMenu;
 import zerobase.demo.owner.repository.MenuRepository;
@@ -36,6 +39,7 @@ import zerobase.demo.user.service.UserService;
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
+@Transactional
 class MenuServiceImplTest {
 
 	@Autowired
@@ -325,6 +329,29 @@ class MenuServiceImplTest {
 		assertEquals(exception.getResponseCode(), ResponseCode.NOT_AUTHORIZED);
 	}
 
+	@Test
+	@DisplayName("메뉴 조회 성공")
+	void getMenuInfoByStoreIdSuccess() throws Exception {
+
+		//given
+
+		Integer storeId = storeRepository.findAllByName("narangdStore").get(0).getId();
+
+		createMenu("narangd2083", "narangdStore", "cider1");
+		createMenu("narangd2083", "narangdStore", "cider2");
+		createMenu("narangd2083", "narangdStore", "cider3");
+
+		//when
+		MenuInfo.Response response = menuService.getMenuInfoByStoreId(storeId);
+
+		//then
+		assertEquals(response.getResult(), Result.SUCCESS);
+		assertEquals(response.getCode(), ResponseCode.SELECT_MENU_SUCCESS);
+
+		assertEquals(response.getMenuInfoList().size(), 3);
+		System.out.println(response.getMenuInfoList());
+	}
+
 
 	private void createMenu(String userId, String storeName, String menuName) {
 		UserDetails loggedUser = userService.loadUserByUsername(userId);
@@ -343,11 +370,6 @@ class MenuServiceImplTest {
 
 		menuService.createMenu(dto);
 	}
-
-
-
-
-
 
 	private void createUser(String userId, UserStatus status) {
 		User user = User.builder()
@@ -388,4 +410,5 @@ class MenuServiceImplTest {
 
 		storeService.createStore(dto);
 	}
+
 }

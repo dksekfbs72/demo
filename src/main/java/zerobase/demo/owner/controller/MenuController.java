@@ -2,14 +2,17 @@ package zerobase.demo.owner.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import zerobase.demo.owner.dto.CreateMenu;
+import zerobase.demo.owner.dto.MenuInfo;
 import zerobase.demo.owner.dto.SetSoldOutStatus;
 import zerobase.demo.owner.dto.UpdateMenu;
 import zerobase.demo.owner.service.MenuService;
@@ -52,5 +55,12 @@ public class MenuController {
 		if(loggedInUser != null) dto.setLoggedInUser(loggedInUser);
 
 		return menuService.updateMenu(dto);
+	}
+
+	//매장id로 메뉴 조회
+	@GetMapping("/menu")
+	public MenuInfo.Response getMenuInfoByStoreId(@RequestParam Integer storeId) {
+
+		return menuService.getMenuInfoByStoreId(storeId);
 	}
 }
