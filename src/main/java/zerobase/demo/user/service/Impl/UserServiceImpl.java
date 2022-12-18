@@ -215,7 +215,7 @@ public class UserServiceImpl implements UserService {
 		List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 		grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
-		if (user.getStatus().name().equals("OWNER")) {
+		if (user.getStatus() == UserStatus.OWNER) {
 			grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_OWNER"));
 		}
 
