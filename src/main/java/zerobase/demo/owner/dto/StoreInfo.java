@@ -24,6 +24,7 @@ public class StoreInfo {
 	private Integer id;
 	private String name;
 	private String storeAddr;
+	private Integer orderCount;
 	private String pictureUrl;
 	private Double deliveryDistanceKm;
 	private String summary;
@@ -41,6 +42,7 @@ public class StoreInfo {
 			.id(store.getId())
 			.name(store.getName())
 			.storeAddr(store.getStoreAddr())
+			.orderCount(store.getOrderCount())
 			.pictureUrl(store.getPictureUrl())
 			.deliveryDistanceKm(store.getDeliveryDistanceKm())
 			.summary(store.getSummary())

@@ -28,6 +28,7 @@ import zerobase.demo.user.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class StoreServiceImpl implements StoreService {
 
 	private final StoreRepository storeRepository;
@@ -47,6 +48,7 @@ public class StoreServiceImpl implements StoreService {
 			throw new OwnerException(NOT_AUTHORIZED);
 
 		Store newStore = Store.fromCreateStore(dto);
+		newStore.setOrderCount(0);
 		newStore.setOpenClose(StoreOpenCloseStatus.CLOSE);
 		newStore.setOpenCloseDt(LocalDateTime.now());
 		newStore.setUser(user);
@@ -82,10 +84,10 @@ public class StoreServiceImpl implements StoreService {
 	@Override
 	public StoreInfo.Response getStoreInfoByOwnerId(String ownerId) {
 
-		User user = userRepository.findByUserId(ownerId).orElseThrow(() -> new UserException(USER_NOT_FOUND));
-		if(user.getStatus() != UserStatus.OWNER) throw new OwnerException(NOT_OWNER);
+		User owner = userRepository.findByUserId(ownerId).orElseThrow(() -> new UserException(USER_NOT_FOUND));
+		if(owner.getStatus() != UserStatus.OWNER) throw new OwnerException(NOT_OWNER);
 
-		List<Store> storeList = storeRepository.findAllByUser(user);
+		List<Store> storeList = storeRepository.findAllByUser(owner);
 
 		return new StoreInfo.Response(storeList, ResponseCode.SELECT_STORE_SUCCESS);
 	}

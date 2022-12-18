@@ -42,6 +42,7 @@ public class Store extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private StoreOpenCloseStatus openClose;
 
+	private Integer orderCount;
 	private Integer deliveryTip;
 	private Double commission;
 
@@ -50,10 +51,11 @@ public class Store extends BaseEntity {
 	private Double lat; //위도
 	private Double lon; //경도
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
 	private User user; //owner
 
-	@OneToMany
+	@OneToMany(mappedBy = "store")
 	private List<Menu> menuList;
 
 	public static Store fromCreateStore(CreateStore createStore) {
