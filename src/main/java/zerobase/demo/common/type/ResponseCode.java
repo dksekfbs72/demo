@@ -14,8 +14,12 @@ public enum ResponseCode {
 	USER_IS_STOP(Result.FAIL, "정지된 유저입니다."),
 	NOT_ADMIN_ROLL(Result.FAIL, "관리자 계정이 아닙니다."),
 	NOT_THIS_STORE_MENU(Result.FAIL, "장바구니에는 한 식당의 메뉴만 담을 수 있습니다."),
+	MENU_SOLD_OUT(Result.FAIL, "품절된 메뉴입니다."),
+	STORE_CLOSED(Result.FAIL, "해당 식당은 영업중이 아닙니다."),
 
 	CHANGE_USER_INFO_SUCCESS(Result.SUCCESS, "유저 정보를 변경하였습니다."),
+	ORDER_SUCCESS(Result.SUCCESS, "주문 결제가 완료되었습니다."),
+	PULL_THIS_MENU(Result.SUCCESS, "장바구니에서 메뉴를 제거하였습니다."),
 	PUT_THIS_MENU(Result.SUCCESS, "메뉴를 장바구니에 담았습니다."),
 	GET_MY_ORDER_SUCCESS(Result.SUCCESS, "성공적으로 주문을 불러왔습니다."),
 	CREATE_USER_SUCCESS(Result.SUCCESS, "회원가입을 성공했습니다."),

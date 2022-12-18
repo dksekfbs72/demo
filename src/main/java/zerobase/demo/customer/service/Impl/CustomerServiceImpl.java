@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
+import javax.mail.StoreClosedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import zerobase.demo.common.components.MailComponents;
@@ -12,7 +13,9 @@ import zerobase.demo.common.entity.Order;
 import zerobase.demo.common.entity.Review;
 import zerobase.demo.common.exception.CustomerException;
 import zerobase.demo.common.exception.UserException;
+import zerobase.demo.common.type.OrderStatus;
 import zerobase.demo.common.type.ResponseCode;
+import zerobase.demo.common.type.StoreOpenCloseStatus;
 import zerobase.demo.customer.service.CustomerService;
 import zerobase.demo.menu.dto.MenuDto;
 import zerobase.demo.menu.repository.MenuRepository;
@@ -95,32 +98,78 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public OrderDto putShoppingBasket(Integer storeId, String username, Integer menuId) {
+	public OrderDto putShoppingBasket(Integer storeId, String username, Integer menuId, Integer count) {
 		Menu menu = menuRepository.findById(menuId).orElseThrow(
 			() -> new CustomerException(ResponseCode.MENU_NOT_FOUND));
+		if (menu.getSoldOut()) throw new CustomerException(ResponseCode.MENU_SOLD_OUT);
 
 		Integer userId = userRepository.findByUserId(username).get().getId();
-		Optional<Order> order = orderRepository.findByUserIdAndStatus(userId, "SHOPPING");
+		Optional<Order> order = orderRepository.findByUserIdAndStatus(userId, OrderStatus.SHOPPING);
 		Order newOrder;
 		if (!order.isPresent()) {
+			List<Integer> newMenus = new ArrayList<>();
+			Integer newPrice = 0;
+			for (int i=0; i<count; i++) {
+				newMenus.add(menuId);
+				newPrice += menu.getPrice();
+			}
 			newOrder = Order.builder()
-				.price(menu.getPrice())
-				.menus(Arrays.asList(menuId))
+				.price(newPrice)
+				.menus(newMenus)
 				.userId(userId)
-				.status("SHOPPING")
+				.status(OrderStatus.SHOPPING)
 				.restaurantId(storeId)
 				.build();
 		} else {
 			newOrder = order.get();
 			if (!menu.getRestaurantId().equals(newOrder.getRestaurantId()))
 				throw new CustomerException(ResponseCode.NOT_THIS_STORE_MENU);
-			List<Integer> list = newOrder.getMenus();
-			list.add(menuId);
-			newOrder.setMenus(list);
-			newOrder.setPrice(newOrder.getPrice()+menu.getPrice());
-
+			List<Integer> newMenus = newOrder.getMenus();
+			for (int i=0; i<count; i++) {
+				newMenus.add(menuId);
+				newOrder.setPrice(newOrder.getPrice()+menu.getPrice());
+			}
+			newOrder.setMenus(newMenus);
 		}
 		orderRepository.save(newOrder);
 		return OrderDto.request(newOrder);
+	}
+
+	@Override
+	public OrderDto pullShoppingBasket(String username, Integer menuId) {
+		Order order = orderRepository.findByUserIdAndStatus(userRepository.findByUserId(username).get().getId()
+			, OrderStatus.SHOPPING).orElseThrow(() -> new CustomerException(ResponseCode.ORDER_NOT_FOUND));
+
+		Menu menu = menuRepository.findById(menuId).orElseThrow(
+			() -> new CustomerException(ResponseCode.MENU_NOT_FOUND));
+
+		List<Integer> newMenus = order.getMenus();
+		if (!newMenus.contains(menuId)) throw new CustomerException(ResponseCode.MENU_NOT_FOUND);
+		newMenus.remove(menuId);
+		if (newMenus.isEmpty()) {
+			orderRepository.delete(order);
+			return null;
+		}
+		order.setMenus(newMenus);
+		order.setPrice(order.getPrice()-menu.getPrice());
+		orderRepository.save(order);
+
+		return OrderDto.request(order);
+	}
+
+	@Override
+	public OrderDto orderPayment(String username) {
+		Order order = orderRepository.findByUserIdAndStatus(userRepository.findByUserId(username).get().getId()
+			, OrderStatus.SHOPPING).orElseThrow(() -> new CustomerException(ResponseCode.ORDER_NOT_FOUND));
+
+		if (storeRepository.findById(order.getRestaurantId()).get().getOpenClose() == StoreOpenCloseStatus.CLOSE){
+			throw new CustomerException(ResponseCode.STORE_CLOSED);
+		}
+
+		order.setStatus(OrderStatus.PAYMENT);
+		order.setDeliveryTime(60);
+		order.setOrderTime(LocalDateTime.now());
+		orderRepository.save(order);
+		return OrderDto.request(order);
 	}
 }

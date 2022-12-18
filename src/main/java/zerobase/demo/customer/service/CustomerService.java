@@ -37,5 +37,15 @@ public interface CustomerService {
 	/**
 	 * 장바구니에 메뉴 담기
 	 */
-	OrderDto putShoppingBasket(Integer storeId, String name, Integer menuId);
+	OrderDto putShoppingBasket(Integer storeId, String username, Integer menuId, Integer count);
+
+	/**
+	 * 장바구니에 메뉴 빼기
+	 */
+	OrderDto pullShoppingBasket(String username, Integer menuId);
+
+	/**
+	 * 내 주문 결제하기
+	 */
+	OrderDto orderPayment(String username);
 }

@@ -1,5 +1,7 @@
 package zerobase.demo.order.dto;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import lombok.*;
 import zerobase.demo.common.entity.Order;
 import zerobase.demo.common.model.BaseResponse;
@@ -7,6 +9,7 @@ import zerobase.demo.common.model.BaseResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import zerobase.demo.common.type.OrderStatus;
 import zerobase.demo.common.type.ResponseCode;
 
 @Getter
@@ -18,9 +21,8 @@ public class OrderDto {
     private Integer price;
 
     private List<Integer> menus;
-
-    private Integer userId;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
     private Integer deliveryTime;
     private Integer restaurantId;
     private LocalDateTime orderTime;
@@ -30,7 +32,6 @@ public class OrderDto {
         return OrderDto.builder()
                 .price(request.getPrice())
                 .menus(request.getMenus())
-                .userId(request.getUserId())
                 .status(request.getStatus())
                 .deliveryTime(request.getDeliveryTime())
                 .restaurantId(request.getRestaurantId())

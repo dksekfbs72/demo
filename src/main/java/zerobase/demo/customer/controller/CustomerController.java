@@ -47,9 +47,24 @@ public class CustomerController extends AllExceptionHandler {
 	}
 
 	@PostMapping("/customer/{storeId}")
-	public OrderDto.Response putShoppingBasket(@PathVariable Integer storeId, Principal principal, @RequestParam Integer menuId) {
+	public OrderDto.Response putShoppingBasket(@PathVariable Integer storeId, Principal principal, @RequestParam Integer menuId,
+		@RequestParam Integer count) {
 
-		return new OrderDto.Response(customerService.putShoppingBasket(storeId, principal.getName(), menuId)
+		return new OrderDto.Response(customerService.putShoppingBasket(storeId, principal.getName(), menuId, count)
 										, ResponseCode.PUT_THIS_MENU);
+	}
+
+	@DeleteMapping("/customer/pullShoppingBasket")
+	public OrderDto.Response pullShoppingBasket(Principal principal, @RequestParam Integer menuId) {
+
+		return new OrderDto.Response(customerService.pullShoppingBasket(principal.getName(), menuId)
+			, ResponseCode.PULL_THIS_MENU);
+	}
+
+	@PostMapping("/customer/payment")
+	public OrderDto.Response orderPayment(Principal principal) {
+
+		return new OrderDto.Response(customerService.orderPayment(principal.getName()),
+			ResponseCode.ORDER_SUCCESS);
 	}
 }
