@@ -112,7 +112,7 @@ public class CustomerServiceImpl implements CustomerService {
 				.build();
 		} else {
 			newOrder = order.get();
-			if (menu.getRestaurantId().equals(newOrder.getRestaurantId()))
+			if (!menu.getRestaurantId().equals(newOrder.getRestaurantId()))
 				throw new CustomerException(ResponseCode.NOT_THIS_STORE_MENU);
 			List<Integer> list = newOrder.getMenus();
 			list.add(menuId);
