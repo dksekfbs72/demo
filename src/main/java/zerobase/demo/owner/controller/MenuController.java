@@ -11,12 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import zerobase.demo.owner.dto.CreateMenu;
 import zerobase.demo.owner.dto.SetSoldOutStatus;
+import zerobase.demo.owner.dto.UpdateMenu;
 import zerobase.demo.owner.service.MenuService;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/menu")
-public class OwnerMenuController {
+public class MenuController {
 
 	private final MenuService menuService;
 
@@ -42,4 +43,14 @@ public class OwnerMenuController {
 		return menuService.setSoldOutStatus(dto);
 	}
 
+	//메뉴 정보 수정
+	@PutMapping()
+	public UpdateMenu.Response updateMenu(@RequestBody UpdateMenu.Request request,
+		@AuthenticationPrincipal UserDetails loggedInUser) {
+
+		UpdateMenu dto = UpdateMenu.fromRequest(request);
+		if(loggedInUser != null) dto.setLoggedInUser(loggedInUser);
+
+		return menuService.updateMenu(dto);
+	}
 }

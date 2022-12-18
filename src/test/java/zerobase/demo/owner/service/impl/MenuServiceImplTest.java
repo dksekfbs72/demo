@@ -2,6 +2,8 @@ package zerobase.demo.owner.service.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,6 +25,7 @@ import zerobase.demo.common.type.UserStatus;
 import zerobase.demo.owner.dto.CreateMenu;
 import zerobase.demo.owner.dto.CreateStore;
 import zerobase.demo.owner.dto.SetSoldOutStatus;
+import zerobase.demo.owner.dto.UpdateMenu;
 import zerobase.demo.owner.repository.MenuRepository;
 import zerobase.demo.owner.repository.StoreRepository;
 import zerobase.demo.owner.service.MenuService;
@@ -94,6 +97,7 @@ class MenuServiceImplTest {
 		//then
 		assertEquals(response.getResult(), Result.SUCCESS);
 		assertEquals(response.getCode(), ResponseCode.CREATE_MENU_SUCCESS);
+		assertFalse(menuRepository.findAllByName("나랑드사이다").isEmpty());
 	}
 
 	@Test
@@ -259,6 +263,67 @@ class MenuServiceImplTest {
 		assertEquals(exception.getResponseCode(), ResponseCode.NOT_AUTHORIZED);
 	}
 
+	@Test
+	@DisplayName("메뉴 수정 성공")
+	void updateMenuSuccess() throws Exception {
+
+		//given
+		createMenu("narangd2083", "narangdStore", "cider");
+		Menu menu = menuRepository.findAllByName("cider").get(0);
+		Integer menuId = menu.getId();
+		UserDetails loggedUser = userService.loadUserByUsername("narangd2083");
+
+		UpdateMenu dto = UpdateMenu.builder()
+			.loggedInUser(loggedUser)
+			.menuId(menuId)
+			.name("cider2")
+			.price(5555)
+			.summary("사이다2 입니다.")
+			.pictureUrl("url Update")
+			.build();
+
+		//when
+		UpdateMenu.Response response = menuService.updateMenu(dto);
+
+		//then
+		assertEquals(response.getResult(), Result.SUCCESS);
+		assertEquals(response.getCode(), ResponseCode.UPDATE_MENU_SUCCESS);
+
+		Optional<Menu> optionalMenu = menuRepository.findById(menuId);
+		assertTrue(optionalMenu.isPresent());
+		assertEquals(optionalMenu.get().getName(), "cider2");
+		assertEquals(optionalMenu.get().getPrice(), 5555);
+	}
+
+	@Test
+	@DisplayName("메뉴 수정 실패 - 로그인한 유저가 주인이 아닌 경우")
+	void updateMenuNotAuthorized() throws Exception {
+
+		//given
+		createMenu("narangd2083", "narangdStore", "cider");
+		Menu menu = menuRepository.findAllByName("cider").get(0);
+		Integer menuId = menu.getId();
+
+		UserDetails loggedUser = userService.loadUserByUsername("cola2083");
+
+		UpdateMenu dto = UpdateMenu.builder()
+			.loggedInUser(loggedUser)
+			.menuId(menuId)
+			.name("cider2")
+			.price(5555)
+			.summary("사이다2 입니다.")
+			.pictureUrl("url Update")
+			.build();
+
+		//when
+		OwnerException exception = (OwnerException)assertThrows(RuntimeException.class, () -> {
+			menuService.updateMenu(dto);
+		});
+
+		//then
+		assertEquals(exception.getResponseCode().getResult(), Result.FAIL);
+		assertEquals(exception.getResponseCode(), ResponseCode.NOT_AUTHORIZED);
+	}
 
 
 	private void createMenu(String userId, String storeName, String menuName) {

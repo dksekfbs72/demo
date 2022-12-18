@@ -5,6 +5,7 @@ import zerobase.demo.owner.dto.CreateStore;
 import zerobase.demo.owner.dto.OpenCloseStore;
 import zerobase.demo.owner.dto.SetSoldOutStatus;
 import zerobase.demo.owner.dto.StoreInfo;
+import zerobase.demo.owner.dto.UpdateMenu;
 import zerobase.demo.owner.dto.UpdateStore;
 
 public interface MenuService {
@@ -19,13 +20,14 @@ public interface MenuService {
 	 */
 	SetSoldOutStatus.Response setSoldOutStatus(SetSoldOutStatus setSoldOutStatus);
 
+	/**
+	 * 메뉴 수정
+	 */
+	UpdateMenu.Response updateMenu(UpdateMenu updateMenu);
+
 	// /**
 	//  * ownerId로 점포 조회
 	//  */
 	// StoreInfo.Response getStoreInfoByOwnerId(String ownerId);
-	//
-	// /**
-	//  * 점포 수정
-	//  */
-	// UpdateStore.Response updateStore(UpdateStore updateStore);
 }
+

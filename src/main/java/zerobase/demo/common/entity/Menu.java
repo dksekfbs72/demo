@@ -16,6 +16,7 @@ import lombok.Setter;
 import lombok.ToString;
 import zerobase.demo.common.type.SoldOutStatus;
 import zerobase.demo.owner.dto.CreateMenu;
+import zerobase.demo.owner.dto.UpdateMenu;
 
 @Entity
 @Getter
@@ -45,5 +46,12 @@ public class Menu extends BaseEntity{
 			.pictureUrl(dto.getPictureUrl())
 			.summary(dto.getSummary())
 			.build();
+	}
+
+	public void setFromUpdateMenu(UpdateMenu menu) {
+		price = menu.getPrice();
+		name = menu.getName();
+		pictureUrl = menu.getPictureUrl();
+		summary = menu.getSummary();
 	}
 }
