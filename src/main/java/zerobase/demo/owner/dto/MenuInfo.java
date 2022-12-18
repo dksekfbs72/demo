@@ -13,6 +13,7 @@ import lombok.Setter;
 import zerobase.demo.common.entity.Menu;
 import zerobase.demo.common.model.BaseResponse;
 import zerobase.demo.common.type.ResponseCode;
+import zerobase.demo.common.type.SoldOutStatus;
 
 @Getter
 @Setter
@@ -26,6 +27,7 @@ public class MenuInfo {
 	private String name;
 	private String pictureUrl;
 	private String summary;
+	private SoldOutStatus soldOutStatus;
 
 	public static MenuInfo fromEntity(Menu menu) {
 		return MenuInfo.builder()
@@ -34,6 +36,7 @@ public class MenuInfo {
 			.name(menu.getName())
 			.pictureUrl(menu.getPictureUrl())
 			.summary(menu.getSummary())
+			.soldOutStatus(menu.getSoldOutStatus())
 			.build();
 	}
 
@@ -51,7 +54,6 @@ public class MenuInfo {
 			menuInfoList = menuList.stream()
 				.map(menu -> fromEntity(menu))
 				.collect(Collectors.toList());
-
 		}
 	}
 }
