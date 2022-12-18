@@ -13,4 +13,6 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     Optional<List<Review>> findByWriterId(Integer writerId);
     Optional<Review> findByOrderId(Integer orderId);
 
+    List<Review> findAllByRestaurantId(Integer storeId);
+
 }

@@ -7,6 +7,7 @@ import zerobase.demo.common.model.BaseResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import zerobase.demo.common.type.ResponseCode;
 
 @Getter
 @Setter
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 public class OrderDto {
     private Integer price;
 
-    private String menus;
+    private List<Integer> menus;
 
     private Integer userId;
     private String status;
@@ -50,14 +51,30 @@ public class OrderDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class Response extends BaseResponse {
+    public static class ListResponse extends BaseResponse {
         private List<OrderDto> orderDtoList;
 
-        public static OrderDto.Response fromDtoList(List<OrderDto> list){
+        public ListResponse(List<OrderDto> list, ResponseCode responseCode){
 
-            return OrderDto.Response.builder()
-                    .orderDtoList(list)
-                    .build();
+            super(responseCode);
+
+            orderDtoList = list;
         }
     }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class Response extends BaseResponse {
+
+        private OrderDto order;
+        public Response(OrderDto orderDto, ResponseCode responseCode) {
+            super(responseCode);
+            order = orderDto;
+        }
+    }
+
+
 }

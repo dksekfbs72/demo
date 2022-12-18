@@ -4,15 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import zerobase.demo.common.config.AllExceptionHandler;
-import zerobase.demo.common.exception.UserException;
 import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.customer.service.CustomerService;
+import zerobase.demo.menu.dto.MenuDto;
 import zerobase.demo.order.dto.OrderDto;
+import zerobase.demo.order.dto.OrderDto.ListResponse;
 import zerobase.demo.review.dto.ReviewDto;
 import zerobase.demo.review.dto.ReviewRequest;
-import zerobase.demo.user.dto.UserDto;
 import zerobase.demo.user.dto.UserDto.Response;
-import zerobase.demo.user.service.UserService;
 
 import java.security.Principal;
 
@@ -30,8 +29,27 @@ public class CustomerController extends AllExceptionHandler {
 	}
 
 	@GetMapping("/customer/getMyOrder")
-	public OrderDto.Response getMyOrderList(Principal principal) {
+	public ListResponse getMyOrderList(Principal principal) {
 
-		return OrderDto.Response.fromDtoList(customerService.getMyOrderList(principal.getName()));
+		return new ListResponse(customerService.getMyOrderList(principal.getName()), ResponseCode.GET_MY_ORDER_SUCCESS);
+	}
+
+	@GetMapping("/customer/{storeId}/review")
+	public ReviewDto.Response getStoreReview(@PathVariable Integer storeId) {
+
+		return new ReviewDto.Response(customerService.getStoreReview(storeId), ResponseCode.GET_STORE_REVIEW_SUCCESS);
+	}
+
+	@GetMapping("/customer/{storeId}/menu")
+	public MenuDto.Response getStoreMenu(@PathVariable Integer storeId) {
+
+		return new MenuDto.Response(customerService.getStoreMenu(storeId), ResponseCode.GET_STORE_MENU_SUCCESS);
+	}
+
+	@PostMapping("/customer/{storeId}")
+	public OrderDto.Response putShoppingBasket(@PathVariable Integer storeId, Principal principal, @RequestParam Integer menuId) {
+
+		return new OrderDto.Response(customerService.putShoppingBasket(storeId, principal.getName(), menuId)
+										, ResponseCode.PUT_THIS_MENU);
 	}
 }
