@@ -16,6 +16,7 @@ import zerobase.demo.common.exception.UserException;
 import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.common.type.SoldOutStatus;
 import zerobase.demo.owner.dto.CreateMenu;
+import zerobase.demo.owner.dto.SetSoldOutStatus;
 import zerobase.demo.owner.repository.MenuRepository;
 import zerobase.demo.owner.repository.StoreRepository;
 import zerobase.demo.owner.service.MenuService;
@@ -48,5 +49,33 @@ public class MenuServiceImpl implements MenuService {
 		menuRepository.save(newMenu);
 
 		return new CreateMenu.Response(CREATE_MENU_SUCCESS);
+	}
+
+	@Override
+	public SetSoldOutStatus.Response setSoldOutStatus(SetSoldOutStatus dto) {
+		//로그인하지 않은 경우
+		if(dto.getLoggedInUser() == null) throw new UserException(ResponseCode.NOT_LOGGED);
+
+		//존재하지 않는 메뉴인 경우
+		Menu menu = menuRepository.findById(dto.getMenuId()).orElseThrow(() -> new OwnerException(MENU_NOT_FOUND));
+
+		//로그인한 유저가 가게주인이 아닌 경우
+		if(!dto.getLoggedInUser().getUsername().equals(menu.getStore().getUser().getUserId()))
+			throw new OwnerException(NOT_AUTHORIZED);
+
+		//이미 품절인데 품절처리 하려고 하는 경우
+		if(menu.getSoldOutStatus() == SoldOutStatus.SOLD_OUT
+			&& dto.getSoldOutStatus() == SoldOutStatus.SOLD_OUT)
+			throw new OwnerException(ALREADY_SOLD_OUT);
+
+		//이미 판매중인데 판매중으로 바꾸려고 하는 경우
+		if(menu.getSoldOutStatus() == SoldOutStatus.FOR_SALE
+			&& dto.getSoldOutStatus() == SoldOutStatus.FOR_SALE)
+			throw new OwnerException(ALREADY_FOR_SAIL);
+
+		menu.setSoldOutStatus(dto.getSoldOutStatus());
+		menuRepository.save(menu);
+
+		return new SetSoldOutStatus.Response(SET_SOLD_OUT_STATUS_SUCCESS);
 	}
 }

@@ -3,6 +3,7 @@ package zerobase.demo.owner.service;
 import zerobase.demo.owner.dto.CreateMenu;
 import zerobase.demo.owner.dto.CreateStore;
 import zerobase.demo.owner.dto.OpenCloseStore;
+import zerobase.demo.owner.dto.SetSoldOutStatus;
 import zerobase.demo.owner.dto.StoreInfo;
 import zerobase.demo.owner.dto.UpdateStore;
 
@@ -13,11 +14,11 @@ public interface MenuService {
 	 */
 	CreateMenu.Response createMenu(CreateMenu createMenu);
 
-	// /**
-	//  * 점포 열기, 닫기
-	//  */
-	// OpenCloseStore.Response openCloseStore(OpenCloseStore openCloseStore);
-	//
+	/**
+	 * 메뉴 판매중 / 품절 처리
+	 */
+	SetSoldOutStatus.Response setSoldOutStatus(SetSoldOutStatus setSoldOutStatus);
+
 	// /**
 	//  * ownerId로 점포 조회
 	//  */

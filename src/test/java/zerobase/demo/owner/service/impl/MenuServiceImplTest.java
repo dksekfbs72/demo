@@ -12,14 +12,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.TestPropertySource;
 
+import zerobase.demo.common.entity.Menu;
 import zerobase.demo.common.entity.Store;
 import zerobase.demo.common.entity.User;
 import zerobase.demo.common.exception.OwnerException;
 import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.common.type.Result;
+import zerobase.demo.common.type.SoldOutStatus;
 import zerobase.demo.common.type.UserStatus;
 import zerobase.demo.owner.dto.CreateMenu;
 import zerobase.demo.owner.dto.CreateStore;
+import zerobase.demo.owner.dto.SetSoldOutStatus;
 import zerobase.demo.owner.repository.MenuRepository;
 import zerobase.demo.owner.repository.StoreRepository;
 import zerobase.demo.owner.service.MenuService;
@@ -152,6 +155,129 @@ class MenuServiceImplTest {
 		assertEquals(exception.getResponseCode(), ResponseCode.NOT_AUTHORIZED);
 	}
 
+	@Test
+	@DisplayName("판매중으로 변경 성공")
+	void setForSaleSuccess() throws Exception {
+
+		//given
+		createMenu("narangd2083", "narangdStore", "cider");
+		Menu menu = menuRepository.findAllByName("cider").get(0);
+		Integer menuId = menu.getId();
+		UserDetails loggedUser = userService.loadUserByUsername("narangd2083");
+
+		SetSoldOutStatus dto = SetSoldOutStatus.builder()
+			.loggedInUser(loggedUser)
+			.menuId(menuId)
+			.soldOutStatus(SoldOutStatus.FOR_SALE)
+			.build();
+
+		//when
+		SetSoldOutStatus.Response response = menuService.setSoldOutStatus(dto);
+
+		//then
+		assertEquals(response.getResult(), Result.SUCCESS);
+		assertEquals(response.getCode(), ResponseCode.SET_SOLD_OUT_STATUS_SUCCESS);
+	}
+
+	@Test
+	@DisplayName("판매중으로 변경 실패 - 이미 판매중일 경우")
+	void setForSaleAlreadyForSale() throws Exception {
+
+		//given
+		createMenu("narangd2083", "narangdStore", "cider");
+		Menu menu = menuRepository.findAllByName("cider").get(0);
+		Integer menuId = menu.getId();
+		UserDetails loggedUser = userService.loadUserByUsername("narangd2083");
+
+		SetSoldOutStatus dto = SetSoldOutStatus.builder()
+			.loggedInUser(loggedUser)
+			.menuId(menuId)
+			.soldOutStatus(SoldOutStatus.FOR_SALE)
+			.build();
+
+		menuService.setSoldOutStatus(dto);
+
+		//when
+		OwnerException exception = (OwnerException)assertThrows(RuntimeException.class, () -> {
+			menuService.setSoldOutStatus(dto);
+		});
+
+		//then
+		assertEquals(exception.getResponseCode().getResult(), Result.FAIL);
+		assertEquals(exception.getResponseCode(), ResponseCode.ALREADY_FOR_SAIL);
+	}
+
+	@Test
+	@DisplayName("판매중으로 변경 실패 - 존재하지 않는 메뉴")
+	void setForSaleMenuNotFound() throws Exception {
+
+		//given
+		createMenu("narangd2083", "narangdStore", "cider");
+		Menu menu = menuRepository.findAllByName("cider").get(0);
+		Integer menuId = menu.getId()+9999;
+		UserDetails loggedUser = userService.loadUserByUsername("narangd2083");
+
+		SetSoldOutStatus dto = SetSoldOutStatus.builder()
+			.loggedInUser(loggedUser)
+			.menuId(menuId)
+			.soldOutStatus(SoldOutStatus.FOR_SALE)
+			.build();
+
+		//when
+		OwnerException exception = (OwnerException)assertThrows(RuntimeException.class, () -> {
+			menuService.setSoldOutStatus(dto);
+		});
+
+		//then
+		assertEquals(exception.getResponseCode().getResult(), Result.FAIL);
+		assertEquals(exception.getResponseCode(), ResponseCode.MENU_NOT_FOUND);
+	}
+
+	@Test
+	@DisplayName("판매중으로 변경 실패 - 로그인한 유저가 주인이 아닌 경우")
+	void setForSaleMenuNotAuthorized() throws Exception {
+
+		//given
+		createMenu("narangd2083", "narangdStore", "cider");
+		Menu menu = menuRepository.findAllByName("cider").get(0);
+		Integer menuId = menu.getId();
+		UserDetails loggedUser = userService.loadUserByUsername("cola2083");
+
+		SetSoldOutStatus dto = SetSoldOutStatus.builder()
+			.loggedInUser(loggedUser)
+			.menuId(menuId)
+			.soldOutStatus(SoldOutStatus.FOR_SALE)
+			.build();
+
+		//when
+		OwnerException exception = (OwnerException)assertThrows(RuntimeException.class, () -> {
+			menuService.setSoldOutStatus(dto);
+		});
+
+		//then
+		assertEquals(exception.getResponseCode().getResult(), Result.FAIL);
+		assertEquals(exception.getResponseCode(), ResponseCode.NOT_AUTHORIZED);
+	}
+
+
+
+	private void createMenu(String userId, String storeName, String menuName) {
+		UserDetails loggedUser = userService.loadUserByUsername(userId);
+
+		Store store = storeRepository.findAllByName(storeName).get(0);
+		int storeId = store.getId();
+
+		CreateMenu dto = CreateMenu.builder()
+			.loggedInUser(loggedUser)
+			.storeId(storeId)
+			.name(menuName)
+			.price(1000)
+			.pictureUrl("https://naver.com")
+			.summary("설명설명")
+			.build();
+
+		menuService.createMenu(dto);
+	}
 
 
 
