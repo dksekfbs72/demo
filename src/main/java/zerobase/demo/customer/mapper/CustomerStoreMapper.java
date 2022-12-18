@@ -10,5 +10,4 @@ import zerobase.demo.customer.dto.CustomerStoreInfo;
 public interface CustomerStoreMapper {
 
     List<CustomerStoreInfo> selectList(CustomerStoreInfo.Param parameter);
-    List<CustomerStoreInfo> selectTest(Double userLon);
 }

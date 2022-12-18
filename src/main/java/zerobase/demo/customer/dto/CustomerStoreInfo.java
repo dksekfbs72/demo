@@ -47,7 +47,6 @@ public class CustomerStoreInfo {
 	@AllArgsConstructor
 	@NoArgsConstructor
 	@Builder
-	
 	public static class Response extends BaseResponse {
 		private List<CustomerStoreInfo> list;
 

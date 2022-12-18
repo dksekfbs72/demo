@@ -18,9 +18,14 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public CustomerStoreInfo.Response getStoreList(CustomerStoreInfo.Param param) {
 
+		//캐시에 있으면 캐시에서 읽어서 return 한다
+
+
+		//캐시에 없으면 db에서 읽어서 캐시에 저장한 후 리턴한다
 		List<CustomerStoreInfo> customerStoreInfo = customerStoreMapper.selectList(param);
-		// List<CustomerStoreInfo> customerStoreInfo = customerStoreMapper.selectTest(param.getUserLon());
-		System.out.println(customerStoreInfo.size());
+
+
+
 		return new CustomerStoreInfo.Response(ResponseCode.SELECT_STORE_SUCCESS, customerStoreInfo);
 	}
 }
