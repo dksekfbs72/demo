@@ -22,7 +22,6 @@ import zerobase.demo.owner.dto.UpdateMenu;
 import zerobase.demo.owner.repository.MenuRepository;
 import zerobase.demo.owner.repository.StoreRepository;
 import zerobase.demo.owner.service.MenuService;
-import zerobase.demo.user.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor

@@ -40,7 +40,7 @@ public class CustomerStoreInfo {
 	@AllArgsConstructor
 	@NoArgsConstructor
 	@Builder
-	public static class Param {
+	public static class ListParam {
 		Double userLat;
 		Double userLon;
 
@@ -54,6 +54,19 @@ public class CustomerStoreInfo {
 		Double limitDistanceKm;
 
 	}
+
+	@Getter
+	@Setter
+	@AllArgsConstructor
+	@NoArgsConstructor
+	@Builder
+	public static class SelectParam {
+		Double userLat;
+		Double userLon;
+
+		Integer storeId;
+	}
+
 
 	@Getter
 	@Setter

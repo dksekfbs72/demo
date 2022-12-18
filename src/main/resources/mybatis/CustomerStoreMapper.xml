@@ -39,4 +39,18 @@
         limit #{offset}, #{limit}
     </select>
 
+    <select id="selectStoreById" resultType="zerobase.demo.customer.dto.CustomerStoreInfo">
+        SELECT
+        * , (
+        6371 * acos (cos( RADIANS(#{userLat}))
+        * cos(radians(lat))
+        * cos(radians(lon) - RADIANS(#{userLon}))
+        + sin (radians(#{userLat})) * sin( radians(lat))
+        )
+        ) AS distanceKm
+        FROM STORE
+        WHERE
+        id = #{storeId}
+    </select>
+
 </mapper>

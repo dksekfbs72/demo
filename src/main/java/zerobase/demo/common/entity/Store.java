@@ -19,6 +19,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import zerobase.demo.common.type.StoreOpenCloseStatus;
 import zerobase.demo.owner.dto.CreateStore;
 import zerobase.demo.owner.dto.UpdateStore;
@@ -29,12 +30,14 @@ import zerobase.demo.owner.dto.UpdateStore;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class Store extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	private String name;
 	private String storeAddr;
+	private Integer orderCount;
 	private String pictureUrl;
 	private Double deliveryDistanceKm;
 	private String summary;
@@ -42,10 +45,8 @@ public class Store extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private StoreOpenCloseStatus openClose;
 
-	private Integer orderCount;
 	private Integer deliveryTip;
 	private Double commission;
-
 	private LocalDateTime openCloseDt;
 
 	private Double lat; //위도
@@ -68,6 +69,8 @@ public class Store extends BaseEntity {
 			.storeAddr(createStore.getStoreAddr())
 			.summary(createStore.getSummary())
 			.pictureUrl(createStore.getPictureUrl())
+			.lat(createStore.getLat())
+			.lon(createStore.getLon())
 			.build();
 	}
 
@@ -79,5 +82,7 @@ public class Store extends BaseEntity {
 		this.summary = dto.getSummary();
 		this.deliveryTip = dto.getDeliveryTip();
 		this.commission = dto.getCommission();
+		this.lat = dto.getLat();
+		this.lon = dto.getLon();
 	}
 }
