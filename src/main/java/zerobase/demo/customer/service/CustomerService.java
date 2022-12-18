@@ -48,4 +48,9 @@ public interface CustomerService {
 	 * 내 주문 결제하기
 	 */
 	OrderDto orderPayment(String username);
+
+	/**
+	 * 주문 취소하기
+	 */
+	OrderDto cancelOrder(String username, Integer orderId);
 }

@@ -47,14 +47,17 @@ public class CustomerServiceImpl implements CustomerService {
 		Order order = orderRepository.findById(fromRequest.getOrderId())
 				.orElseThrow(() -> new UserException(ResponseCode.ORDER_NOT_FOUND));
 
+		if (order.getStatus() != OrderStatus.DELIVERY_COMPLETE) {
+			throw new CustomerException(ResponseCode.DID_NOT_DELIVERY_COMPLETE);
+		}
 		if (!Objects.equals(order.getRestaurantId(), fromRequest.getRestaurantId())) {
-			throw new UserException(ResponseCode.DIFF_ORDER_ID);
+			throw new CustomerException(ResponseCode.DIFF_ORDER_ID);
 		}
 		if (order.getOrderTime().plusDays(3).isBefore(LocalDateTime.now())) {
-			throw new UserException(ResponseCode.TOO_OLD_AN_ORDER);
+			throw new CustomerException(ResponseCode.TOO_OLD_AN_ORDER);
 		}
 		if (!order.getUserId().equals(userRepository.findByUserId(userId).get().getId())) {
-			throw new UserException(ResponseCode.NOT_MY_ORDER);
+			throw new CustomerException(ResponseCode.NOT_MY_ORDER);
 		}
 
 		Review review = new Review().builder()
@@ -67,7 +70,8 @@ public class CustomerServiceImpl implements CustomerService {
 				.build();
 
 		reviewRepository.save(review);
-
+		order.setReviewed(true);
+		orderRepository.save(order);
 		return false;
 	}
 
@@ -108,17 +112,16 @@ public class CustomerServiceImpl implements CustomerService {
 		Order newOrder;
 		if (!order.isPresent()) {
 			List<Integer> newMenus = new ArrayList<>();
-			Integer newPrice = 0;
 			for (int i=0; i<count; i++) {
 				newMenus.add(menuId);
-				newPrice += menu.getPrice();
 			}
 			newOrder = Order.builder()
-				.price(newPrice)
+				.price(menu.getPrice()*count)
 				.menus(newMenus)
 				.userId(userId)
 				.status(OrderStatus.SHOPPING)
 				.restaurantId(storeId)
+				.reviewed(false)
 				.build();
 		} else {
 			newOrder = order.get();
@@ -127,8 +130,8 @@ public class CustomerServiceImpl implements CustomerService {
 			List<Integer> newMenus = newOrder.getMenus();
 			for (int i=0; i<count; i++) {
 				newMenus.add(menuId);
-				newOrder.setPrice(newOrder.getPrice()+menu.getPrice());
 			}
+			newOrder.setPrice(newOrder.getPrice()+(menu.getPrice()*count));
 			newOrder.setMenus(newMenus);
 		}
 		orderRepository.save(newOrder);
@@ -169,6 +172,21 @@ public class CustomerServiceImpl implements CustomerService {
 		order.setStatus(OrderStatus.PAYMENT);
 		order.setDeliveryTime(60);
 		order.setOrderTime(LocalDateTime.now());
+		orderRepository.save(order);
+		return OrderDto.request(order);
+	}
+
+	@Override
+	public OrderDto cancelOrder(String username, Integer orderId) {
+		Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomerException(
+			ResponseCode.ORDER_NOT_FOUND));
+
+		if (order.getOrderTime().plusMinutes(20).isBefore(LocalDateTime.now())) {
+			throw new CustomerException(ResponseCode.TOO_OLD_AN_ORDER);
+		}
+
+		order.setStatus(OrderStatus.CANCEL);
+		order.setDeliveryTime(null);
 		orderRepository.save(order);
 		return OrderDto.request(order);
 	}

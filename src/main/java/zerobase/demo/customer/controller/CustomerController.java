@@ -61,10 +61,16 @@ public class CustomerController extends AllExceptionHandler {
 			, ResponseCode.PULL_THIS_MENU);
 	}
 
-	@PostMapping("/customer/payment")
+	@PutMapping("/customer/payment")
 	public OrderDto.Response orderPayment(Principal principal) {
 
 		return new OrderDto.Response(customerService.orderPayment(principal.getName()),
 			ResponseCode.ORDER_SUCCESS);
+	}
+
+	@PutMapping("/customer/cancelOrder")
+	public OrderDto.Response cancelOrder(Principal principal, @RequestParam Integer orderId) {
+		return new OrderDto.Response(customerService.cancelOrder(principal.getName(), orderId),
+			ResponseCode.ORDER_CANCEL_SUCCESS);
 	}
 }

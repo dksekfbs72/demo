@@ -44,4 +44,5 @@ public class Order extends BaseEntity{
 	private Integer restaurantId;
 	private LocalDateTime orderTime;
 	private Integer useCouponId;
+	private boolean reviewed;
 }
