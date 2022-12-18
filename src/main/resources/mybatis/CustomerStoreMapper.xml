@@ -13,13 +13,30 @@
         + sin (radians(#{userLat})) * sin( radians(lat))
             )
         ) AS distanceKm
-        FROM store
-        HAVING distanceKm &lt; #{maxDistanceKm}
-        ORDER BY distanceKm
+        FROM STORE
+        WHERE
+            1=1
+        <if test='openType.name().equals("OPEN")'>
+            and
+            open_close = 'open'
+        </if>
+
+        and
+        name like concat('%', #{keyword}, '%')
+
+        <if test='limitDistanceKm != null'>
+            HAVING distanceKm &lt; #{limitDistanceKm}
+        </if>
+
+        ORDER BY
+        <choose>
+            <when test='sort.name().equals("RANDOM")'> RAND()</when>
+            <when test='sort.name().equals("DISTANCE")'> distanceKm</when>
+            <when test='sort.name().equals("TIP")'> DELIVERY_TIP</when>
+            <when test='sort.name().equals("ORDER")'> ORDER_COUNT</when>
+        </choose>
+
+        limit #{offset}, #{limit}
     </select>
 
-    <select id="selectTest" resultType="zerobase.demo.customer.dto.CustomerStoreInfo">
-        SELECT * FROM store
-        where lon = #{userLon}
-    </select>
 </mapper>

@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import zerobase.demo.common.model.BaseResponse;
 import zerobase.demo.common.type.ResponseCode;
+import zerobase.demo.common.type.SelectStoreOpenType;
+import zerobase.demo.common.type.Sort;
 import zerobase.demo.common.type.StoreOpenCloseStatus;
 
 @Getter
@@ -19,8 +21,10 @@ import zerobase.demo.common.type.StoreOpenCloseStatus;
 @Builder
 public class CustomerStoreInfo {
 
+	private Integer id;
 	private String name;
 	private String storeAddr;
+	private Integer orderCount;
 	private String pictureUrl;
 	private Double deliveryDistanceKm;
 	private String summary;
@@ -39,7 +43,16 @@ public class CustomerStoreInfo {
 	public static class Param {
 		Double userLat;
 		Double userLon;
-		int maxDistanceKm;
+
+		Integer offset; //default 0
+		Integer limit; //default 50
+		Sort sort; //default random
+		SelectStoreOpenType openType; //default open
+
+		//Optional
+		String keyword;
+		Double limitDistanceKm;
+
 	}
 
 	@Getter

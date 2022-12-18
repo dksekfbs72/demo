@@ -1,8 +1,7 @@
-package zerobase.demo.owner.service.impl;
+package zerobase.demo.owner.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
@@ -31,8 +30,6 @@ import zerobase.demo.owner.dto.SetSoldOutStatus;
 import zerobase.demo.owner.dto.UpdateMenu;
 import zerobase.demo.owner.repository.MenuRepository;
 import zerobase.demo.owner.repository.StoreRepository;
-import zerobase.demo.owner.service.MenuService;
-import zerobase.demo.owner.service.StoreService;
 import zerobase.demo.user.repository.UserRepository;
 import zerobase.demo.user.service.UserService;
 
@@ -40,7 +37,7 @@ import zerobase.demo.user.service.UserService;
 @TestPropertySource(locations = "classpath:application-test.properties")
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @Transactional
-class MenuServiceImplTest {
+class MenuServiceTest {
 
 	@Autowired
 	private UserRepository userRepository;
@@ -331,6 +328,7 @@ class MenuServiceImplTest {
 
 	@Test
 	@DisplayName("메뉴 조회 성공")
+	@Transactional
 	void getMenuInfoByStoreIdSuccess() throws Exception {
 
 		//given

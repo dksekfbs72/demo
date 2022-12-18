@@ -16,10 +16,12 @@ public class CustomerController {
 
 	private final CustomerService customerService;
 
-	//매장 조회
+	//근처 매장 조회
 	@GetMapping("/store")
 	public CustomerStoreInfo.Response getStoreList(CustomerStoreInfo.Param param) {
 
 		return customerService.getStoreList(param);
 	}
+
+
 }

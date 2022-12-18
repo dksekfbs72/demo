@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -39,7 +40,8 @@ public class Menu extends BaseEntity{
 	@Enumerated(EnumType.STRING)
 	private SoldOutStatus soldOutStatus;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "store_id")
 	private Store store;
 
 	public static Menu fromCreateMenu(CreateMenu dto) {

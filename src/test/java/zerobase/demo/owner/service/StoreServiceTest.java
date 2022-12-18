@@ -1,4 +1,4 @@
-package zerobase.demo.owner.service.impl;
+package zerobase.demo.owner.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static zerobase.demo.common.type.ResponseCode.*;
@@ -28,7 +28,6 @@ import zerobase.demo.owner.dto.OpenCloseStore;
 import zerobase.demo.owner.dto.StoreInfo;
 import zerobase.demo.owner.dto.UpdateStore;
 import zerobase.demo.owner.repository.StoreRepository;
-import zerobase.demo.owner.service.StoreService;
 import zerobase.demo.user.repository.UserRepository;
 import zerobase.demo.user.service.UserService;
 
@@ -37,7 +36,7 @@ import zerobase.demo.user.service.UserService;
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
-public class StoreServiceImplTest {
+public class StoreServiceTest {
 
 	@Autowired
 	private  UserRepository userRepository;
