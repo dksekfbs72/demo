@@ -2,7 +2,8 @@ package zerobase.demo.owner.service.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -19,6 +20,7 @@ import zerobase.demo.common.type.Result;
 import zerobase.demo.common.type.UserStatus;
 import zerobase.demo.owner.dto.CreateMenu;
 import zerobase.demo.owner.dto.CreateStore;
+import zerobase.demo.owner.repository.MenuRepository;
 import zerobase.demo.owner.repository.StoreRepository;
 import zerobase.demo.owner.service.MenuService;
 import zerobase.demo.owner.service.StoreService;
@@ -27,7 +29,7 @@ import zerobase.demo.user.service.UserService;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 class MenuServiceImplTest {
 
 	@Autowired
@@ -38,11 +40,12 @@ class MenuServiceImplTest {
 	private StoreService storeService;
 	@Autowired
 	private StoreRepository storeRepository;
-
 	@Autowired
 	private MenuService menuService;
+	@Autowired
+	private MenuRepository menuRepository;
 
-	@BeforeAll
+	@BeforeEach
 	public void setUp() {
 		String userName1 = "narangd2083";
 		String userName2 = "cola2083";
@@ -54,6 +57,12 @@ class MenuServiceImplTest {
 
 		createStore(userName1, storeName1);
 		createStore(userName2, storeName2);
+	}
+	@AfterEach
+	public void deleteAll() {
+		menuRepository.deleteAll();
+		storeRepository.deleteAll();
+		userRepository.deleteAll();
 	}
 
 	@Test

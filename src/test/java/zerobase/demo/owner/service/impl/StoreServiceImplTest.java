@@ -6,7 +6,8 @@ import static zerobase.demo.common.type.ResponseCode.*;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -35,14 +36,8 @@ import zerobase.demo.user.service.UserService;
 // @AutoConfigureMockMvc
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class StoreServiceImplTest {
-	//
-	// @Autowired
-	// ObjectMapper mapper;
-	//
-	// @Autowired
-	// MockMvc mockMvc;
 
 	@Autowired
 	private  UserRepository userRepository;
@@ -65,11 +60,17 @@ public class StoreServiceImplTest {
 		userRepository.save(user);
 	}
 
-	@BeforeAll
+	@BeforeEach
 	public void setRegisteredUser() {
 		createUser("narangd2083", UserStatus.OWNER);
 		createUser("cocacola2083", UserStatus.OWNER);
 		createUser("coffee2083", UserStatus.USER);
+	}
+
+	@AfterEach
+	public void deleteAll() {
+		storeRepository.deleteAll();
+		userRepository.deleteAll();
 	}
 
 	@Test
@@ -245,8 +246,6 @@ public class StoreServiceImplTest {
 		assertEquals(response.getResult(), Result.SUCCESS);
 		assertEquals(response.getCode(), OPEN_STORE_SUCCESS);
 
-		//delete from h2
-		storeRepository.deleteAll();
 	}
 
 	@Test
@@ -275,8 +274,6 @@ public class StoreServiceImplTest {
 		assertEquals(exception.getResponseCode().getResult(), Result.FAIL);
 		assertEquals(exception.getResponseCode(), ALREADY_CLOSE);
 
-		//delete from h2
-		storeRepository.deleteAll();
 	}
 
 	@Test
@@ -305,8 +302,6 @@ public class StoreServiceImplTest {
 		assertEquals(exception.getResponseCode().getResult(), Result.FAIL);
 		assertEquals(exception.getResponseCode(), NOT_AUTHORIZED);
 
-		//delete from h2
-		storeRepository.deleteAll();
 	}
 
 	@Test
@@ -328,8 +323,6 @@ public class StoreServiceImplTest {
 		// System.out.println("############################################");
 		// System.out.println(response.getStoreInfoList().get(0).getName());
 
-		//delete from h2
-		storeRepository.deleteAll();
 	}
 
 	@Test
@@ -349,8 +342,6 @@ public class StoreServiceImplTest {
 		assertEquals(exception.getResponseCode().getResult(), Result.FAIL);
 		assertEquals(exception.getResponseCode(), NOT_OWNER);
 
-		//delete from h2
-		storeRepository.deleteAll();
 	}
 
 	@Test
@@ -380,8 +371,6 @@ public class StoreServiceImplTest {
 		assertEquals(optionalStore.get().getName(), "과일가게");
 		assertEquals(optionalStore.get().getSummary(), "과일가게 입니다.");
 
-		//delete from h2
-		storeRepository.deleteAll();
 	}
 
 	@Test
@@ -410,8 +399,6 @@ public class StoreServiceImplTest {
 		assertEquals(exception.getResponseCode().getResult(), Result.FAIL);
 		assertEquals(exception.getResponseCode(), STORE_NOT_FOUND);
 
-		//delete from h2
-		storeRepository.deleteAll();
 	}
 
 	@Test
@@ -439,7 +426,5 @@ public class StoreServiceImplTest {
 		assertEquals(exception.getResponseCode().getResult(), Result.FAIL);
 		assertEquals(exception.getResponseCode(), NOT_AUTHORIZED);
 
-		//delete from h2
-		storeRepository.deleteAll();
 	}
 }
