@@ -63,7 +63,6 @@ public enum ResponseCode {
 	THERE_IS_NO_ORDER(Result.SUCCESS,"주문내역이 없습니다."),
 
 	CREATE_MENU_SUCCESS(Result.SUCCESS, "메뉴 등록을 성공했습니다."),
-	MENU_NOT_FOUND(Result.FAIL, "존재하지 않는 메뉴입니다."),
 	ALREADY_SOLD_OUT(Result.FAIL, "이미 품절처리된 메뉴입니다."),
 	ALREADY_FOR_SAIL(Result.FAIL, "이미 판매중인 메뉴입니다."),
 	SET_SOLD_OUT_STATUS_SUCCESS(Result.SUCCESS, "메뉴 품절상태 변경 성공"),

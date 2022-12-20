@@ -1,29 +1,23 @@
 package zerobase.demo.customer.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import lombok.RequiredArgsConstructor;
-import zerobase.demo.customer.dto.CustomerStoreInfo;
-import zerobase.demo.customer.dto.CustomerStoreDetail;
-import zerobase.demo.customer.service.CustomerService;
-
 import java.security.Principal;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import zerobase.demo.common.config.AllExceptionHandler;
+import org.springframework.web.bind.annotation.RestController;
+
+import lombok.RequiredArgsConstructor;
 import zerobase.demo.common.type.ResponseCode;
+import zerobase.demo.customer.dto.CustomerStoreDetail;
+import zerobase.demo.customer.dto.CustomerStoreInfo;
 import zerobase.demo.customer.service.CustomerService;
-import zerobase.demo.menu.dto.MenuDto;
 import zerobase.demo.order.dto.OrderDto;
 import zerobase.demo.review.dto.ReviewDto;
 import zerobase.demo.review.dto.ReviewRequest;
@@ -66,12 +60,6 @@ public class CustomerController {
 	public ReviewDto.Response getStoreReview(@PathVariable Integer storeId) {
 
 		return new ReviewDto.Response(customerService.getStoreReview(storeId), ResponseCode.GET_STORE_REVIEW_SUCCESS);
-	}
-
-	@GetMapping("/{storeId}/menu")
-	public MenuDto.Response<List<MenuDto>> getStoreMenu(@PathVariable Integer storeId) {
-
-		return new MenuDto.Response<>(customerService.getStoreMenu(storeId), ResponseCode.GET_STORE_MENU_SUCCESS);
 	}
 
 	@PostMapping("/{storeId}")

@@ -1,18 +1,12 @@
 package zerobase.demo.customer.service;
 
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import zerobase.demo.common.entity.Menu;
+import java.util.List;
+
 import zerobase.demo.common.entity.Review;
-import zerobase.demo.common.type.ResponseCode;
-import zerobase.demo.menu.dto.MenuDto;
+import zerobase.demo.customer.dto.CustomerStoreDetail;
+import zerobase.demo.customer.dto.CustomerStoreInfo;
 import zerobase.demo.order.dto.OrderDto;
 import zerobase.demo.review.dto.ReviewDto;
-import zerobase.demo.user.dto.UserDto;
-import zerobase.demo.user.dto.UserUpdateDto;
-import zerobase.demo.customer.dto.CustomerStoreInfo;
-import zerobase.demo.customer.dto.CustomerStoreDetail;
-import java.util.List;
 
 public interface CustomerService {
 
@@ -34,11 +28,6 @@ public interface CustomerService {
 	 * 식당 리뷰 불러오기
 	 */
 	List<Review> getStoreReview(Integer storeId);
-
-	/**
-	 * 식당 메뉴 리스트 보기
-	 */
-	List<MenuDto> getStoreMenu(Integer storeId);
 
 	/**
 	 * 장바구니에 메뉴 담기
