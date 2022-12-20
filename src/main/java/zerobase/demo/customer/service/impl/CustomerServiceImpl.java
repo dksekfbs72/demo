@@ -86,15 +86,19 @@ public class CustomerServiceImpl implements CustomerService {
 
 		//필수값 미입력
 		if(userLat == null || userLon == null) throw new CustomerException(ResponseCode.BAD_REQUEST);
+		if(isOutOfKorea(userLat, userLon)) {throw new CustomerException(ResponseCode.BAD_REQUEST);}
 
-		//대한민국을 벗어날 경우
-		if(userLat < 33.12 || userLat > 38.58
-			|| userLon < 125.11 || userLon > 131.86) {
-			throw new CustomerException(ResponseCode.BAD_REQUEST);
-		}
 		CustomerStoreInfo customerStoreInfo =  customerStoreMapper.selectStoreById(param)
 			.orElseThrow(() -> new CustomerException(ResponseCode.STORE_NOT_FOUND));
 
 		return customerStoreInfo;
+	}
+
+	private boolean isOutOfKorea(Double userLat, Double userLon) {
+		if(userLat < 33.12 || userLat > 38.58
+			|| userLon < 125.11 || userLon > 131.86) {
+			return true;
+		}
+		return false;
 	}
 }
