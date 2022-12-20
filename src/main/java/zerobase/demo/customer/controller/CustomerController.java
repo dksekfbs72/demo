@@ -9,26 +9,6 @@ import zerobase.demo.customer.dto.CustomerStoreInfo;
 import zerobase.demo.customer.dto.CustomerStoreDetail;
 import zerobase.demo.customer.service.CustomerService;
 
-@RestController
-@RequiredArgsConstructor
-@RequestMapping(value = "/customer")
-public class CustomerController {
-
-	private final CustomerService customerService;
-
-	//매장 조회
-	@GetMapping("/store")
-	public CustomerStoreInfo.Response getStoreList(CustomerStoreInfo.ListParam listParam) {
-
-		return customerService.getStoreList(listParam);
-	}
-
-	@GetMapping("/store/detail")
-	public CustomerStoreDetail.Response getStoreDetail(CustomerStoreDetail.Request request) {
-
-		return customerService.getStoreDetail(request);
-	}
-
 import java.security.Principal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -49,60 +29,74 @@ import zerobase.demo.review.dto.ReviewDto;
 import zerobase.demo.review.dto.ReviewRequest;
 import zerobase.demo.user.dto.UserDto.Response;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
-public class CustomerController extends AllExceptionHandler {
+@RequestMapping(value = "/customer")
+public class CustomerController {
 
 	private final CustomerService customerService;
 
-	@PostMapping("/customer/addReview")
+	//매장 조회
+	@GetMapping("/store")
+	public CustomerStoreInfo.Response getStoreList(CustomerStoreInfo.ListParam listParam) {
+
+		return customerService.getStoreList(listParam);
+	}
+
+	@GetMapping("/store/detail")
+	public CustomerStoreDetail.Response getStoreDetail(CustomerStoreDetail.Request request) {
+
+		return customerService.getStoreDetail(request);
+	}
+
+	@PostMapping("/addReview")
 	Response<ResponseCode> userAddReview(@RequestBody ReviewRequest request, Principal principal) {
 		boolean result = customerService.userAddReview(ReviewDto.fromRequest(request), principal.getName());
 
 		return new Response<>(ResponseCode.ADD_REVIEW_SUCCESS);
 	}
 
-	@GetMapping("/customer/getMyOrder")
+	@GetMapping("/getMyOrder")
 	public OrderDto.Response<List<OrderDto>> getMyOrderList(Principal principal) {
 
 		return new OrderDto.Response<>(customerService.getMyOrderList(principal.getName()), ResponseCode.GET_MY_ORDER_SUCCESS);
 	}
 
-	@GetMapping("/customer/{storeId}/review")
+	@GetMapping("/{storeId}/review")
 	public ReviewDto.Response getStoreReview(@PathVariable Integer storeId) {
 
 		return new ReviewDto.Response(customerService.getStoreReview(storeId), ResponseCode.GET_STORE_REVIEW_SUCCESS);
 	}
 
-	@GetMapping("/customer/{storeId}/menu")
+	@GetMapping("/{storeId}/menu")
 	public MenuDto.Response<List<MenuDto>> getStoreMenu(@PathVariable Integer storeId) {
 
 		return new MenuDto.Response<>(customerService.getStoreMenu(storeId), ResponseCode.GET_STORE_MENU_SUCCESS);
 	}
 
-	@PostMapping("/customer/{storeId}")
+	@PostMapping("/{storeId}")
 	public OrderDto.Response<OrderDto> putShoppingBasket(@PathVariable Integer storeId, Principal principal, @RequestParam Integer menuId,
 		@RequestParam Integer count) {
 
 		return new OrderDto.Response<>(customerService.putShoppingBasket(storeId, principal.getName(), menuId, count)
-										, ResponseCode.PUT_THIS_MENU);
+			, ResponseCode.PUT_THIS_MENU);
 	}
 
-	@DeleteMapping("/customer/pullShoppingBasket")
+	@DeleteMapping("/pullShoppingBasket")
 	public OrderDto.Response<OrderDto> pullShoppingBasket(Principal principal, @RequestParam Integer menuId) {
 
 		return new OrderDto.Response<>(customerService.pullShoppingBasket(principal.getName(), menuId)
 			, ResponseCode.PULL_THIS_MENU);
 	}
 
-	@PutMapping("/customer/payment")
+	@PutMapping("/payment")
 	public OrderDto.Response<OrderDto> orderPayment(Principal principal) {
 
 		return new OrderDto.Response<>(customerService.orderPayment(principal.getName()),
 			ResponseCode.ORDER_SUCCESS);
 	}
 
-	@PutMapping("/customer/cancelOrder")
+	@PutMapping("/cancelOrder")
 	public OrderDto.Response<OrderDto> cancelOrder(Principal principal, @RequestParam Integer orderId) {
 		return new OrderDto.Response<>(customerService.cancelOrder(principal.getName(), orderId),
 			ResponseCode.ORDER_CANCEL_SUCCESS);
