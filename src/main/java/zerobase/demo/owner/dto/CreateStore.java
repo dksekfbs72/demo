@@ -29,6 +29,8 @@ public class CreateStore {
 	private Double commission;
 	private Double deliveryDistanceKm;
 	private Integer deliveryTip;
+	private Double lat;
+	private Double lon;
 
 	public static CreateStore fromRequest(CreateStore.Request request) {
 		return CreateStore.builder()
@@ -40,6 +42,8 @@ public class CreateStore {
 			.commission(request.commission)
 			.deliveryDistanceKm(request.deliveryDistanceKm)
 			.deliveryTip(request.deliveryTip)
+			.lat(request.lat)
+			.lon(request.lon)
 			.build();
 	}
 
@@ -59,6 +63,8 @@ public class CreateStore {
 		private Double commission;
 		private Double deliveryDistanceKm;
 		private Integer deliveryTip;
+		private Double lat;
+		private Double lon;
 	}
 
 	public static class Response extends BaseResponse {

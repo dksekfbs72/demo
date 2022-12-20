@@ -1,4 +1,4 @@
-package zerobase.demo.owner.service.impl;
+package zerobase.demo.owner.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static zerobase.demo.common.type.ResponseCode.*;
@@ -6,7 +6,8 @@ import static zerobase.demo.common.type.ResponseCode.*;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -27,7 +28,6 @@ import zerobase.demo.owner.dto.OpenCloseStore;
 import zerobase.demo.owner.dto.StoreInfo;
 import zerobase.demo.owner.dto.UpdateStore;
 import zerobase.demo.owner.repository.StoreRepository;
-import zerobase.demo.owner.service.StoreService;
 import zerobase.demo.user.repository.UserRepository;
 import zerobase.demo.user.service.UserService;
 
@@ -35,14 +35,8 @@ import zerobase.demo.user.service.UserService;
 // @AutoConfigureMockMvc
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class StoreServiceImplTest {
-	//
-	// @Autowired
-	// ObjectMapper mapper;
-	//
-	// @Autowired
-	// MockMvc mockMvc;
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+public class StoreServiceTest {
 
 	@Autowired
 	private  UserRepository userRepository;
@@ -65,11 +59,17 @@ public class StoreServiceImplTest {
 		userRepository.save(user);
 	}
 
-	@BeforeAll
+	@BeforeEach
 	public void setRegisteredUser() {
 		createUser("narangd2083", UserStatus.OWNER);
 		createUser("cocacola2083", UserStatus.OWNER);
 		createUser("coffee2083", UserStatus.USER);
+	}
+
+	@AfterEach
+	public void deleteAll() {
+		storeRepository.deleteAll();
+		userRepository.deleteAll();
 	}
 
 	@Test
@@ -88,6 +88,9 @@ public class StoreServiceImplTest {
 		Double commission = 3.5;
 		Double deliveryDistanceKm = 5.0;
 		Integer deliveryTip = 3000;
+		Double lat = 123.4545;
+		Double lon = 92.332;
+
 
 		CreateStore dto = CreateStore.builder()
 			.loggedInUser(loggedUser)
@@ -99,6 +102,8 @@ public class StoreServiceImplTest {
 			.commission(commission)
 			.deliveryDistanceKm(deliveryDistanceKm)
 			.deliveryTip(deliveryTip)
+			.lat(lat)
+			.lon(lon)
 			.build();
 
 		//when
@@ -240,8 +245,6 @@ public class StoreServiceImplTest {
 		assertEquals(response.getResult(), Result.SUCCESS);
 		assertEquals(response.getCode(), OPEN_STORE_SUCCESS);
 
-		//delete from h2
-		storeRepository.deleteAll();
 	}
 
 	@Test
@@ -270,8 +273,6 @@ public class StoreServiceImplTest {
 		assertEquals(exception.getResponseCode().getResult(), Result.FAIL);
 		assertEquals(exception.getResponseCode(), ALREADY_CLOSE);
 
-		//delete from h2
-		storeRepository.deleteAll();
 	}
 
 	@Test
@@ -300,8 +301,6 @@ public class StoreServiceImplTest {
 		assertEquals(exception.getResponseCode().getResult(), Result.FAIL);
 		assertEquals(exception.getResponseCode(), NOT_AUTHORIZED);
 
-		//delete from h2
-		storeRepository.deleteAll();
 	}
 
 	@Test
@@ -323,8 +322,6 @@ public class StoreServiceImplTest {
 		// System.out.println("############################################");
 		// System.out.println(response.getStoreInfoList().get(0).getName());
 
-		//delete from h2
-		storeRepository.deleteAll();
 	}
 
 	@Test
@@ -344,8 +341,6 @@ public class StoreServiceImplTest {
 		assertEquals(exception.getResponseCode().getResult(), Result.FAIL);
 		assertEquals(exception.getResponseCode(), NOT_OWNER);
 
-		//delete from h2
-		storeRepository.deleteAll();
 	}
 
 	@Test
@@ -375,8 +370,6 @@ public class StoreServiceImplTest {
 		assertEquals(optionalStore.get().getName(), "과일가게");
 		assertEquals(optionalStore.get().getSummary(), "과일가게 입니다.");
 
-		//delete from h2
-		storeRepository.deleteAll();
 	}
 
 	@Test
@@ -405,8 +398,6 @@ public class StoreServiceImplTest {
 		assertEquals(exception.getResponseCode().getResult(), Result.FAIL);
 		assertEquals(exception.getResponseCode(), STORE_NOT_FOUND);
 
-		//delete from h2
-		storeRepository.deleteAll();
 	}
 
 	@Test
@@ -434,7 +425,5 @@ public class StoreServiceImplTest {
 		assertEquals(exception.getResponseCode().getResult(), Result.FAIL);
 		assertEquals(exception.getResponseCode(), NOT_AUTHORIZED);
 
-		//delete from h2
-		storeRepository.deleteAll();
 	}
 }

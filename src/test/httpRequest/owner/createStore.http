@@ -9,7 +9,9 @@ Content-Type: application/json
   "pictureUrl": "urlTest",
   "commission": 5.3,
   "deliveryDistanceKm": 3.5,
-  "deliveryTip": 3000
+  "deliveryTip": 3000,
+  "lat": 12.1215,
+  "long": 223.1123
 }
 
 ###

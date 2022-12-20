@@ -21,8 +21,10 @@ import zerobase.demo.common.type.StoreOpenCloseStatus;
 @Builder
 public class StoreInfo {
 
+	private Integer id;
 	private String name;
 	private String storeAddr;
+	private Integer orderCount;
 	private String pictureUrl;
 	private Double deliveryDistanceKm;
 	private String summary;
@@ -31,12 +33,16 @@ public class StoreInfo {
 	private Double commission;
 	private LocalDateTime openCloseDt;
 	private LocalDateTime regDt;
+	private Double lat;
+	private Double lon;
 
 	public static StoreInfo fromEntity(Store store) {
 
 		return StoreInfo.builder()
+			.id(store.getId())
 			.name(store.getName())
 			.storeAddr(store.getStoreAddr())
+			.orderCount(store.getOrderCount())
 			.pictureUrl(store.getPictureUrl())
 			.deliveryDistanceKm(store.getDeliveryDistanceKm())
 			.summary(store.getSummary())
@@ -44,7 +50,8 @@ public class StoreInfo {
 			.deliveryTip(store.getDeliveryTip())
 			.commission(store.getCommission())
 			.openCloseDt(store.getOpenCloseDt())
-			.regDt(store.getRegDt())
+			.lat(store.getLat())
+			.lon(store.getLon())
 			.build();
 	}
 

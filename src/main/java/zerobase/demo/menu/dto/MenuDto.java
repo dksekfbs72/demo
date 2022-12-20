@@ -10,6 +10,7 @@ import lombok.Setter;
 import zerobase.demo.common.entity.Menu;
 import zerobase.demo.common.model.BaseResponse;
 import zerobase.demo.common.type.ResponseCode;
+import zerobase.demo.common.type.SoldOutStatus;
 
 @Getter
 @Setter
@@ -24,13 +25,17 @@ public class MenuDto {
     private boolean soldOut;
 
     public static MenuDto request(Menu request) {
-        return MenuDto.builder()
-                .price(request.getPrice())
-                .name(request.getName())
-                .pictureUrl(request.getPictureUrl())
-                .summary(request.getSummary())
-                .soldOut(request.isSoldOut())
-                .build();
+        MenuDto menuDto = MenuDto.builder()
+            .price(request.getPrice())
+            .name(request.getName())
+            .pictureUrl(request.getPictureUrl())
+            .summary(request.getSummary())
+            .build();
+
+        if(request.getSoldOutStatus() == SoldOutStatus.SOLD_OUT) menuDto.soldOut = true;
+        else menuDto.soldOut = false;
+
+        return menuDto;
     }
 
     public static List<MenuDto> fromEntity(List<Menu> orders) {

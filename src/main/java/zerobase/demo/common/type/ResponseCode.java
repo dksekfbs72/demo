@@ -60,7 +60,18 @@ public enum ResponseCode {
 	EMAIL_AUTH_SUCCESS(Result.SUCCESS, "이메일 인증에 성공하셨습니다."),
 	LOGOUT_SUCCESS(Result.SUCCESS, "로그아웃에 성공했습니다."),
 	USER_UNREGISTER(Result.SUCCESS,"회원 탈퇴에 성공하였습니다."),
-	THERE_IS_NO_ORDER(Result.SUCCESS,"주문내역이 없습니다.");
+	THERE_IS_NO_ORDER(Result.SUCCESS,"주문내역이 없습니다."),
+
+	CREATE_MENU_SUCCESS(Result.SUCCESS, "메뉴 등록을 성공했습니다."),
+	ALREADY_SOLD_OUT(Result.FAIL, "이미 품절처리된 메뉴입니다."),
+	ALREADY_FOR_SAIL(Result.FAIL, "이미 판매중인 메뉴입니다."),
+	SET_SOLD_OUT_STATUS_SUCCESS(Result.SUCCESS, "메뉴 품절상태 변경 성공"),
+	UPDATE_MENU_SUCCESS(Result.SUCCESS, "메뉴 수정을 성공했습니다."),
+	SELECT_MENU_SUCCESS(Result.SUCCESS, "메뉴 조회를 성공했습니다."),
+
+	BAD_REQUEST(Result.FAIL, "잘못된 요청입니다."),
+	SELECT_STORE_DETAIL_SUCCESS(Result.SUCCESS, "가게 상세정보 조회 성공");
+
 
 
 	private final Result result;

@@ -1,0 +1,4 @@
+GET http://localhost:8080/customer/store?userLat=37.5&userLon=126.9&maxDistanceKm=10
+Accept: application/json
+
+###

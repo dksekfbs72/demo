@@ -20,7 +20,7 @@ import zerobase.demo.owner.service.StoreService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/store")
-public class OwnerStoreController {
+public class StoreController {
 
 	private final StoreService storeService;
 

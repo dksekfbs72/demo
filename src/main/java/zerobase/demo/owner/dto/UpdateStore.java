@@ -27,6 +27,8 @@ public class UpdateStore {
 	private String summary;
 	private Integer deliveryTip;
 	private Double commission;
+	private Double lat;
+	private Double lon;
 
 	public static UpdateStore fromRequest(UpdateStore.Request request) {
 		return UpdateStore.builder()
@@ -56,6 +58,8 @@ public class UpdateStore {
 		private String summary;
 		private Integer deliveryTip;
 		private Double commission;
+		private Double lat;
+		private Double lon;
 	}
 
 	public static class Response extends BaseResponse {
