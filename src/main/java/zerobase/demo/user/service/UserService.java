@@ -48,17 +48,8 @@ public interface UserService extends UserDetailsService {
 	boolean userEmailAuth(String emailAuthKey);
 
 	/**
-	 * 리뷰 남기기
-	 */
-    boolean userAddReview(ReviewDto fromRequest, String userId);
-
-	/**
 	 * 로그인
 	 */
 	UserDetails loadUserByUsername(String userId);
 
-	/**
-	 * 주문 내역 확인
-	 */
-	List<OrderDto> getMyOrderList(String userId);
 }

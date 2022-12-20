@@ -10,6 +10,7 @@ import org.springframework.security.authentication.InternalAuthenticationService
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import zerobase.demo.DemoApplication;
+import zerobase.demo.common.exception.CustomerException;
 import zerobase.demo.common.exception.OwnerException;
 import zerobase.demo.common.exception.UserException;
 import zerobase.demo.common.exception.UserNotFindException;
@@ -30,6 +31,12 @@ public class AllExceptionHandler {
 
 	@ExceptionHandler(OwnerException.class)
 	public ErrorResponse handleOwnerException(OwnerException ex) {
+		logger.error("{} is occurred.", ex.getMessage());
+		return new ErrorResponse(ex.getResponseCode());
+	}
+
+	@ExceptionHandler(CustomerException.class)
+	public ErrorResponse handleCustomerException(CustomerException ex) {
 		logger.error("{} is occurred.", ex.getMessage());
 		return new ErrorResponse(ex.getResponseCode());
 	}
