@@ -33,9 +33,6 @@ public class MenuServiceImpl implements MenuService {
 	@Override
 	public CreateMenu.Response createMenu(CreateMenu dto) {
 
-		//로그인하지 않은 경우
-		if(dto.getLoggedInUser() == null) throw new UserException(ResponseCode.NOT_LOGGED);
-
 		//존재하지 않는 가게인 경우
 		Store store = storeRepository.findById(dto.getStoreId()).orElseThrow(() -> new OwnerException(STORE_NOT_FOUND));
 
