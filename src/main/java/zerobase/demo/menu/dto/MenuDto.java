@@ -1,6 +1,5 @@
 package zerobase.demo.menu.dto;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -9,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import zerobase.demo.common.entity.Menu;
-import zerobase.demo.common.entity.Order;
 import zerobase.demo.common.model.BaseResponse;
 import zerobase.demo.common.type.ResponseCode;
 
@@ -26,15 +24,12 @@ public class MenuDto {
     private boolean soldOut;
 
     public static MenuDto request(Menu request) {
-        boolean soldOut = request.getSoldOut()==null ? false : request.getSoldOut();
-        //null 이면 품절이 아님
-        // 추후 메뉴 등록 시에 자동으로 false 로 등록되는 방식으로 수정 예정
         return MenuDto.builder()
                 .price(request.getPrice())
                 .name(request.getName())
                 .pictureUrl(request.getPictureUrl())
                 .summary(request.getSummary())
-                .soldOut(soldOut)
+                .soldOut(request.isSoldOut())
                 .build();
     }
 
@@ -50,14 +45,18 @@ public class MenuDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class Response extends BaseResponse {
-        private List<MenuDto> orderDtoList;
+    public static class Response<T> extends BaseResponse {
+        private T resultList;
 
-        public Response(List<MenuDto> list, ResponseCode responseCode){
+        public Response(T list, ResponseCode responseCode){
 
             super(responseCode);
 
-            orderDtoList = list;
+            resultList = list;
         }
     }
 }
+
+
+
+

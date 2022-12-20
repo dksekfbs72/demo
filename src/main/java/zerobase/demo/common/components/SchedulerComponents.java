@@ -24,7 +24,7 @@ public class SchedulerComponents {
 	private final OrderRepository orderRepository;
 	private final UserRepository userRepository;
 
-	@Scheduled(cron = "0 */1 * * * *")
+	@Scheduled(cron = "0 0 0/1 * * *")
 	public void promotingReviewEmailSender() {
 		log.info("send email to promote review");
 

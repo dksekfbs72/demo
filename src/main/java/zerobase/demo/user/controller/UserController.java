@@ -31,17 +31,17 @@ public class UserController extends AllExceptionHandler {
 	private final UserService userService;
 
 	@PostMapping("/user/create")
-	public UserDto.Response createUser(@RequestBody UserDto.Request parameter) {
+	public UserDto.Response<ResponseCode> createUser(@RequestBody UserDto.Request parameter) {
 
 		boolean result = userService.createUser(UserDto.fromRequest(parameter));
 
-		return new UserDto.Response(ResponseCode.CREATE_USER_SUCCESS);
+		return new UserDto.Response<>(ResponseCode.CREATE_USER_SUCCESS);
 	}
 
 	@PostMapping("/login/success")
-	public UserDto.Response login() {
+	public UserDto.Response<ResponseCode> login() {
 
-		return new UserDto.Response(ResponseCode.LOGIN_SUCCESS);
+		return new UserDto.Response<>(ResponseCode.LOGIN_SUCCESS);
 	}
 
 	@GetMapping("/user/readMyInfo")
@@ -52,29 +52,29 @@ public class UserController extends AllExceptionHandler {
 	}
 
 	@PostMapping("/user/changePassword")
-	UserDto.Response changePassword(Principal principal, @RequestParam String password, @RequestParam String newPassword) {
+	UserDto.Response<ResponseCode> changePassword(Principal principal, @RequestParam String password, @RequestParam String newPassword) {
 		boolean result = userService.changePassword(principal.getName(),password,newPassword);
-		return new Response(ResponseCode.PASSWORD_CHANGE);
+		return new Response<>(ResponseCode.PASSWORD_CHANGE);
 	}
 
 	@DeleteMapping("/user/unregister")
-	UserDto.Response userUnregister(Principal principal, @RequestParam String password) {
+	UserDto.Response<ResponseCode> userUnregister(Principal principal, @RequestParam String password) {
 		boolean result = userService.userUnregister(principal.getName(), password);
-		return new UserDto.Response(ResponseCode.USER_UNREGISTER);
+		return new UserDto.Response<>(ResponseCode.USER_UNREGISTER);
 	}
 
 	@RequestMapping("/error/denied")
-	UserDto.Response errorResponse(@RequestParam String errorCode) {
+	UserDto.Response<ResponseCode> errorResponse(@RequestParam String errorCode) {
 
 		ResponseCode responseCode = userService.getErrorCode(errorCode);
 
-		return new Response(responseCode);
+		return new Response<>(responseCode);
 	}
 
 	@PostMapping("/user/emailAuth")
-	UserDto.Response userEmailAuth(@RequestParam String emailAuthKey) {
+	UserDto.Response<ResponseCode> userEmailAuth(@RequestParam String emailAuthKey) {
 		boolean result = userService.userEmailAuth(emailAuthKey);
-		return new Response(ResponseCode.EMAIL_AUTH_SUCCESS);
+		return new Response<>(ResponseCode.EMAIL_AUTH_SUCCESS);
 	}
 
 }

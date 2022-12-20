@@ -1,13 +1,12 @@
 package zerobase.demo.customer.service.Impl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import javax.mail.StoreClosedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import zerobase.demo.common.components.MailComponents;
 import zerobase.demo.common.entity.Menu;
 import zerobase.demo.common.entity.Order;
 import zerobase.demo.common.entity.Review;
@@ -26,13 +25,10 @@ import zerobase.demo.review.dto.ReviewDto;
 import zerobase.demo.review.repository.ReviewRepository;
 import zerobase.demo.user.repository.UserRepository;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-
 @Service
 @RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
+
 	private final UserRepository userRepository;
 	private final ReviewRepository reviewRepository;
 	private final OrderRepository orderRepository;
@@ -41,12 +37,13 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public boolean userAddReview(ReviewDto fromRequest, String userId) {
-		reviewRepository.findByOrderId(fromRequest.getOrderId())
-				.ifPresent(t -> {throw new UserException(ResponseCode.ALREADY_ADDED_REVIEW);});
 
 		Order order = orderRepository.findById(fromRequest.getOrderId())
-				.orElseThrow(() -> new UserException(ResponseCode.ORDER_NOT_FOUND));
+			.orElseThrow(() -> new UserException(ResponseCode.ORDER_NOT_FOUND));
 
+		if (order.isReviewed()) {
+			throw new CustomerException(ResponseCode.ALREADY_ADDED_REVIEW);
+		}
 		if (order.getStatus() != OrderStatus.DELIVERY_COMPLETE) {
 			throw new CustomerException(ResponseCode.DID_NOT_DELIVERY_COMPLETE);
 		}
@@ -61,13 +58,13 @@ public class CustomerServiceImpl implements CustomerService {
 		}
 
 		Review review = new Review().builder()
-				.writerId(userRepository.findByUserId(userId).get().getId())
-				.orderId(fromRequest.getOrderId())
-				.restaurantId(fromRequest.getRestaurantId())
-				.summary(fromRequest.getSummary())
-				.content(fromRequest.getContent())
-				.reviewAddTime(LocalDateTime.now())
-				.build();
+			.writerId(userRepository.findByUserId(userId).get().getId())
+			.orderId(fromRequest.getOrderId())
+			.restaurantId(fromRequest.getRestaurantId())
+			.summary(fromRequest.getSummary())
+			.content(fromRequest.getContent())
+			.reviewAddTime(LocalDateTime.now())
+			.build();
 
 		reviewRepository.save(review);
 		order.setReviewed(true);
@@ -79,44 +76,57 @@ public class CustomerServiceImpl implements CustomerService {
 	public List<OrderDto> getMyOrderList(String userId) {
 
 		List<Order> orderDtoList = orderRepository
-				.findAllByUserId(userRepository.findByUserId(userId).get().getId());
-		if (orderDtoList.isEmpty()) throw new CustomerException(ResponseCode.THERE_IS_NO_ORDER);
+			.findAllByUserId(userRepository.findByUserId(userId).get().getId());
+		if (orderDtoList.isEmpty()) {
+			throw new CustomerException(ResponseCode.THERE_IS_NO_ORDER);
+		}
 
 		return OrderDto.fromEntity(orderDtoList);
 	}
 
 	@Override
 	public List<Review> getStoreReview(Integer storeId) {
-		if (!storeRepository.findById(storeId).isPresent()) throw new CustomerException(ResponseCode.STORE_NOT_FOUND);
+		if (!storeRepository.findById(storeId).isPresent()) {
+			throw new CustomerException(ResponseCode.STORE_NOT_FOUND);
+		}
 		List<Review> list = reviewRepository.findAllByRestaurantId(storeId);
-		if (list.isEmpty()) throw new CustomerException(ResponseCode.THERE_IS_NO_REVIEW);
+		if (list.isEmpty()) {
+			throw new CustomerException(ResponseCode.THERE_IS_NO_REVIEW);
+		}
 		return list;
 	}
 
 	@Override
 	public List<MenuDto> getStoreMenu(Integer storeId) {
-		if (!storeRepository.findById(storeId).isPresent()) throw new CustomerException(ResponseCode.STORE_NOT_FOUND);
+		if (!storeRepository.findById(storeId).isPresent()) {
+			throw new CustomerException(ResponseCode.STORE_NOT_FOUND);
+		}
 		List<Menu> menuList = menuRepository.findAllByRestaurantId(storeId);
-		if (menuList.isEmpty()) throw new CustomerException(ResponseCode.THERE_IS_NO_MENU);
+		if (menuList.isEmpty()) {
+			throw new CustomerException(ResponseCode.THERE_IS_NO_MENU);
+		}
 		return MenuDto.fromEntity(menuList);
 	}
 
 	@Override
-	public OrderDto putShoppingBasket(Integer storeId, String username, Integer menuId, Integer count) {
+	public OrderDto putShoppingBasket(Integer storeId, String username, Integer menuId,
+		Integer count) {
 		Menu menu = menuRepository.findById(menuId).orElseThrow(
 			() -> new CustomerException(ResponseCode.MENU_NOT_FOUND));
-		if (menu.getSoldOut()) throw new CustomerException(ResponseCode.MENU_SOLD_OUT);
+		if (menu.isSoldOut()) {
+			throw new CustomerException(ResponseCode.MENU_SOLD_OUT);
+		}
 
 		Integer userId = userRepository.findByUserId(username).get().getId();
 		Optional<Order> order = orderRepository.findByUserIdAndStatus(userId, OrderStatus.SHOPPING);
 		Order newOrder;
 		if (!order.isPresent()) {
 			List<Integer> newMenus = new ArrayList<>();
-			for (int i=0; i<count; i++) {
+			for (int i = 0; i < count; i++) {
 				newMenus.add(menuId);
 			}
 			newOrder = Order.builder()
-				.price(menu.getPrice()*count)
+				.price(menu.getPrice() * count)
 				.menus(newMenus)
 				.userId(userId)
 				.status(OrderStatus.SHOPPING)
@@ -125,13 +135,14 @@ public class CustomerServiceImpl implements CustomerService {
 				.build();
 		} else {
 			newOrder = order.get();
-			if (!menu.getRestaurantId().equals(newOrder.getRestaurantId()))
+			if (!menu.getRestaurantId().equals(newOrder.getRestaurantId())) {
 				throw new CustomerException(ResponseCode.NOT_THIS_STORE_MENU);
+			}
 			List<Integer> newMenus = newOrder.getMenus();
-			for (int i=0; i<count; i++) {
+			for (int i = 0; i < count; i++) {
 				newMenus.add(menuId);
 			}
-			newOrder.setPrice(newOrder.getPrice()+(menu.getPrice()*count));
+			newOrder.setPrice(newOrder.getPrice() + (menu.getPrice() * count));
 			newOrder.setMenus(newMenus);
 		}
 		orderRepository.save(newOrder);
@@ -140,21 +151,25 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public OrderDto pullShoppingBasket(String username, Integer menuId) {
-		Order order = orderRepository.findByUserIdAndStatus(userRepository.findByUserId(username).get().getId()
-			, OrderStatus.SHOPPING).orElseThrow(() -> new CustomerException(ResponseCode.ORDER_NOT_FOUND));
+		Order order = orderRepository.findByUserIdAndStatus(
+				userRepository.findByUserId(username).get().getId()
+				, OrderStatus.SHOPPING)
+			.orElseThrow(() -> new CustomerException(ResponseCode.ORDER_NOT_FOUND));
 
 		Menu menu = menuRepository.findById(menuId).orElseThrow(
 			() -> new CustomerException(ResponseCode.MENU_NOT_FOUND));
 
 		List<Integer> newMenus = order.getMenus();
-		if (!newMenus.contains(menuId)) throw new CustomerException(ResponseCode.MENU_NOT_FOUND);
+		if (!newMenus.contains(menuId)) {
+			throw new CustomerException(ResponseCode.MENU_NOT_FOUND);
+		}
 		newMenus.remove(menuId);
 		if (newMenus.isEmpty()) {
 			orderRepository.delete(order);
 			return null;
 		}
 		order.setMenus(newMenus);
-		order.setPrice(order.getPrice()-menu.getPrice());
+		order.setPrice(order.getPrice() - menu.getPrice());
 		orderRepository.save(order);
 
 		return OrderDto.request(order);
@@ -162,10 +177,13 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public OrderDto orderPayment(String username) {
-		Order order = orderRepository.findByUserIdAndStatus(userRepository.findByUserId(username).get().getId()
-			, OrderStatus.SHOPPING).orElseThrow(() -> new CustomerException(ResponseCode.ORDER_NOT_FOUND));
+		Order order = orderRepository.findByUserIdAndStatus(
+				userRepository.findByUserId(username).get().getId()
+				, OrderStatus.SHOPPING)
+			.orElseThrow(() -> new CustomerException(ResponseCode.ORDER_NOT_FOUND));
 
-		if (storeRepository.findById(order.getRestaurantId()).get().getOpenClose() == StoreOpenCloseStatus.CLOSE){
+		if (storeRepository.findById(order.getRestaurantId()).get().getOpenClose()
+			== StoreOpenCloseStatus.CLOSE) {
 			throw new CustomerException(ResponseCode.STORE_CLOSED);
 		}
 
@@ -181,6 +199,9 @@ public class CustomerServiceImpl implements CustomerService {
 		Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomerException(
 			ResponseCode.ORDER_NOT_FOUND));
 
+		if (order.getStatus() != OrderStatus.PAYMENT) {
+			throw new CustomerException(ResponseCode.ORDER_NOT_PAYMENT);
+		}
 		if (order.getOrderTime().plusMinutes(20).isBefore(LocalDateTime.now())) {
 			throw new CustomerException(ResponseCode.TOO_OLD_AN_ORDER);
 		}

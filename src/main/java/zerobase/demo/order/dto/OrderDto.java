@@ -52,28 +52,11 @@ public class OrderDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class ListResponse extends BaseResponse {
-        private List<OrderDto> orderDtoList;
-
-        public ListResponse(List<OrderDto> list, ResponseCode responseCode){
-
+    public static class Response<T> extends BaseResponse {
+        private T resultList;
+        public Response(T orderDto, ResponseCode responseCode) {
             super(responseCode);
-
-            orderDtoList = list;
-        }
-    }
-
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    public static class Response extends BaseResponse {
-
-        private OrderDto order;
-        public Response(OrderDto orderDto, ResponseCode responseCode) {
-            super(responseCode);
-            order = orderDto;
+            resultList = orderDto;
         }
     }
 
