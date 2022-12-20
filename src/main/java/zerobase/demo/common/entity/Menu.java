@@ -22,7 +22,7 @@ public class Menu extends BaseEntity{
 	private String name;
 	private String pictureUrl;
 	private String summary;
-	private Boolean soldOut;
+	private boolean soldOut;
 	private Integer restaurantId;
 	private LocalDateTime dropMenuTime;
 }

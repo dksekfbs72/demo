@@ -27,6 +27,7 @@ public class AdminUserController extends AllExceptionHandler {
 		//유저의 아이디와 비밀번호는 변경할 수 없음
 		boolean result = userService.adminUpdateUser(UserUpdateDto.fromRequest(parameter),
 			principal.getName());
+		logger.info("change user info -> " + parameter.getUserId());
 
 		return new UserUpdateDto.Response(ResponseCode.CHANGE_USER_INFO_SUCCESS);
 	}
