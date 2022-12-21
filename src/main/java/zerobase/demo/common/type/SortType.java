@@ -1,6 +1,6 @@
 package zerobase.demo.common.type;
 
-public enum Sort {
+public enum SortType {
 	RANDOM,
 	DISTANCE,
 	ORDER,

@@ -16,7 +16,7 @@ import zerobase.demo.common.type.OrderStatus;
 import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.common.type.SelectStoreOpenType;
 import zerobase.demo.common.type.SoldOutStatus;
-import zerobase.demo.common.type.Sort;
+import zerobase.demo.common.type.SortType;
 import zerobase.demo.common.type.StoreOpenCloseStatus;
 import zerobase.demo.customer.dto.CustomerStoreDetail;
 import zerobase.demo.customer.dto.CustomerStoreInfo;
@@ -225,19 +225,7 @@ public class CustomerServiceImpl implements CustomerService {
 		if(listParam.getOffset() == null) listParam.setOffset(0);
 		if(listParam.getLimit() == null) listParam.setLimit(50);
 		if(listParam.getOpenType() ==null) listParam.setOpenType(SelectStoreOpenType.OPEN);
-		if(listParam.getSort() == null) listParam.setSort(Sort.RANDOM);
-
-		// //좌표 압축
-		// //좌표 소수점 3째자리 오차 : 약 110m
-		// //소수점 3째자리까지 남기고 반올림
-		// userLat = Math.round(userLat*1000)/1000.0;
-		// userLon = Math.round(userLon*1000)/1000.0;
-
-		// if((param.getKeyword() == null ||param.getKeyword() == "") && param.getLimit()<=50
-		// 	&& param.getOpenType() == SelectStoreOpenType.OPEN) {
-		// 	// 이 경우 캐시 조회
-		// 	// 캐시 키 : 위,경도
-		// }
+		if(listParam.getSortType() == null) listParam.setSortType(SortType.DISTANCE);
 
 		List<CustomerStoreInfo> customerStoreInfo = customerStoreMapper.selectList(listParam);
 		return new CustomerStoreInfo.Response(ResponseCode.SELECT_STORE_SUCCESS, customerStoreInfo);
