@@ -3,12 +3,8 @@ package zerobase.demo.user.service;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import zerobase.demo.common.type.ResponseCode;
-import zerobase.demo.order.dto.OrderDto;
-import zerobase.demo.review.dto.ReviewDto;
 import zerobase.demo.user.dto.UserDto;
 import zerobase.demo.user.dto.UserUpdateDto;
-
-import java.util.List;
 
 public interface UserService extends UserDetailsService {
 
@@ -52,4 +48,8 @@ public interface UserService extends UserDetailsService {
 	 */
 	UserDetails loadUserByUsername(String userId);
 
+	/**
+	 * 배달완료
+	 */
+	ResponseCode deliveryComplete(Integer orderId);
 }

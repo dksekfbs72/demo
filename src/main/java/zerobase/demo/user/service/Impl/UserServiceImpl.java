@@ -13,13 +13,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import zerobase.demo.common.entity.Order;
 import zerobase.demo.common.entity.Review;
+import zerobase.demo.common.entity.Store;
 import zerobase.demo.common.entity.User;
 import zerobase.demo.common.exception.*;
+import zerobase.demo.common.type.OrderStatus;
 import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.common.type.UserStatus;
 import zerobase.demo.common.components.MailComponents;
 import zerobase.demo.order.dto.OrderDto;
 import zerobase.demo.order.repository.OrderRepository;
+import zerobase.demo.owner.repository.StoreRepository;
 import zerobase.demo.review.dto.ReviewDto;
 import zerobase.demo.review.repository.ReviewRepository;
 import zerobase.demo.user.dto.UserDto;
@@ -33,6 +36,8 @@ public class UserServiceImpl implements UserService {
 
 	private final MailComponents mailComponents;
 	private final UserRepository userRepository;
+	private final OrderRepository orderRepository;
+	private final StoreRepository storeRepository;
 
 	@Override
 	public boolean createUser(UserDto userDto) {
@@ -191,6 +196,18 @@ public class UserServiceImpl implements UserService {
 
 		return new org.springframework.security.core.userdetails.User(user.getUserId(),
 			user.getPassword(), grantedAuthorities);
+	}
+
+	@Override
+	public ResponseCode deliveryComplete(Integer orderId) {
+		Order order = orderRepository.findById(orderId)
+			.orElseThrow(() -> new UserException(ResponseCode.ORDER_NOT_FOUND));
+		order.setStatus(OrderStatus.DELIVERY_COMPLETE);
+		Store store = storeRepository.findById(order.getRestaurantId()).get();
+		store.setOrderCount(store.getOrderCount()+1);
+		orderRepository.save(order);
+		storeRepository.save(store);
+		return ResponseCode.DELIVERY_SUCCESS;
 	}
 
 }

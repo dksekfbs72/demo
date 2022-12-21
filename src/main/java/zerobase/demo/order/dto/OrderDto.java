@@ -3,6 +3,7 @@ package zerobase.demo.order.dto;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import lombok.*;
+import zerobase.demo.common.entity.Coupon;
 import zerobase.demo.common.entity.Order;
 import zerobase.demo.common.model.BaseResponse;
 
@@ -26,7 +27,7 @@ public class OrderDto {
     private Integer deliveryTime;
     private Integer restaurantId;
     private LocalDateTime orderTime;
-    private Integer useCouponId;
+    private List<Coupon> useCoupon;
 
     public static OrderDto request(Order request) {
         return OrderDto.builder()
@@ -36,7 +37,7 @@ public class OrderDto {
                 .deliveryTime(request.getDeliveryTime())
                 .restaurantId(request.getRestaurantId())
                 .orderTime(request.getOrderTime())
-                .useCouponId(request.getUseCouponId())
+                .useCoupon(request.getUseCoupon())
                 .build();
     }
 

@@ -7,21 +7,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import zerobase.demo.DemoApplication;
 import zerobase.demo.common.config.AllExceptionHandler;
 import zerobase.demo.common.type.ResponseCode;
+import zerobase.demo.user.dto.UserDto;
 import zerobase.demo.user.dto.UserUpdateDto;
 import zerobase.demo.user.service.UserService;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/admin")
 public class AdminUserController extends AllExceptionHandler {
 
 	private final UserService userService;
 	private static final Logger logger = LoggerFactory.getLogger(DemoApplication.class);
 
 
-	@PutMapping("/admin/userUpdate")
+	@PutMapping("/userUpdate")
 	UserUpdateDto.Response userUpdate(@RequestBody UserUpdateDto.Request parameter,
 		Principal principal) {
 		//유저의 아이디와 비밀번호는 변경할 수 없음
@@ -30,5 +34,10 @@ public class AdminUserController extends AllExceptionHandler {
 		logger.info("change user info -> " + parameter.getUserId());
 
 		return new UserUpdateDto.Response(ResponseCode.CHANGE_USER_INFO_SUCCESS);
+	}
+
+	@PutMapping("/deliveryComplete")
+	UserDto.Response<ResponseCode> deliveryComplete(@RequestParam Integer orderId) {
+		return new UserDto.Response<>(userService.deliveryComplete(orderId));
 	}
 }

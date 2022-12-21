@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,4 +52,7 @@ public class User {
 
 	@OneToMany
 	private List<Order> orderList;
+
+	@OneToMany(mappedBy = "user")
+	private List<UserCouponTbl> myCoupon;
 }

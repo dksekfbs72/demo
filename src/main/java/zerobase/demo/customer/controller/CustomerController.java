@@ -89,4 +89,10 @@ public class CustomerController {
 		return new OrderDto.Response<>(customerService.cancelOrder(principal.getName(), orderId),
 			ResponseCode.ORDER_CANCEL_SUCCESS);
 	}
+
+	@PutMapping("/useCoupon")
+	public OrderDto.Response<OrderDto> useCoupon(Principal principal, @RequestParam Integer couponId) {
+		return new OrderDto.Response<>(customerService.useCoupon(principal.getName(), couponId),
+			ResponseCode.USE_COUPON_SUCCESS);
+	}
 }

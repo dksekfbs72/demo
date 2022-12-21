@@ -49,4 +49,5 @@ public interface CustomerService {
 	 */
 	OrderDto cancelOrder(String username, Integer orderId);
 
+	OrderDto useCoupon(String name, Integer couponId);
 }

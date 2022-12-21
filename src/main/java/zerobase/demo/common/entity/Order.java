@@ -11,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,6 +45,7 @@ public class Order extends BaseEntity{
 	private Integer deliveryTime;
 	private Integer restaurantId;
 	private LocalDateTime orderTime;
-	private Integer useCouponId;
+	@ManyToMany(mappedBy = "orderList")
+	private List<Coupon> useCoupon = new ArrayList<>();
 	private boolean reviewed;
 }
