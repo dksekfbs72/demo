@@ -24,10 +24,6 @@
         and
         name like concat('%', #{keyword}, '%')
 
-        <if test='limitDistanceKm != null'>
-            HAVING distanceKm &lt; #{limitDistanceKm}
-        </if>
-
         ORDER BY
         <choose>
             <when test='sort.name().equals("RANDOM")'> RAND()</when>
