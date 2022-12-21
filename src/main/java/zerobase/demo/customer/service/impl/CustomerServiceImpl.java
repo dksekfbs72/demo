@@ -214,21 +214,21 @@ public class CustomerServiceImpl implements CustomerService {
 
 		Double userLat = listParam.getUserLat();
 		Double userLon = listParam.getUserLon();
-
 		//필수값 미입력
 		if(userLat == null || userLon == null) throw new CustomerException(ResponseCode.BAD_REQUEST);
-
 		//대한민국을 벗어날 경우
 		if(isOutOfKorea(userLat, userLon)) { throw new CustomerException(ResponseCode.BAD_REQUEST); }
 
+		setNull2Default(listParam);
+		List<CustomerStoreInfo> customerStoreInfo = customerStoreMapper.selectList(listParam);
+		return new CustomerStoreInfo.Response(ResponseCode.SELECT_STORE_SUCCESS, customerStoreInfo);
+	}
+	private void setNull2Default(CustomerStoreInfo.ListParam listParam) {
 		//기본값
 		if(listParam.getOffset() == null) listParam.setOffset(0);
 		if(listParam.getLimit() == null) listParam.setLimit(50);
 		if(listParam.getOpenType() ==null) listParam.setOpenType(SelectStoreOpenType.OPEN);
 		if(listParam.getSortType() == null) listParam.setSortType(SortType.DISTANCE);
-
-		List<CustomerStoreInfo> customerStoreInfo = customerStoreMapper.selectList(listParam);
-		return new CustomerStoreInfo.Response(ResponseCode.SELECT_STORE_SUCCESS, customerStoreInfo);
 	}
 
 	@Override
