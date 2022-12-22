@@ -1,4 +1,4 @@
-package zerobase.demo.customer.service.impl;
+package zerobase.demo.customer.service.Impl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,6 +18,7 @@ import zerobase.demo.common.type.SelectStoreOpenType;
 import zerobase.demo.common.type.SoldOutStatus;
 import zerobase.demo.common.type.SortType;
 import zerobase.demo.common.type.StoreOpenCloseStatus;
+import zerobase.demo.common.util.Page;
 import zerobase.demo.customer.dto.CustomerStoreDetail;
 import zerobase.demo.customer.dto.CustomerStoreInfo;
 import zerobase.demo.customer.mapper.CustomerStoreMapper;
@@ -210,25 +211,25 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public CustomerStoreInfo.Response getStoreList(CustomerStoreInfo.ListParam listParam) {
+	public CustomerStoreInfo.Response getStoreList(CustomerStoreInfo.ListParam param) {
 
-		Double userLat = listParam.getUserLat();
-		Double userLon = listParam.getUserLon();
+		Double userLat = param.getUserLat();
+		Double userLon = param.getUserLon();
 		//필수값 미입력
 		if(userLat == null || userLon == null) throw new CustomerException(ResponseCode.BAD_REQUEST);
 		//대한민국을 벗어날 경우
 		if(isOutOfKorea(userLat, userLon)) { throw new CustomerException(ResponseCode.BAD_REQUEST); }
 
-		setNull2Default(listParam);
-		List<CustomerStoreInfo> customerStoreInfo = customerStoreMapper.selectList(listParam);
+		setNull2Default(param);
+		List<CustomerStoreInfo> customerStoreInfo = customerStoreMapper.selectList(param, new Page(param.getPage()));
+
 		return new CustomerStoreInfo.Response(ResponseCode.SELECT_STORE_SUCCESS, customerStoreInfo);
 	}
-	private void setNull2Default(CustomerStoreInfo.ListParam listParam) {
+	private void setNull2Default(CustomerStoreInfo.ListParam param) {
 		//기본값
-		if(listParam.getOffset() == null) listParam.setOffset(0);
-		if(listParam.getLimit() == null) listParam.setLimit(50);
-		if(listParam.getOpenType() ==null) listParam.setOpenType(SelectStoreOpenType.OPEN);
-		if(listParam.getSortType() == null) listParam.setSortType(SortType.DISTANCE);
+		if(param.getPage() == null || param.getPage()<1) param.setPage(1);
+		if(param.getOpenType() ==null) param.setOpenType(SelectStoreOpenType.OPEN);
+		if(param.getSortType() == null) param.setSortType(SortType.DISTANCE);
 	}
 
 	@Override
