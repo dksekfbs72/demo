@@ -7,15 +7,16 @@ import lombok.Setter;
 @Setter
 public class Page {
 	static int PER_PAGE = 20;
-	Integer page;
+	Integer startPage;
+	Integer endPage;
 	Integer offset;
 	Integer limit;
 
-	public Page(int page) {
-		this.page = page;
+	public Page(int startPage, int endPage) {
+		this.startPage = startPage;
+		this.endPage = endPage;
 
-		this.offset = page == 1 ? 0 : (page-1)*20+1;
-		this.limit = page*20;
-
+		this.offset = startPage == 1 ? 0 : (startPage-1)*20+1;
+		this.limit = (endPage)*20;
 	}
 }
