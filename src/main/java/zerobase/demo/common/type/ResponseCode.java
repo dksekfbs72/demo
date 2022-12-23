@@ -23,8 +23,11 @@ public enum ResponseCode {
 	STORE_CLOSED(Result.FAIL, "해당 식당은 영업중이 아닙니다."),
 	DID_NOT_DELIVERY_COMPLETE(Result.FAIL, "완료된 주문이 아닙니다."),
 	ORDER_NOT_PAYMENT(Result.FAIL, "결제된 주문이 아닙니다."),
+	REVIEW_NOT_FOUND(Result.FAIL, "리뷰를 찾을 수 없습니다."),
 
 	CHANGE_USER_INFO_SUCCESS(Result.SUCCESS, "유저 정보를 변경하였습니다."),
+	DELETE_REVIEW_SUCCESS(Result.SUCCESS, "리뷰를 삭제하였습니다."),
+	REVIEW_UPDATE_SUCCESS(Result.SUCCESS, "리뷰를 변경하였습니다."),
 	USE_COUPON_SUCCESS(Result.SUCCESS, "쿠폰을 사용하셨습니다."),
 	ORDER_CANCEL_SUCCESS(Result.SUCCESS, "주문을 취소하였습니다."),
 	DELIVERY_SUCCESS(Result.SUCCESS, "주문 배달이 완료되었습니다."),

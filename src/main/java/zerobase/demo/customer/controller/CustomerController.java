@@ -57,9 +57,9 @@ public class CustomerController {
 	}
 
 	@GetMapping("/{storeId}/review")
-	public ReviewDto.Response getStoreReview(@PathVariable Integer storeId) {
+	public ReviewDto.Response<List<ReviewDto>> getStoreReview(@PathVariable Integer storeId) {
 
-		return new ReviewDto.Response(customerService.getStoreReview(storeId), ResponseCode.GET_STORE_REVIEW_SUCCESS);
+		return new ReviewDto.Response<>(ReviewDto.fromList(customerService.getStoreReview(storeId)), ResponseCode.GET_STORE_REVIEW_SUCCESS);
 	}
 
 	@PostMapping("/{storeId}")

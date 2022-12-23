@@ -1,10 +1,14 @@
 package zerobase.demo.user.controller;
 
 import java.security.Principal;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +16,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import zerobase.demo.DemoApplication;
 import zerobase.demo.common.config.AllExceptionHandler;
 import zerobase.demo.common.type.ResponseCode;
+import zerobase.demo.customer.service.CustomerService;
+import zerobase.demo.review.dto.ReviewDto;
+import zerobase.demo.review.dto.ReviewDto.Response;
+import zerobase.demo.review.dto.ReviewRequest;
 import zerobase.demo.user.dto.UserDto;
 import zerobase.demo.user.dto.UserUpdateDto;
 import zerobase.demo.user.service.UserService;
@@ -22,6 +30,7 @@ import zerobase.demo.user.service.UserService;
 public class AdminUserController extends AllExceptionHandler {
 
 	private final UserService userService;
+	private final CustomerService customerService;
 	private static final Logger logger = LoggerFactory.getLogger(DemoApplication.class);
 
 
@@ -39,5 +48,23 @@ public class AdminUserController extends AllExceptionHandler {
 	@PutMapping("/deliveryComplete")
 	UserDto.Response<ResponseCode> deliveryComplete(@RequestParam Integer orderId) {
 		return new UserDto.Response<>(userService.deliveryComplete(orderId));
+	}
+
+	@GetMapping("/{storeId}/review")
+	ReviewDto.Response<List<ReviewDto>> getStoreReview(@PathVariable Integer storeId) {
+
+		return new ReviewDto.Response<>(ReviewDto.fromList(customerService.getStoreReview(storeId)), ResponseCode.GET_STORE_REVIEW_SUCCESS);
+	}
+
+	@PutMapping("/updateReview")
+	ReviewDto.Response<ReviewDto> updateReview(@RequestBody ReviewRequest reviewDto) {
+
+		return new ReviewDto.Response<>(userService.updateReview(ReviewDto.fromRequest(reviewDto)), ResponseCode.REVIEW_UPDATE_SUCCESS);
+	}
+
+	@DeleteMapping("/deleteReview")
+	ReviewDto.Response<?> deleteReview(@RequestParam Integer reviewId) {
+
+		return new Response<>(userService.deleteReview(reviewId));
 	}
 }

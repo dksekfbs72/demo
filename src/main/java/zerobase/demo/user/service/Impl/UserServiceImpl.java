@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import zerobase.demo.common.entity.Order;
+import zerobase.demo.common.entity.Review;
 import zerobase.demo.common.entity.Store;
 import zerobase.demo.common.entity.User;
 import zerobase.demo.common.exception.*;
@@ -21,6 +22,8 @@ import zerobase.demo.common.type.UserStatus;
 import zerobase.demo.common.components.MailComponents;
 import zerobase.demo.order.repository.OrderRepository;
 import zerobase.demo.owner.repository.StoreRepository;
+import zerobase.demo.review.dto.ReviewDto;
+import zerobase.demo.review.repository.ReviewRepository;
 import zerobase.demo.user.dto.UserDto;
 import zerobase.demo.user.dto.UserUpdateDto;
 import zerobase.demo.user.repository.UserRepository;
@@ -34,7 +37,7 @@ public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
 	private final OrderRepository orderRepository;
 	private final StoreRepository storeRepository;
-
+	private final ReviewRepository reviewRepository;
 	@Override
 	public boolean createUser(UserDto userDto) {
 
@@ -204,6 +207,27 @@ public class UserServiceImpl implements UserService {
 		orderRepository.save(order);
 		storeRepository.save(store);
 		return ResponseCode.DELIVERY_SUCCESS;
+	}
+
+	@Override
+	public ReviewDto updateReview(ReviewDto reviewDto) {
+		Review review = reviewRepository.findByOrderId(reviewDto.getOrderId())
+			.orElseThrow(() -> new UserException(ResponseCode.REVIEW_NOT_FOUND));
+
+		review.setSummary(reviewDto.getSummary());
+		review.setContent(reviewDto.getContent());
+
+		reviewRepository.save(review);
+		return ReviewDto.fromEntity(review);
+	}
+
+	@Override
+	public ResponseCode deleteReview(Integer reviewId) {
+		Review review = reviewRepository.findById(reviewId)
+			.orElseThrow(() -> new UserException(ResponseCode.REVIEW_NOT_FOUND));
+
+		reviewRepository.delete(review);
+		return ResponseCode.DELETE_REVIEW_SUCCESS;
 	}
 
 }

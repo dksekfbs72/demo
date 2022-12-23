@@ -39,21 +39,29 @@ public class ReviewDto {
             .build();
     }
 
+    public static List<ReviewDto> fromList(List<Review> reviews) {
+
+        return reviews.stream()
+            .map(ReviewDto::fromEntity)
+            .collect(Collectors.toList());
+    }
+
     @Getter
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class Response extends BaseResponse {
-        private List<ReviewDto> reviewDtoList;
+    public static class Response<T> extends BaseResponse {
+        private T reviewDtoList;
 
-        public Response(List<Review> storeList, ResponseCode responseCode){
+        public Response(T reviews, ResponseCode responseCode){
 
             super(responseCode);
 
-            reviewDtoList = storeList.stream()
-                .map(review -> fromEntity(review))
-                .collect(Collectors.toList());
+            reviewDtoList = reviews;
+        }
+        public Response(ResponseCode responseCode){
+            super((responseCode));
         }
     }
 }

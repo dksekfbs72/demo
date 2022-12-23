@@ -3,6 +3,7 @@ package zerobase.demo.user.service;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import zerobase.demo.common.type.ResponseCode;
+import zerobase.demo.review.dto.ReviewDto;
 import zerobase.demo.user.dto.UserDto;
 import zerobase.demo.user.dto.UserUpdateDto;
 
@@ -52,4 +53,14 @@ public interface UserService extends UserDetailsService {
 	 * 배달완료
 	 */
 	ResponseCode deliveryComplete(Integer orderId);
+
+	/**
+	 * 리뷰 내용 변경
+	 */
+	ReviewDto updateReview(ReviewDto fromRequest);
+
+	/**
+	 * 리뷰 삭제
+	 */
+	ResponseCode deleteReview(Integer reviewId);
 }
