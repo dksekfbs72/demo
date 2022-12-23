@@ -67,4 +67,10 @@ public class AdminUserController extends AllExceptionHandler {
 
 		return new Response<>(userService.deleteReview(reviewId));
 	}
+
+	@PutMapping("/resetPassword")
+	UserDto.Response<?> adminResetPassword(@RequestParam Integer userId) {
+
+		return new UserDto.Response<>(userService.adminResetPassword(userId));
+	}
 }

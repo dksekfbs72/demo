@@ -230,4 +230,33 @@ public class UserServiceImpl implements UserService {
 		return ResponseCode.DELETE_REVIEW_SUCCESS;
 	}
 
+	@Override
+	public ResponseCode adminResetPassword(Integer userId) {
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
+
+		String newPassword = randomWord();
+		user.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+		mailComponents.sendMail(user.getUserId(),
+			"[조기요] 비밀번호 초기화",
+			"<p>관리자에 의해 회원님의 비밀번호가 초기화되었습니다.</p>" +
+				"<p>회원님의 임시 비밀번호는 "+ newPassword + " 입니다.</p>");
+		userRepository.save(user);
+		return ResponseCode.PASSWORD_RESET;
+	}
+
+	static String randomWord() {
+		StringBuilder Random= new StringBuilder();
+		for (int i=0;; i++) {
+			int x = (int) (Math.random()*75)+48;
+			if (x >= 58 && x<=64) continue;
+			if (x >= 91 && x<=96) continue;
+			char ch = (char) x;
+			Random.append(ch);
+			if (Random.length()==8) break;
+		}
+
+		return Random.toString();
+	}
+
 }

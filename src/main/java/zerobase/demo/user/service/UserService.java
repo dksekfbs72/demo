@@ -63,4 +63,9 @@ public interface UserService extends UserDetailsService {
 	 * 리뷰 삭제
 	 */
 	ResponseCode deleteReview(Integer reviewId);
+
+	/**
+	 * 회원 비밀번호 초기화
+	 */
+	ResponseCode adminResetPassword(Integer userId);
 }
