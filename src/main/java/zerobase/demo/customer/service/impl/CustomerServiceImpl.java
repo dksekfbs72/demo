@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
+
+import lombok.RequiredArgsConstructor;
 import zerobase.demo.common.entity.Menu;
 import zerobase.demo.common.entity.Order;
 import zerobase.demo.common.entity.Review;
@@ -18,7 +20,6 @@ import zerobase.demo.common.type.SelectStoreOpenType;
 import zerobase.demo.common.type.SoldOutStatus;
 import zerobase.demo.common.type.SortType;
 import zerobase.demo.common.type.StoreOpenCloseStatus;
-import zerobase.demo.common.util.Page;
 import zerobase.demo.customer.dto.CustomerStoreDetail;
 import zerobase.demo.customer.dto.CustomerStoreInfo;
 import zerobase.demo.customer.mapper.CustomerStoreMapper;
@@ -221,13 +222,14 @@ public class CustomerServiceImpl implements CustomerService {
 		if(isOutOfKorea(userLat, userLon)) { throw new CustomerException(ResponseCode.BAD_REQUEST); }
 
 		setNull2Default(param);
-		List<CustomerStoreInfo> customerStoreInfo = customerStoreMapper.selectList(param, new Page(param.getPage()));
+		List<CustomerStoreInfo> customerStoreInfo =
+			customerStoreMapper.selectList(param);
 
 		return new CustomerStoreInfo.Response(ResponseCode.SELECT_STORE_SUCCESS, customerStoreInfo);
 	}
-	private void setNull2Default(CustomerStoreInfo.ListParam param) {
+	private void setNull2Default(CustomerStoreInfo.ListParam param)  {
 		//기본값
-		if(param.getPage() == null || param.getPage()<1) param.setPage(1);
+		if(param.getMaxDistanceKm() == null) param.setMaxDistanceKm(3.0);
 		if(param.getOpenType() ==null) param.setOpenType(SelectStoreOpenType.OPEN);
 		if(param.getSortType() == null) param.setSortType(SortType.DISTANCE);
 	}

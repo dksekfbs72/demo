@@ -7,32 +7,36 @@
     <select id="selectList" resultType="zerobase.demo.customer.dto.CustomerStoreInfo">
         SELECT
         * , (
-        6371 * acos (cos( RADIANS(#{parameter.userLat}))
+        6371 * acos (cos( RADIANS(#{userLat}))
         * cos(radians(lat))
-        * cos(radians(lon) - RADIANS(#{parameter.userLon}))
-        + sin (radians(#{parameter.userLat})) * sin( radians(lat))
-            )
+        * cos(radians(lon) - RADIANS(#{userLon}))
+        + sin (radians(#{userLat})) * sin( radians(lat))
+        )
         ) AS distanceKm
         FROM STORE
+
         WHERE
-            1=1
-        <if test='parameter.openType.name().equals("OPEN")'>
+        1=1
+        <if test='openType.name().equals("OPEN")'>
             and
             open_close = 'open'
         </if>
 
+        <if test='keyword != null'>
         and
-        name like concat('%', #{parameter.keyword}, '%')
+        name like concat('%', #{keyword}, '%')
+        </if>
+
+        HAVING distanceKm &lt; #{maxDistanceKm}
 
         ORDER BY
         <choose>
-            <when test='parameter.sortType.name().equals("RANDOM")'> RAND()</when>
-            <when test='parameter.sortType.name().equals("DISTANCE")'> distanceKm</when>
-            <when test='parameter.sortType.name().equals("TIP")'> DELIVERY_TIP</when>
-            <when test='parameter.sortType.name().equals("ORDER")'> ORDER_COUNT</when>
+            <when test='sortType.name().equals("RANDOM")'> RAND()</when>
+            <when test='sortType.name().equals("DISTANCE")'> distanceKm</when>
+            <when test='sortType.name().equals("TIP")'> DELIVERY_TIP</when>
+            <when test='sortType.name().equals("ORDER")'> ORDER_COUNT</when>
         </choose>
 
-        limit #{page.offset}, #{page.limit}
     </select>
 
     <select id="selectStoreById" resultType="zerobase.demo.customer.dto.CustomerStoreInfo">

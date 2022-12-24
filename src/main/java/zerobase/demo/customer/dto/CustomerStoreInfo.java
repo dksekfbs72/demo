@@ -11,7 +11,7 @@ import lombok.Setter;
 import zerobase.demo.common.model.BaseResponse;
 import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.common.type.SelectStoreOpenType;
-import zerobase.demo.common.type.Sort;
+import zerobase.demo.common.type.SortType;
 import zerobase.demo.common.type.StoreOpenCloseStatus;
 
 @Getter
@@ -44,15 +44,11 @@ public class CustomerStoreInfo {
 		Double userLat;
 		Double userLon;
 
-		Integer offset; //default 0
-		Integer limit; //default 50
-		Sort sort; //default random
-		SelectStoreOpenType openType; //default open
-
 		//Optional
+		Double maxDistanceKm; //default 3km
+		SortType sortType; //default distance
+		SelectStoreOpenType openType; //default open
 		String keyword;
-		Double limitDistanceKm;
-
 	}
 
 	@Getter

@@ -94,11 +94,11 @@ class CustomerServiceTest {
 		//when
 		CustomerStoreInfo.Response response = customerService.getStoreList(listParam);
 
-		// System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		// for(CustomerStoreInfo x : response.getList()) {
-		// 	System.out.println(x.getName());
-		// }
-		// System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		for(CustomerStoreInfo x : response.getList()) {
+			System.out.println(x.getDistanceKm());
+		}
+		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
 		//then
 		assertEquals(response.getCode().getResult(), Result.SUCCESS);
@@ -176,8 +176,8 @@ class CustomerServiceTest {
 		Double commission = 3.5;
 		Double deliveryDistanceKm = 5.0;
 		Integer deliveryTip = 3000;
-		Double lat = 123.4545;
-		Double lon = 92.332;
+		Double lat = 35.5;
+		Double lon = 130.2;
 
 		CreateStore dto = CreateStore.builder()
 			.loggedInUser(loggedUser)
