@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import zerobase.demo.DemoApplication;
 import zerobase.demo.common.config.AllExceptionHandler;
 import zerobase.demo.common.type.ResponseCode;
+import zerobase.demo.common.type.UserStatus;
 import zerobase.demo.customer.service.CustomerService;
 import zerobase.demo.review.dto.ReviewDto;
 import zerobase.demo.review.dto.ReviewDto.Response;
@@ -72,5 +73,12 @@ public class AdminUserController extends AllExceptionHandler {
 	UserDto.Response<?> adminResetPassword(@RequestParam Integer userId) {
 
 		return new UserDto.Response<>(userService.adminResetPassword(userId));
+	}
+
+	@PutMapping("/changeUserStatus")
+	UserDto.Response<UserDto> adminChangeUserStatus(@RequestParam Integer userId
+		, @RequestParam String userStatus) {
+
+		return new UserDto.Response<>(userService.adminChangeUserStatus(userId, userStatus),ResponseCode.CHANGE_USER_INFO_SUCCESS);
 	}
 }

@@ -13,6 +13,7 @@ public enum ResponseCode {
 	NOT_THIS_STORE_COUPON(Result.FAIL, "이 식당의 쿠폰이 아닙니다."),
 	USER_NOT_FOUND(Result.FAIL, "해당 유저가 없습니다."),
 	USER_NOT_EMAIL_AUTH(Result.FAIL, "이메일 인증 후 이용할 수 있습니다."),
+	USER_STATUS_NOT_FOUND(Result.FAIL, "유저 상태 정보를 찾을 수 없습니다."),
 	USER_IS_STOP(Result.FAIL, "정지된 유저입니다."),
 	COUPON_NOT_FOUND(Result.FAIL, "쿠폰을 찾을 수 없습니다."),
 	NOT_ADMIN_ROLL(Result.FAIL, "관리자 계정이 아닙니다."),

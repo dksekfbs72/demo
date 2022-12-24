@@ -245,6 +245,18 @@ public class UserServiceImpl implements UserService {
 		return ResponseCode.PASSWORD_RESET;
 	}
 
+	@Override
+	public UserDto adminChangeUserStatus(Integer userId, String userStatus) {
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
+		if (!userStatus.equals("USER") && !userStatus.equals("OWNER") && !userStatus.equals("STOP")) {
+			throw new UserException(ResponseCode.USER_STATUS_NOT_FOUND);
+		}
+		user.setStatus(UserStatus.valueOf(userStatus));
+		userRepository.save(user);
+		return UserDto.fromEntity(user);
+	}
+
 	static String randomWord() {
 		StringBuilder Random= new StringBuilder();
 		for (int i=0;; i++) {

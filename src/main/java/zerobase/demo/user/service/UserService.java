@@ -50,22 +50,27 @@ public interface UserService extends UserDetailsService {
 	UserDetails loadUserByUsername(String userId);
 
 	/**
-	 * 배달완료
+	 * 관리자 배달완료
 	 */
 	ResponseCode deliveryComplete(Integer orderId);
 
 	/**
-	 * 리뷰 내용 변경
+	 * 관리자 리뷰 내용 변경
 	 */
 	ReviewDto updateReview(ReviewDto fromRequest);
 
 	/**
-	 * 리뷰 삭제
+	 * 관리자 리뷰 삭제
 	 */
 	ResponseCode deleteReview(Integer reviewId);
 
 	/**
-	 * 회원 비밀번호 초기화
+	 * 관리자 회원 비밀번호 초기화
 	 */
 	ResponseCode adminResetPassword(Integer userId);
+
+	/**
+	 * 관리자 회원 상태 변경
+	 */
+	UserDto adminChangeUserStatus(Integer userId, String userStatus);
 }
