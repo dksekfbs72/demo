@@ -1,4 +1,4 @@
-package zerobase.demo.customer.dto;
+package zerobase.demo.redis.entity;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,20 +12,25 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import zerobase.demo.common.entity.Store;
 import zerobase.demo.common.model.BaseResponse;
 import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.common.type.SelectStoreOpenType;
 import zerobase.demo.common.type.SortType;
 import zerobase.demo.common.type.StoreOpenCloseStatus;
+import zerobase.demo.customer.dto.CustomerStoreInfo;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CustomerStoreInfo {
+@ToString
+@RedisHash("storeId")
+public class CustomerStoreInfoCache {
 
+	@Id
 	private Integer id;
 	private String name;
 	private String storeAddr;
@@ -38,48 +43,22 @@ public class CustomerStoreInfo {
 	private Double commission;
 	private LocalDateTime openCloseDt;
 	private LocalDateTime regDt;
-	private Double distanceKm;
 
-	@Getter
-	@Setter
-	@AllArgsConstructor
-	@NoArgsConstructor
-	@Builder
-	public static class ListParam {
-		Double userLat;
-		Double userLon;
-
-		//Optional
-		Double maxDistanceKm; //default 3km
-		SortType sortType; //default distance
-		SelectStoreOpenType openType; //default open
-		String keyword;
+	public static CustomerStoreInfoCache fromEntity(Store store) {
+		return CustomerStoreInfoCache.builder()
+								.id(store.getId())
+								.name(store.getName())
+								.storeAddr(store.getStoreAddr())
+								.orderCount(store.getOrderCount())
+								.pictureUrl(store.getPictureUrl())
+								.deliveryDistanceKm(store.getDeliveryDistanceKm())
+								.summary(store.getSummary())
+								.openClose(store.getOpenClose())
+								.deliveryTip(store.getDeliveryTip())
+								.commission(store.getCommission())
+								.openCloseDt(store.getOpenCloseDt())
+								.regDt(store.getRegDt())
+								.build();
 	}
 
-	@Getter
-	@Setter
-	@AllArgsConstructor
-	@NoArgsConstructor
-	@Builder
-	public static class SelectParam {
-		Double userLat;
-		Double userLon;
-
-		Integer storeId;
-	}
-
-
-	@Getter
-	@Setter
-	@AllArgsConstructor
-	@NoArgsConstructor
-	@Builder
-	public static class Response extends BaseResponse {
-		private List<CustomerStoreInfo> list;
-
-		public Response(ResponseCode code, List<CustomerStoreInfo> list) {
-			super(code);
-			this.list = list;
-		}
-	}
 }

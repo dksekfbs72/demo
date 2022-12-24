@@ -8,7 +8,6 @@ import java.util.List;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import zerobase.demo.common.entity.Store;
@@ -18,6 +17,9 @@ import zerobase.demo.common.exception.UserException;
 import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.common.type.StoreOpenCloseStatus;
 import zerobase.demo.common.type.UserStatus;
+import zerobase.demo.customer.dto.CustomerStoreInfo;
+import zerobase.demo.redis.entity.CustomerStoreInfoCache;
+import zerobase.demo.redis.repository.RedisStoreInfoRepository;
 import zerobase.demo.owner.dto.CreateStore;
 import zerobase.demo.owner.dto.OpenCloseStore;
 import zerobase.demo.owner.dto.StoreInfo;
@@ -28,11 +30,12 @@ import zerobase.demo.user.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class StoreServiceImpl implements StoreService {
 
 	private final StoreRepository storeRepository;
 	private final UserRepository userRepository;
+
+	private final RedisStoreInfoRepository redisStoreInfoRepository;
 
 	@Override
 	public CreateStore.Response createStore(CreateStore dto) {
@@ -53,7 +56,11 @@ public class StoreServiceImpl implements StoreService {
 		newStore.setOpenCloseDt(LocalDateTime.now());
 		newStore.setUser(user);
 
-		storeRepository.save(newStore);
+		Store savedStore = storeRepository.save(newStore);
+
+		//redis
+		redisStoreInfoRepository.save(CustomerStoreInfoCache.fromEntity(savedStore));
+
 		return new CreateStore.Response(CREATE_STORE_SUCCESS);
 	}
 
@@ -73,7 +80,9 @@ public class StoreServiceImpl implements StoreService {
 		store.setOpenClose(dto.getOpenClose());
 		store.setOpenCloseDt(LocalDateTime.now());
 
-		storeRepository.save(store);
+		Store savedStore = storeRepository.save(store);
+		//redis
+		redisStoreInfoRepository.save(CustomerStoreInfoCache.fromEntity(savedStore));
 
 		if(dto.getOpenClose() == StoreOpenCloseStatus.OPEN)
 			return new OpenCloseStore.Response(OPEN_STORE_SUCCESS);
@@ -103,7 +112,10 @@ public class StoreServiceImpl implements StoreService {
 		if(!loggedInUser.getUsername().equals(store.getUser().getUserId())) throw new OwnerException(NOT_AUTHORIZED);
 
 		store.setFromUpdateStoreDto(dto);
-		storeRepository.save(store);
+		Store savedStore = storeRepository.save(store);
+
+		//redis
+		redisStoreInfoRepository.save(CustomerStoreInfoCache.fromEntity(savedStore));
 
 		return new UpdateStore.Response(UPDATE_STORE_SUCCESS);
 	}
