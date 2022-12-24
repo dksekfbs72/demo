@@ -1,4 +1,4 @@
-GET http://localhost:8080/customer/store?userLat=37.5&userLon=126.9
+GET http://localhost:8080/customer/store?userLat=37.5088141&userLon=126.8900&maxDistanceKm=5000&openType=ALL
 Accept: application/json
 
 ###

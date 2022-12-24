@@ -1,5 +1,6 @@
 package zerobase.demo.redis.entity;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import zerobase.demo.common.type.SelectStoreOpenType;
 import zerobase.demo.common.type.SortType;
 import zerobase.demo.common.type.StoreOpenCloseStatus;
 import zerobase.demo.customer.dto.CustomerStoreInfo;
+import zerobase.demo.redis.customStructure.LocationJsonConverter;
 
 @Getter
 @Setter
@@ -27,7 +29,7 @@ import zerobase.demo.customer.dto.CustomerStoreInfo;
 @NoArgsConstructor
 @Builder
 @ToString
-@RedisHash("storeId")
+@RedisHash("StoreId")
 public class CustomerStoreInfoCache {
 
 	@Id
@@ -59,6 +61,24 @@ public class CustomerStoreInfoCache {
 								.openCloseDt(store.getOpenCloseDt())
 								.regDt(store.getRegDt())
 								.build();
+	}
+
+	public CustomerStoreInfo toDtoWithDistance(Double distanceKm) {
+		return CustomerStoreInfo.builder()
+							.id(id)
+							.name(name)
+							.storeAddr(storeAddr)
+							.orderCount((orderCount))
+							.pictureUrl((pictureUrl))
+							.deliveryDistanceKm(deliveryDistanceKm)
+							.summary(summary)
+							.openClose(openClose)
+							.deliveryTip(deliveryTip)
+							.commission(commission)
+							.openCloseDt(openCloseDt)
+							.regDt(regDt)
+							.distanceKm(distanceKm)
+							.build();
 	}
 
 }
