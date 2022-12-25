@@ -43,7 +43,7 @@ public class StoreController {
 		OpenCloseStore dto = OpenCloseStore.fromRequest(request);
 		if(loggedInUser != null) dto.setLoggedInUser(loggedInUser);
 
-		return storeService.openCloseStore(OpenCloseStore.fromRequest(request));
+		return storeService.openCloseStore(dto);
 	}
 
 	//보유 가게 조회
@@ -61,6 +61,6 @@ public class StoreController {
 		UpdateStore dto = UpdateStore.fromRequest(request);
 		if(loggedInUser != null) dto.setLoggedInUser(loggedInUser);
 
-		return storeService.updateStore(UpdateStore.fromRequest(request));
+		return storeService.updateStore(dto);
 	}
 }
