@@ -3,7 +3,9 @@ package zerobase.demo.user.service;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import zerobase.demo.common.type.ResponseCode;
+import zerobase.demo.common.type.UserStatus;
 import zerobase.demo.review.dto.ReviewDto;
+import zerobase.demo.user.dto.NoticeDto;
 import zerobase.demo.user.dto.UserDto;
 import zerobase.demo.user.dto.UserUpdateDto;
 
@@ -73,4 +75,9 @@ public interface UserService extends UserDetailsService {
 	 * 관리자 회원 상태 변경
 	 */
 	UserDto adminChangeUserStatus(Integer userId, String userStatus);
+
+	/**
+	 * 관리자 공지 사항 전송
+	 */
+	NoticeDto sendNotice(NoticeDto noticeDto);
 }

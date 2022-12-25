@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,7 @@ import zerobase.demo.customer.service.CustomerService;
 import zerobase.demo.review.dto.ReviewDto;
 import zerobase.demo.review.dto.ReviewDto.Response;
 import zerobase.demo.review.dto.ReviewRequest;
+import zerobase.demo.user.dto.NoticeDto;
 import zerobase.demo.user.dto.UserDto;
 import zerobase.demo.user.dto.UserUpdateDto;
 import zerobase.demo.user.service.UserService;
@@ -80,5 +82,11 @@ public class AdminUserController extends AllExceptionHandler {
 		, @RequestParam String userStatus) {
 
 		return new UserDto.Response<>(userService.adminChangeUserStatus(userId, userStatus),ResponseCode.CHANGE_USER_INFO_SUCCESS);
+	}
+
+	@PostMapping("/sendNotice")
+	UserDto.Response<NoticeDto> adminSendNotice(@RequestBody NoticeDto.request notice) {
+		return new UserDto.Response<>(userService.sendNotice(NoticeDto.fromRequest(notice)),
+			ResponseCode.SEND_NOTICE_SUCCESS);
 	}
 }

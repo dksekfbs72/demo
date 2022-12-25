@@ -9,12 +9,17 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import zerobase.demo.common.components.MailComponents;
 import zerobase.demo.common.entity.Order;
+import zerobase.demo.common.entity.User;
 import zerobase.demo.common.type.OrderStatus;
+import zerobase.demo.common.type.UserStatus;
 import zerobase.demo.order.repository.OrderRepository;
 import zerobase.demo.user.repository.UserRepository;
 
@@ -30,7 +35,7 @@ public class JobConfig {
 	private final UserRepository userRepository;
 
 	@Bean
-	public Job Job() {
+	public Job promotionMailSendJob() {
 		return jobBuilderFactory.get("job")
 			.start(Step1())
 			.on("FAILED")
@@ -45,10 +50,19 @@ public class JobConfig {
 	}
 
 	@Bean
+	public Job sendNoticeJob() {
+		return jobBuilderFactory.get("job2")
+			.start(sendNoticeStep())
+			.on("*")
+			.end()
+			.end()
+			.build();
+	}
+
+	@Bean
 	public Step Step1() {
 		return stepBuilderFactory.get("step1")
 			.tasklet((contribution, chunkContext) -> {
-				System.out.println("step1=======");
 				List<Order> orderList = orderRepository.findAllByOrderTimeBetweenAndReviewedAndStatus(
 					LocalDateTime.now().minusHours(2),
 					LocalDateTime.now().minusHours(1),
@@ -67,7 +81,6 @@ public class JobConfig {
 	public Step Step2() {
 		return stepBuilderFactory.get("step2")
 			.tasklet((contribution, chunkContext) -> {
-				System.out.println("step2=======");
 				List<Order> orderList = orderRepository.findAllByOrderTimeBetweenAndReviewedAndStatus(
 					LocalDateTime.now().minusHours(2),
 					LocalDateTime.now().minusHours(1),
@@ -88,5 +101,42 @@ public class JobConfig {
 				return RepeatStatus.FINISHED;
 			})
 			.build();
+	}
+
+	@Bean
+	public Step sendNoticeStep() {
+		return stepBuilderFactory.get("sendNoticeStep")
+			.tasklet(helloTasklet(null, null))
+			.build();
+	}
+
+	@Bean
+	@StepScope //stepScope로 지정해줘야함
+	public Tasklet helloTasklet(@Value("#{jobParameters['status']}") String status
+		,@Value("#{jobParameters['notice']}") String notice) {
+		return (stepContribution, chunkContext) -> {
+			List<User> userList;
+			if (!status.equals("ALL")){
+				userList = userRepository.findAllByStatus(UserStatus.valueOf(status));
+			} else {
+				userList = userRepository.findAll();
+			}
+			if (userList.isEmpty()) {
+				stepContribution.setExitStatus(ExitStatus.FAILED);
+			}
+			for (User i : userList) {
+				try {
+					mailComponents.sendMail(
+						i.getUserId(),
+						"[조기요] 중요! 공지사항 입니다.",
+						"<p>회원 여러분께 공지 드립니다.</p>"
+							+ "<p>"+ notice + "</p>");
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+
+			}
+			return RepeatStatus.FINISHED;
+		};
 	}
 }

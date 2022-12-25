@@ -28,6 +28,7 @@ public enum ResponseCode {
 
 	CHANGE_USER_INFO_SUCCESS(Result.SUCCESS, "유저 정보를 변경하였습니다."),
 	PASSWORD_RESET(Result.SUCCESS, "회원의 비밀번호를 초기화하였습니다."),
+	SEND_NOTICE_SUCCESS(Result.SUCCESS, "공지 사항을 전송하였습니다."),
 	DELETE_REVIEW_SUCCESS(Result.SUCCESS, "리뷰를 삭제하였습니다."),
 	REVIEW_UPDATE_SUCCESS(Result.SUCCESS, "리뷰를 변경하였습니다."),
 	USE_COUPON_SUCCESS(Result.SUCCESS, "쿠폰을 사용하셨습니다."),

@@ -78,10 +78,10 @@ public class UserDto {
 	@Getter
 	@Setter
 	public static class Response<T> extends zerobase.demo.common.model.BaseResponse {
-		private T userInfo;
+		private T resultList;
 		public Response(T userDto, ResponseCode responseCode) {
 			super(responseCode);
-			this.userInfo = userDto;
+			this.resultList = userDto;
 		}
 		public Response(ResponseCode responseCode) {
 			super(responseCode);

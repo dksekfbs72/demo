@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import zerobase.demo.common.components.JobComponents;
 import zerobase.demo.common.entity.Order;
 import zerobase.demo.common.entity.Review;
 import zerobase.demo.common.entity.Store;
@@ -24,6 +25,7 @@ import zerobase.demo.order.repository.OrderRepository;
 import zerobase.demo.owner.repository.StoreRepository;
 import zerobase.demo.review.dto.ReviewDto;
 import zerobase.demo.review.repository.ReviewRepository;
+import zerobase.demo.user.dto.NoticeDto;
 import zerobase.demo.user.dto.UserDto;
 import zerobase.demo.user.dto.UserUpdateDto;
 import zerobase.demo.user.repository.UserRepository;
@@ -38,6 +40,7 @@ public class UserServiceImpl implements UserService {
 	private final OrderRepository orderRepository;
 	private final StoreRepository storeRepository;
 	private final ReviewRepository reviewRepository;
+	private final JobComponents jobComponents;
 	@Override
 	public boolean createUser(UserDto userDto) {
 
@@ -255,6 +258,12 @@ public class UserServiceImpl implements UserService {
 		user.setStatus(UserStatus.valueOf(userStatus));
 		userRepository.save(user);
 		return UserDto.fromEntity(user);
+	}
+
+	@Override
+	public NoticeDto sendNotice(NoticeDto noticeDto) {
+		jobComponents.noticeEmailSender(noticeDto.getUserStatus(), noticeDto.getNotice());
+		return noticeDto;
 	}
 
 	static String randomWord() {

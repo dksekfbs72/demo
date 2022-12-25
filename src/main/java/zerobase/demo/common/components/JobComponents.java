@@ -14,11 +14,12 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import zerobase.demo.common.config.JobConfig;
+import zerobase.demo.common.type.UserStatus;
 
 @Slf4j
 @Component
 @AllArgsConstructor
-public class SchedulerComponents {
+public class JobComponents {
 
 	private JobLauncher jobLauncher;
 	private JobConfig jobConfig;
@@ -29,7 +30,22 @@ public class SchedulerComponents {
 		confMap.put("time", new JobParameter(System.currentTimeMillis()));
 		JobParameters jobParameters = new JobParameters(confMap);
 		try {
-			jobLauncher.run(jobConfig.Job(), jobParameters);
+			jobLauncher.run(jobConfig.promotionMailSendJob(), jobParameters);
+		} catch (JobInstanceAlreadyCompleteException | JobParametersInvalidException |
+				 JobExecutionAlreadyRunningException | JobRestartException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void noticeEmailSender(String status, String notice) {
+		log.info(("send notice email"));
+		Map<String, JobParameter> confMap = new HashMap<>();
+		confMap.put("time", new JobParameter(System.currentTimeMillis()));
+		confMap.put("status", new JobParameter(status));
+		confMap.put("notice", new JobParameter(notice));
+		JobParameters jobParameters = new JobParameters(confMap);
+		try {
+			jobLauncher.run(jobConfig.sendNoticeJob(), jobParameters);
 		} catch (JobInstanceAlreadyCompleteException | JobParametersInvalidException |
 				 JobExecutionAlreadyRunningException | JobRestartException e) {
 			throw new RuntimeException(e);
