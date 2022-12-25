@@ -5,6 +5,7 @@ import static zerobase.demo.common.type.ResponseCode.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,8 @@ import zerobase.demo.user.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
-public class StoreServiceImpl implements StoreService {
+@Primary
+public class RedisStoreServiceImpl implements StoreService {
 
 	private final StoreRepository storeRepository;
 	private final UserRepository userRepository;
@@ -57,6 +59,9 @@ public class StoreServiceImpl implements StoreService {
 
 		Store savedStore = storeRepository.save(newStore);
 
+		//redis
+		redisStoreInfoRepository.save(CustomerStoreInfoCache.fromEntity(savedStore));
+
 		return new CreateStore.Response(CREATE_STORE_SUCCESS);
 	}
 
@@ -78,7 +83,8 @@ public class StoreServiceImpl implements StoreService {
 		store.setOpenCloseDt(LocalDateTime.now());
 
 		Store savedStore = storeRepository.save(store);
-
+		//redis
+		redisStoreInfoRepository.save(CustomerStoreInfoCache.fromEntity(savedStore));
 
 		if(dto.getOpenClose() == StoreOpenCloseStatus.OPEN)
 			return new OpenCloseStore.Response(OPEN_STORE_SUCCESS);
@@ -108,6 +114,10 @@ public class StoreServiceImpl implements StoreService {
 		if(!loggedInUser.getUsername().equals(store.getUser().getUserId())) throw new OwnerException(NOT_AUTHORIZED);
 
 		store.setFromUpdateStoreDto(dto);
+		Store savedStore = storeRepository.save(store);
+
+		//redis
+		redisStoreInfoRepository.save(CustomerStoreInfoCache.fromEntity(savedStore));
 
 		return new UpdateStore.Response(UPDATE_STORE_SUCCESS);
 	}

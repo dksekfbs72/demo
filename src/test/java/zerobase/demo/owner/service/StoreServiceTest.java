@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.annotation.Transactional;
 
 import zerobase.demo.common.entity.Store;
 import zerobase.demo.common.entity.User;
@@ -28,6 +29,8 @@ import zerobase.demo.owner.dto.OpenCloseStore;
 import zerobase.demo.owner.dto.StoreInfo;
 import zerobase.demo.owner.dto.UpdateStore;
 import zerobase.demo.owner.repository.StoreRepository;
+import zerobase.demo.owner.service.impl.StoreServiceImpl;
+import zerobase.demo.redis.repository.RedisStoreInfoRepository;
 import zerobase.demo.user.repository.UserRepository;
 import zerobase.demo.user.service.UserService;
 
@@ -36,6 +39,7 @@ import zerobase.demo.user.service.UserService;
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
+@Transactional
 public class StoreServiceTest {
 
 	@Autowired
@@ -45,7 +49,8 @@ public class StoreServiceTest {
 	private UserService userService;
 
 	@Autowired
-	private StoreService storeService;
+	private StoreServiceImpl storeService;
+
 	@Autowired
 	private StoreRepository storeRepository;
 

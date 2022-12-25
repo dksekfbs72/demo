@@ -24,12 +24,14 @@ import zerobase.demo.common.type.SelectStoreOpenType;
 import zerobase.demo.common.type.UserStatus;
 import zerobase.demo.customer.dto.CustomerStoreDetail;
 import zerobase.demo.customer.dto.CustomerStoreInfo;
+import zerobase.demo.customer.service.Impl.CustomerServiceImpl;
 import zerobase.demo.owner.dto.CreateMenu;
 import zerobase.demo.owner.dto.CreateStore;
 import zerobase.demo.owner.repository.MenuRepository;
 import zerobase.demo.owner.repository.StoreRepository;
 import zerobase.demo.owner.service.MenuService;
 import zerobase.demo.owner.service.StoreService;
+import zerobase.demo.owner.service.impl.StoreServiceImpl;
 import zerobase.demo.user.repository.UserRepository;
 import zerobase.demo.user.service.UserService;
 
@@ -44,11 +46,11 @@ class CustomerServiceTest {
 	@Autowired
 	private UserService userService;
 	@Autowired
-	private StoreService storeService;
+	private StoreServiceImpl storeService;
 	@Autowired
 	private StoreRepository storeRepository;
 	@Autowired
-	private CustomerService customerService;
+	private CustomerServiceImpl customerService;
 	@Autowired
 	private MenuService menuService;
 	@Autowired
@@ -79,33 +81,33 @@ class CustomerServiceTest {
 		userRepository.deleteAll();
 	}
 
-	// @Test
-	// @DisplayName("기본 조회 성공")
-	// void createMenuSuccess() throws Exception {
-	//
-	// 	//given
-	// 	CustomerStoreInfo.ListParam listParam =
-	// 		CustomerStoreInfo.ListParam.builder()
-	// 			.userLat(35.0)
-	// 			.userLon(130.0)
-	// 			.openType(SelectStoreOpenType.ALL)
-	// 			.maxDistanceKm(999999.0)
-	// 		.build();
-	//
-	// 	//when
-	// 	CustomerStoreInfo.Response response = customerService.getStoreList(listParam);
-	//
-	// 	System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-	// 	for(CustomerStoreInfo x : response.getList()) {
-	// 		System.out.println(x.getDistanceKm());
-	// 	}
-	// 	System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-	//
-	// 	//then
-	// 	assertEquals(response.getCode().getResult(), Result.SUCCESS);
-	// 	assertEquals(response.getCode(), ResponseCode.SELECT_STORE_SUCCESS);
-	// 	assertEquals(response.getList().size(), 2);
-	// }
+	@Test
+	@DisplayName("기본 조회 성공")
+	void createMenuSuccess() throws Exception {
+
+		//given
+		CustomerStoreInfo.ListParam listParam =
+			CustomerStoreInfo.ListParam.builder()
+				.userLat(35.0)
+				.userLon(130.0)
+				.openType(SelectStoreOpenType.ALL)
+				.maxDistanceKm(999999.0)
+			.build();
+
+		//when
+		CustomerStoreInfo.Response response = customerService.getStoreList(listParam);
+
+		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		for(CustomerStoreInfo x : response.getList()) {
+			System.out.println(x.getDistanceKm());
+		}
+		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+		//then
+		assertEquals(response.getCode().getResult(), Result.SUCCESS);
+		assertEquals(response.getCode(), ResponseCode.SELECT_STORE_SUCCESS);
+		assertEquals(response.getList().size(), 2);
+	}
 
 	@Test
 	@DisplayName("기본 조회 실패 - 좌표 한국 밖")
@@ -129,32 +131,32 @@ class CustomerServiceTest {
 		assertEquals(exception.getResponseCode(), ResponseCode.BAD_REQUEST);
 	}
 
-	@Test
-	@DisplayName("가게 상세정보 조회 - 성공")
-	void getStoreDetail() throws Exception {
-
-
-		//given
-		Integer storeId = storeRepository.findAllByName("narangdStore").get(0).getId();
-
-		CustomerStoreDetail.Request request =
-			CustomerStoreDetail.Request.builder()
-				.storeId(storeId)
-				.userLat(35.0)
-				.userLon(130.0)
-				.build();
-
-		//when
-		CustomerStoreDetail.Response response = customerService.getStoreDetail(request);
-
-		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		System.out.println(response.getCustomerStoreDetail().toString());
-		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
-		//then
-		assertEquals(response.getCode().getResult(), Result.SUCCESS);
-		assertEquals(response.getCode(), ResponseCode.SELECT_STORE_DETAIL_SUCCESS);
-	}
+	// @Test
+	// @DisplayName("가게 상세정보 조회 - 성공")
+	// void getStoreDetail() throws Exception {
+	//
+	//
+	// 	//given
+	// 	Integer storeId = storeRepository.findAllByName("narangdStore").get(0).getId();
+	//
+	// 	CustomerStoreDetail.Request request =
+	// 		CustomerStoreDetail.Request.builder()
+	// 			.storeId(storeId)
+	// 			.userLat(35.0)
+	// 			.userLon(130.0)
+	// 			.build();
+	//
+	// 	//when
+	// 	CustomerStoreDetail.Response response = customerService.getStoreDetail(request);
+	//
+	// 	System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+	// 	System.out.println(response.getCustomerStoreDetail().toString());
+	// 	System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+	//
+	// 	//then
+	// 	assertEquals(response.getCode().getResult(), Result.SUCCESS);
+	// 	assertEquals(response.getCode(), ResponseCode.SELECT_STORE_DETAIL_SUCCESS);
+	// }
 
 
 	private void createUser(String userId, UserStatus status) {
