@@ -35,7 +35,6 @@ public class CustomerStoreInfo {
 	private String summary;
 	private StoreOpenCloseStatus openClose;
 	private Integer deliveryTip;
-	private Double commission;
 	private LocalDateTime openCloseDt;
 	private LocalDateTime regDt;
 	private Double distanceKm;
