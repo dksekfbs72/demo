@@ -39,7 +39,14 @@ public class AdminUserController extends AllExceptionHandler {
 	private static final Logger logger = LoggerFactory.getLogger(DemoApplication.class);
 
 
-	@ApiOperation("관리자 - 회원 정보 변경")
+	@ApiOperation(value = "관리자 - 회원 정보 변경", notes = "<p>parameter는 아래와 같습니다.</p>"
+		+ "<p>{\n"
+		+ "  \"phone\": \"string\",<br>"
+		+ "  \"status\": \"ADMIN\",<br>"
+		+ "  \"userAddr\": \"string\",<br>"
+		+ "  \"userId\": \"string\",<br>"
+		+ "  \"userName\": \"string\""
+		+ "}</p>")
 	@PutMapping("/userUpdate")
 	UserUpdateDto.Response userUpdate(@RequestBody UserUpdateDto.Request parameter,
 		Principal principal) {

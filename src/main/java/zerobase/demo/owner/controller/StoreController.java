@@ -26,7 +26,19 @@ public class StoreController {
 	private final StoreService storeService;
 
 	//가게 등록
-	@ApiOperation("점주 - 가게 등록")
+	@ApiOperation(value = "점주 - 가게 등록", notes = "<p>request는 아래와 같습니다<p>"
+		+ "{\n"
+		+ "\t\t\"ownerId\" : \"String\"<br>"
+		+ "\t\t\"name\" : \"String\"<br>"
+		+ "\t\t\"storeAddr\" : \"String\"<br>"
+		+ "\t\t\"summary\" : \"String\"<br>"
+		+ "\t\t\"pictureUrl\" : \"String\"<br>"
+		+ "\t\t\"commission\" : \"Double\"<br>"
+		+ "\t\t\"deliveryDistanceKm\" : \"Double\"<br>"
+		+ "\t\t\"deliveryTip\" : \"Integer\"<br>"
+		+ "\t\t\"lat\" : \"Double\"<br>"
+		+ "\t\t\"lon\" : \"Double\"<br>"
+		+ "\t}")
 	@PostMapping()
 	public CreateStore.Response createStore(@RequestBody CreateStore.Request request,
 		@AuthenticationPrincipal UserDetails loggedInUser) {
@@ -40,7 +52,11 @@ public class StoreController {
 	}
 
 	//가게 열기/닫기
-	@ApiOperation("점주 - 점포 열기/닫기")
+	@ApiOperation(value = "점주 - 점포 열기/닫기", notes = "<p>request는 아래와 같습니다<p>"
+		+ "{\n"
+		+ "\t\t\"storeId\" : \"Integer\",<br>"
+		+ "\t\t\"openClose\" : \"StoreOpenCloseStatus\"<br>"
+		+ "\t}")
 	@PutMapping("/openclose")
 	public OpenCloseStore.Response openCloseStore(@RequestBody OpenCloseStore.Request request,
 		@AuthenticationPrincipal UserDetails loggedInUser) {
@@ -63,7 +79,19 @@ public class StoreController {
 	}
 
 	//점포 수정
-	@ApiOperation("점주 - 점포 정보 수정")
+	@ApiOperation(value = "점주 - 좀포 정보 수정", notes = "<p>request는 아래와 같습니다<p>"
+		+ "{\n"
+		+ "\t\t\"storeId\" : \"Integer\"<br>"
+		+ "\t\t\"name\" : \"String\"<br>"
+		+ "\t\t\"storeAddr\" : \"String\"<br>"
+		+ "\t\t\"summary\" : \"String\"<br>"
+		+ "\t\t\"pictureUrl\" : \"String\"<br>"
+		+ "\t\t\"commission\" : \"Double\"<br>"
+		+ "\t\t\"deliveryDistanceKm\" : \"Double\"<br>"
+		+ "\t\t\"deliveryTip\" : \"Integer\"<br>"
+		+ "\t\t\"lat\" : \"Double\"<br>"
+		+ "\t\t\"lon\" : \"Double\"<br>"
+		+ "\t}")
 	@PutMapping()
 	public UpdateStore.Response updateStore(@RequestBody UpdateStore.Request request,
 		@AuthenticationPrincipal UserDetails loggedInUser) {

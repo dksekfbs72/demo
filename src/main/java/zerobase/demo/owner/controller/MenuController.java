@@ -29,7 +29,14 @@ public class MenuController {
 	private final MenuService menuService;
 
 	//메뉴 등록
-	@ApiOperation("점주 - 메뉴 생성")
+	@ApiOperation(value = "점주 - 메뉴 등록", notes = "<p>request는 아래와 같습니다<p>"
+		+ "{\n"
+		+ "\t\t\"storeId\" : \"Integer\"<br>"
+		+ "\t\t\"price\" : \"Integer\"<br>"
+		+ "\t\t\"pictureUrl\" : \"String\"<br>"
+		+ "\t\t\"name\" : \"String\"<br>"
+		+ "\t\t\"summary\" : \"String\"<br>"
+		+ "\t}")
 	@PostMapping()
 	public CreateMenu.Response createMenu(@RequestBody CreateMenu.Request request,
 		@AuthenticationPrincipal UserDetails loggedInUser) {
@@ -41,7 +48,11 @@ public class MenuController {
 	}
 
 	// 메뉴 품절/판매중 처리
-	@ApiOperation("점주 - 메뉴 품절 처리")
+	@ApiOperation(value = "점주 - 메뉴 품절 처리", notes = "<p>request는 아래와 같습니다<p>"
+		+ "{\n"
+		+ "\t\t\"menuId\" : \"Integer\"<br>"
+		+ "\t\t\"soldOutStatus\" : \"SoldOutStatus\"<br>"
+		+ "\t}")
 	@PutMapping("/soldoutstatus")
 	public SetSoldOutStatus.Response setSoldOutStatus(@RequestBody SetSoldOutStatus.Request request,
 		@AuthenticationPrincipal UserDetails loggedInUser) {
@@ -53,7 +64,14 @@ public class MenuController {
 	}
 
 	//메뉴 정보 수정
-	@ApiOperation("점주 - 메뉴 정보 수정")
+	@ApiOperation(value = "점주 - 메뉴 정보 수정", notes = "<p>request는 아래와 같습니다<p>"
+		+ "{\n"
+		+ "\t\t\"menuId\" : \"Integer\"<br>"
+		+ "\t\t\"price\" : \"Integer\"<br>"
+		+ "\t\t\"pictureUrl\" : \"String\"<br>"
+		+ "\t\t\"name\" : \"String\"<br>"
+		+ "\t\t\"summary\" : \"String\"<br>"
+		+ "\t}")
 	@PutMapping()
 	public UpdateMenu.Response updateMenu(@RequestBody UpdateMenu.Request request,
 		@AuthenticationPrincipal UserDetails loggedInUser) {
@@ -73,7 +91,10 @@ public class MenuController {
 		return menuService.getMenuInfoByStoreId(storeId);
 	}
 
-	@ApiOperation("점주 - 메뉴 삭제")
+	@ApiOperation(value = "점주 - 메뉴 삭제", notes = "<p>request는 아래와 같습니다<p>"
+		+ "{\n"
+		+ "\t\t\"menuId\" : \"Integer\"<br>"
+		+ "\t}")
 	@DeleteMapping()
 	public DeleteMenu.Response deleteMenu(@RequestBody DeleteMenu.Request request,
 		@AuthenticationPrincipal UserDetails loggedInUser) {

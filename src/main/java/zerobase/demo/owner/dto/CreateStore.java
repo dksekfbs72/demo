@@ -67,6 +67,7 @@ public class CreateStore {
 		private Double lon;
 	}
 
+
 	public static class Response extends BaseResponse {
 		public Response(ResponseCode code) {
 			super(code);

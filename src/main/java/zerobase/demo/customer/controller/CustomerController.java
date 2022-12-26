@@ -35,7 +35,17 @@ public class CustomerController {
 	private final CustomerService customerService;
 
 	//매장 리스트 조회
-	@ApiOperation("고객 - 매장 리스트 조회")
+	@ApiOperation(value = "고객 - 매장 리스트 조회", notes = "request입니다.<br>"
+		+ "{<br>"
+		+ "//Required"
+		+ "		\"userLat\" : \"Double\" ,<br>"
+		+ "     \"userLon\" : \"Double\" ,<br>"
+		+ "     //Optional<br>"
+		+ "      \"maxDistanceKm\" : \"Double\" , //default 3km<br>"
+		+ "      \"sortType\" : \"SortType\" , //default distance<br>"
+		+ "      \"openType\" : \"SelectStoreOpenType\" , //default open<br>"
+		+ "      \"keyword\" : \"String\")<br>"
+		+ "}")
 	@GetMapping("/store")
 	public CustomerStoreInfo.Response getStoreList(CustomerStoreInfo.ListParam listParam) throws
 		JsonProcessingException {
@@ -43,7 +53,12 @@ public class CustomerController {
 		return customerService.getStoreList(listParam);
 	}
 
-	@ApiOperation("고객 - 매장 상세 정보")
+	@ApiOperation(value = "고객 - 매장 상세 정보", notes = "request입니다.<br>"
+		+ "{<br>"
+		+ "		\"storeId\" : \"Integer\" ,<br>"
+		+ "     \"userLat\" : \"Double\" ,<br>"
+		+ "      \"userLon\" : \"Double\" "
+		+ "}")
 	@GetMapping("/store/detail")
 	public CustomerStoreDetail.Response getStoreDetail(CustomerStoreDetail.Request request) {
 

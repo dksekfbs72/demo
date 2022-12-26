@@ -1,6 +1,9 @@
 package zerobase.demo.owner.controller;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ExampleProperty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +20,11 @@ public class AdminStoreController {
 	private final StoreService storeService;
 
 	//수수료 설정
-	@ApiOperation("관리자 - 수수료 설정")
+	@ApiOperation(value = "관리 - 수수료 설정", notes = "<p>request는 아래와 같습니다<p>"
+		+ "{\n"
+		+ "\t\t\"storeId\" : \"Integer\"<br>"
+		+ "\t\t\"commission\" : \"Double\"<br>"
+		+ "\t}")
 	@PostMapping("/commission")
 	public SetCommission.Response setCommission(@RequestBody SetCommission.Request request) {
 
