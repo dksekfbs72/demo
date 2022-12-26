@@ -3,12 +3,11 @@ package zerobase.demo.user.service;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import zerobase.demo.common.type.ResponseCode;
-import zerobase.demo.order.dto.OrderDto;
+import zerobase.demo.common.type.UserStatus;
 import zerobase.demo.review.dto.ReviewDto;
+import zerobase.demo.user.dto.NoticeDto;
 import zerobase.demo.user.dto.UserDto;
 import zerobase.demo.user.dto.UserUpdateDto;
-
-import java.util.List;
 
 public interface UserService extends UserDetailsService {
 
@@ -52,4 +51,33 @@ public interface UserService extends UserDetailsService {
 	 */
 	UserDetails loadUserByUsername(String userId);
 
+	/**
+	 * 관리자 배달완료
+	 */
+	ResponseCode deliveryComplete(Integer orderId);
+
+	/**
+	 * 관리자 리뷰 내용 변경
+	 */
+	ReviewDto updateReview(ReviewDto fromRequest);
+
+	/**
+	 * 관리자 리뷰 삭제
+	 */
+	ResponseCode deleteReview(Integer reviewId);
+
+	/**
+	 * 관리자 회원 비밀번호 초기화
+	 */
+	ResponseCode adminResetPassword(Integer userId);
+
+	/**
+	 * 관리자 회원 상태 변경
+	 */
+	UserDto adminChangeUserStatus(Integer userId, String userStatus);
+
+	/**
+	 * 관리자 공지 사항 전송
+	 */
+	NoticeDto sendNotice(NoticeDto noticeDto);
 }

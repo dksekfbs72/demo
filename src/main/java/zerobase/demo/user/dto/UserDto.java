@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import zerobase.demo.common.entity.User;
 import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.common.type.UserStatus;
 
@@ -41,6 +42,18 @@ public class UserDto {
 			.build();
 	}
 
+	public static UserDto fromEntity(User request) {
+		return UserDto.builder()
+			.userId(request.getUserId())
+			.password("**************")
+			.userName(request.getUserName())
+			.phone(request.getPhone())
+			.userAddr(request.getUserAddr())
+			.status(request.getStatus())
+			.emailAuth(true)
+			.build();
+	}
+
 	@Getter
 	@Setter
 	@AllArgsConstructor
@@ -65,7 +78,11 @@ public class UserDto {
 	@Getter
 	@Setter
 	public static class Response<T> extends zerobase.demo.common.model.BaseResponse {
-
+		private T resultList;
+		public Response(T userDto, ResponseCode responseCode) {
+			super(responseCode);
+			this.resultList = userDto;
+		}
 		public Response(ResponseCode responseCode) {
 			super(responseCode);
 		}

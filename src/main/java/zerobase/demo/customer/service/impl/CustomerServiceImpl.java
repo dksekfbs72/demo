@@ -1,4 +1,4 @@
-package zerobase.demo.customer.service.impl;
+package zerobase.demo.customer.service.Impl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -7,9 +7,11 @@ import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import zerobase.demo.common.entity.Coupon;
 import zerobase.demo.common.entity.Menu;
 import zerobase.demo.common.entity.Order;
 import zerobase.demo.common.entity.Review;
+import zerobase.demo.common.entity.UserCouponTbl;
 import zerobase.demo.common.exception.CustomerException;
 import zerobase.demo.common.exception.UserException;
 import zerobase.demo.common.type.OrderStatus;
@@ -18,6 +20,7 @@ import zerobase.demo.common.type.SelectStoreOpenType;
 import zerobase.demo.common.type.SoldOutStatus;
 import zerobase.demo.common.type.Sort;
 import zerobase.demo.common.type.StoreOpenCloseStatus;
+import zerobase.demo.coupon.repository.CouponRepository;
 import zerobase.demo.customer.dto.CustomerStoreDetail;
 import zerobase.demo.customer.dto.CustomerStoreInfo;
 import zerobase.demo.customer.mapper.CustomerStoreMapper;
@@ -43,7 +46,7 @@ public class CustomerServiceImpl implements CustomerService {
 	private final MenuRepository menuRepository;
 	private final CustomerStoreMapper customerStoreMapper;
 	private final MenuService menuService;
-
+	private final CouponRepository couponRepository;
 	@Override
 	public boolean userAddReview(ReviewDto fromRequest, String userId) {
 
@@ -132,9 +135,9 @@ public class CustomerServiceImpl implements CustomerService {
 				.build();
 		} else {
 			newOrder = order.get();
-			// if (!menu.getRestaurantId().equals(newOrder.getRestaurantId())) {
-			// 	throw new CustomerException(ResponseCode.NOT_THIS_STORE_MENU);
-			// }
+			if (!menu.getStore().getId().equals(newOrder.getRestaurantId())) {
+				throw new CustomerException(ResponseCode.NOT_THIS_STORE_MENU);
+			}
 			List<Integer> newMenus = newOrder.getMenus();
 			for (int i = 0; i < count; i++) {
 				newMenus.add(menuId);
@@ -206,6 +209,31 @@ public class CustomerServiceImpl implements CustomerService {
 		order.setStatus(OrderStatus.CANCEL);
 		order.setDeliveryTime(null);
 		orderRepository.save(order);
+		return OrderDto.request(order);
+	}
+
+	@Override
+	public OrderDto useCoupon(String username, Integer couponId) {
+		Integer userId = userRepository.findByUserId(username).get().getId();
+		Order order = orderRepository.findByUserIdAndStatus(userId,
+			OrderStatus.SHOPPING).orElseThrow(() -> new CustomerException(ResponseCode.ORDER_NOT_FOUND));
+		UserCouponTbl userCoupon = couponRepository.findByUserIdAndAndCouponId(userId, couponId)
+			.orElseThrow(() -> new CustomerException(ResponseCode.NOT_HAVE_COUPON));
+
+		if (userCoupon.getUsedTime() != null) throw new CustomerException(ResponseCode.USED_COUPON);
+		if (!userCoupon.getCoupon().getRestaurantId().equals(order.getRestaurantId()))
+			throw new CustomerException(ResponseCode.NOT_THIS_STORE_COUPON);
+
+		order.setPrice(order.getPrice()-userCoupon.getCoupon().getSalePrice());
+		if (order.getPrice() < 0) throw new CustomerException(ResponseCode.THERE_IS_NO_DISCOUNT);
+
+		List<Coupon> list = order.getUseCoupon();
+		list.add(userCoupon.getCoupon());
+		order.setUseCoupon(list);
+		userCoupon.setUsedTime(LocalDateTime.now());
+
+		orderRepository.save(order);
+		couponRepository.save(userCoupon);
 		return OrderDto.request(order);
 	}
 

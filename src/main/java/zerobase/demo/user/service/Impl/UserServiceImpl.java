@@ -11,17 +11,21 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import zerobase.demo.common.components.JobComponents;
 import zerobase.demo.common.entity.Order;
 import zerobase.demo.common.entity.Review;
+import zerobase.demo.common.entity.Store;
 import zerobase.demo.common.entity.User;
 import zerobase.demo.common.exception.*;
+import zerobase.demo.common.type.OrderStatus;
 import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.common.type.UserStatus;
 import zerobase.demo.common.components.MailComponents;
-import zerobase.demo.order.dto.OrderDto;
 import zerobase.demo.order.repository.OrderRepository;
+import zerobase.demo.owner.repository.StoreRepository;
 import zerobase.demo.review.dto.ReviewDto;
 import zerobase.demo.review.repository.ReviewRepository;
+import zerobase.demo.user.dto.NoticeDto;
 import zerobase.demo.user.dto.UserDto;
 import zerobase.demo.user.dto.UserUpdateDto;
 import zerobase.demo.user.repository.UserRepository;
@@ -33,7 +37,10 @@ public class UserServiceImpl implements UserService {
 
 	private final MailComponents mailComponents;
 	private final UserRepository userRepository;
-
+	private final OrderRepository orderRepository;
+	private final StoreRepository storeRepository;
+	private final ReviewRepository reviewRepository;
+	private final JobComponents jobComponents;
 	@Override
 	public boolean createUser(UserDto userDto) {
 
@@ -191,6 +198,86 @@ public class UserServiceImpl implements UserService {
 
 		return new org.springframework.security.core.userdetails.User(user.getUserId(),
 			user.getPassword(), grantedAuthorities);
+	}
+
+	@Override
+	public ResponseCode deliveryComplete(Integer orderId) {
+		Order order = orderRepository.findById(orderId)
+			.orElseThrow(() -> new UserException(ResponseCode.ORDER_NOT_FOUND));
+		order.setStatus(OrderStatus.DELIVERY_COMPLETE);
+		Store store = storeRepository.findById(order.getRestaurantId()).get();
+		store.setOrderCount(store.getOrderCount()+1);
+		orderRepository.save(order);
+		storeRepository.save(store);
+		return ResponseCode.DELIVERY_SUCCESS;
+	}
+
+	@Override
+	public ReviewDto updateReview(ReviewDto reviewDto) {
+		Review review = reviewRepository.findByOrderId(reviewDto.getOrderId())
+			.orElseThrow(() -> new UserException(ResponseCode.REVIEW_NOT_FOUND));
+
+		review.setSummary(reviewDto.getSummary());
+		review.setContent(reviewDto.getContent());
+
+		reviewRepository.save(review);
+		return ReviewDto.fromEntity(review);
+	}
+
+	@Override
+	public ResponseCode deleteReview(Integer reviewId) {
+		Review review = reviewRepository.findById(reviewId)
+			.orElseThrow(() -> new UserException(ResponseCode.REVIEW_NOT_FOUND));
+
+		reviewRepository.delete(review);
+		return ResponseCode.DELETE_REVIEW_SUCCESS;
+	}
+
+	@Override
+	public ResponseCode adminResetPassword(Integer userId) {
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
+
+		String newPassword = randomWord();
+		user.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+		mailComponents.sendMail(user.getUserId(),
+			"[조기요] 비밀번호 초기화",
+			"<p>관리자에 의해 회원님의 비밀번호가 초기화되었습니다.</p>" +
+				"<p>회원님의 임시 비밀번호는 "+ newPassword + " 입니다.</p>");
+		userRepository.save(user);
+		return ResponseCode.PASSWORD_RESET;
+	}
+
+	@Override
+	public UserDto adminChangeUserStatus(Integer userId, String userStatus) {
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new UserException(ResponseCode.USER_NOT_FOUND));
+		if (!userStatus.equals("USER") && !userStatus.equals("OWNER") && !userStatus.equals("STOP")) {
+			throw new UserException(ResponseCode.USER_STATUS_NOT_FOUND);
+		}
+		user.setStatus(UserStatus.valueOf(userStatus));
+		userRepository.save(user);
+		return UserDto.fromEntity(user);
+	}
+
+	@Override
+	public NoticeDto sendNotice(NoticeDto noticeDto) {
+		jobComponents.noticeEmailSender(noticeDto.getUserStatus(), noticeDto.getNotice());
+		return noticeDto;
+	}
+
+	static String randomWord() {
+		StringBuilder Random= new StringBuilder();
+		for (int i=0;; i++) {
+			int x = (int) (Math.random()*75)+48;
+			if (x >= 58 && x<=64) continue;
+			if (x >= 91 && x<=96) continue;
+			char ch = (char) x;
+			Random.append(ch);
+			if (Random.length()==8) break;
+		}
+
+		return Random.toString();
 	}
 
 }
