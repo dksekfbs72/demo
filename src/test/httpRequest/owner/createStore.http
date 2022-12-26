@@ -2,16 +2,16 @@ POST http://localhost:8080/store
 Content-Type: application/json
 
 {
-  "ownerId": 1,
-  "name": "nameTest",
-  "storeAddr": "addrTest",
-  "summary": "summaryTest",
-  "pictureUrl": "urlTest",
-  "commission": 5.3,
-  "deliveryDistanceKm": 3.5,
+  "ownerId": 4,
+  "name": "가게1",
+  "storeAddr": "서울시",
+  "summary": "가게1입니다.",
+  "pictureUrl": "pictureUrl",
+  "commission": 0.0,
+  "deliveryDistanceKm": 5.0,
   "deliveryTip": 3000,
-  "lat": 12.1215,
-  "long": 223.1123
+  "lat": 37.5686805,
+  "lon": 126.9804147
 }
 
 ###

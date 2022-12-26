@@ -5,6 +5,7 @@ import static zerobase.demo.common.type.ResponseCode.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ import zerobase.demo.user.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
+@Primary
 public class StoreServiceImpl implements StoreService {
 
 	private final StoreRepository storeRepository;

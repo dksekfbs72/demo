@@ -49,7 +49,6 @@ import zerobase.demo.user.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
-@Primary
 public class RedisCustomerServiceImpl implements CustomerService {
 
 	private final UserRepository userRepository;

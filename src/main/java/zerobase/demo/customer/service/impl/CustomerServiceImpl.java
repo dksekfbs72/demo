@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import zerobase.demo.common.entity.Coupon;
 import zerobase.demo.common.entity.Menu;
@@ -37,6 +39,7 @@ import zerobase.demo.user.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
+@Primary
 public class CustomerServiceImpl implements CustomerService {
 
 	private final UserRepository userRepository;
