@@ -2,8 +2,6 @@ package zerobase.demo.customer.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Optional;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,13 +22,12 @@ import zerobase.demo.common.type.SelectStoreOpenType;
 import zerobase.demo.common.type.UserStatus;
 import zerobase.demo.customer.dto.CustomerStoreDetail;
 import zerobase.demo.customer.dto.CustomerStoreInfo;
-import zerobase.demo.customer.service.Impl.CustomerServiceImpl;
+import zerobase.demo.customer.service.impl.CustomerServiceImpl;
 import zerobase.demo.owner.dto.CreateMenu;
 import zerobase.demo.owner.dto.CreateStore;
 import zerobase.demo.owner.repository.MenuRepository;
 import zerobase.demo.owner.repository.StoreRepository;
 import zerobase.demo.owner.service.MenuService;
-import zerobase.demo.owner.service.StoreService;
 import zerobase.demo.owner.service.impl.StoreServiceImpl;
 import zerobase.demo.user.repository.UserRepository;
 import zerobase.demo.user.service.UserService;

@@ -116,7 +116,7 @@ public class JobConfig {
 		,@Value("#{jobParameters['notice']}") String notice) {
 		return (stepContribution, chunkContext) -> {
 			List<User> userList;
-			if (!status.equals("ALL")){
+			if (status == null || status.isEmpty() || !status.equals("ALL")){
 				userList = userRepository.findAllByStatus(UserStatus.valueOf(status));
 			} else {
 				userList = userRepository.findAll();
