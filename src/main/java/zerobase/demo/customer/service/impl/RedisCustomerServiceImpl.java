@@ -287,7 +287,13 @@ public class RedisCustomerServiceImpl implements CustomerService {
 			return new CustomerStoreInfo.Response(ResponseCode.SELECT_STORE_SUCCESS, responseData);
 		}
 
-		//캐싱 대상이 아닌 경우
+		//캐싱 대상이 아닌 경우 그냥 return
+		if(!isNullOrEmpty(param.getKeyword()) || param.getSortType() != SortType.DISTANCE) {
+			List<CustomerStoreInfo> customerStoreInfoList = customerStoreMapper.selectList(param);
+			return new CustomerStoreInfo.Response(ResponseCode.SELECT_STORE_SUCCESS, customerStoreInfoList);
+		}
+
+
 		//기본적으로 open_close param이 뭐든간에 전부 조회해서 래디스에 저장한다.
 		List<CustomerStoreInfo> customerStoreInfoList = customerStoreMapper.selectList(param);
 
