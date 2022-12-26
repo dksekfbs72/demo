@@ -5,8 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
+import java.util.stream.Collectors;
+
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+import lombok.RequiredArgsConstructor;
 import zerobase.demo.common.entity.Coupon;
 import zerobase.demo.common.entity.Menu;
 import zerobase.demo.common.entity.Order;
@@ -31,13 +37,20 @@ import zerobase.demo.owner.dto.MenuInfo;
 import zerobase.demo.owner.repository.MenuRepository;
 import zerobase.demo.owner.repository.StoreRepository;
 import zerobase.demo.owner.service.MenuService;
+import zerobase.demo.redis.customStructure.Location;
+import zerobase.demo.redis.customStructure.LocationJsonConverter;
+import zerobase.demo.redis.entity.CustomerStoreInfoCache;
+import zerobase.demo.redis.entity.CustomerStoreListCache;
+import zerobase.demo.redis.repository.RedisSelectListRepository;
+import zerobase.demo.redis.repository.RedisStoreInfoRepository;
 import zerobase.demo.review.dto.ReviewDto;
 import zerobase.demo.review.repository.ReviewRepository;
 import zerobase.demo.user.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
-public class CustomerServiceImpl implements CustomerService {
+@Primary
+public class RedisCustomerServiceImpl implements CustomerService {
 
 	private final UserRepository userRepository;
 	private final ReviewRepository reviewRepository;
@@ -47,6 +60,10 @@ public class CustomerServiceImpl implements CustomerService {
 	private final CustomerStoreMapper customerStoreMapper;
 	private final MenuService menuService;
 	private final CouponRepository couponRepository;
+	private final LocationJsonConverter locationJsonConverter;
+	private final RedisSelectListRepository redisSelectListRepository;
+	private final RedisStoreInfoRepository redisStoreInfoRepository;
+
 	@Override
 	public boolean userAddReview(ReviewDto fromRequest, String userId) {
 
@@ -135,9 +152,9 @@ public class CustomerServiceImpl implements CustomerService {
 				.build();
 		} else {
 			newOrder = order.get();
-			if (!menu.getStore().getId().equals(newOrder.getRestaurantId())) {
-				throw new CustomerException(ResponseCode.NOT_THIS_STORE_MENU);
-			}
+			// if (!menu.getRestaurantId().equals(newOrder.getRestaurantId())) {
+			// 	throw new CustomerException(ResponseCode.NOT_THIS_STORE_MENU);
+			// }
 			List<Integer> newMenus = newOrder.getMenus();
 			for (int i = 0; i < count; i++) {
 				newMenus.add(menuId);
@@ -240,24 +257,135 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public CustomerStoreInfo.Response getStoreList(CustomerStoreInfo.ListParam param) {
 
-		Double userLat = param.getUserLat();
-		Double userLon = param.getUserLon();
 		//필수값 미입력
-		if(userLat == null || userLon == null) throw new CustomerException(ResponseCode.BAD_REQUEST);
+		if(param.getUserLat() == null || param.getUserLon() == null) throw new CustomerException(ResponseCode.BAD_REQUEST);
 		//대한민국을 벗어날 경우
-		if(isOutOfKorea(userLat, userLon)) { throw new CustomerException(ResponseCode.BAD_REQUEST); }
+		if(isOutOfKorea(param.getUserLat(), param.getUserLon())) { throw new CustomerException(ResponseCode.BAD_REQUEST); }
 
+		// 미입력 옵션 값을 기본 값 으로
 		setNull2Default(param);
-		List<CustomerStoreInfo> customerStoreInfo =
-			customerStoreMapper.selectList(param);
 
-		return new CustomerStoreInfo.Response(ResponseCode.SELECT_STORE_SUCCESS, customerStoreInfo);
+		//좌표 압축
+		//좌표 소수점 3째자리 오차 : 약 110m
+		//소수점 3째자리까지 남기고 반올림
+		param.setUserLat(Math.round(param.getUserLat()*1000)/1000.0);
+		param.setUserLon(Math.round(param.getUserLon()*1000)/1000.0);
+
+		/**
+		 * 레디스에서 값 가져와도 되는 경우
+		 * 1. 키워드가 null 혹은 공백이고 (검색이 아니고)
+		 * 2. 정렬 방식이 기본 정렬값인 거리순 정렬이며
+		 * 3. 레디스에 키(위도, 경도)가 존재하며
+		 * 4. 해당 키의 벨류값 중 maxCachedDistance(캐싱된 최대거리) 가 요청한 거리값 이상인 경우
+		 */
+
+		CustomerStoreListCache cacheValue = getValueIfCacheOk(param);
+
+		//값 가져오기 가능한 경우
+		if(cacheValue!=null) {
+
+			//래디스에서는 불가능한 쿼리
+			// List<CustomerStoreInfoCache> valueList
+			// 	=redisStoreInfoRepository.findAllByIdIn(cacheValue.getStoreIdList());
+
+			List<CustomerStoreInfo> responseData = new ArrayList<>();
+
+			int size = cacheValue.getStoreIdList()==null?0:cacheValue.getStoreIdList().size();
+			for(int i=0; i<size; i++){
+				Optional<CustomerStoreInfoCache> optionalValue =
+					redisStoreInfoRepository.findById(cacheValue.getStoreIdList().get(i));//오버헤드 가능성 있음
+				CustomerStoreInfoCache storeInfoCache = optionalValue.get();
+
+				//요청한 최대거리보다 먼 매장이 캐싱되어 있을 경우
+				if(cacheValue.getMaxCachedDistance() > param.getMaxDistanceKm()) break;
+
+				//OPEN만 검색했을 때는 OPEN만 담아준다.
+				if(param.getOpenType() == SelectStoreOpenType.OPEN) {
+					if(storeInfoCache.getOpenClose() == StoreOpenCloseStatus.OPEN) {
+						responseData.add(
+							storeInfoCache.toDtoWithDistance(cacheValue.getDistanceKmList().get(i)));
+					}
+				} else {
+					responseData.add(
+						storeInfoCache.toDtoWithDistance(cacheValue.getDistanceKmList().get(i)));
+				}
+			}
+
+			return new CustomerStoreInfo.Response(ResponseCode.SELECT_STORE_SUCCESS, responseData);
+		}
+
+		//캐싱 대상이 아닌 경우 그냥 return
+		if(!isNullOrEmpty(param.getKeyword()) || param.getSortType() != SortType.DISTANCE) {
+			List<CustomerStoreInfo> customerStoreInfoList = customerStoreMapper.selectList(param);
+			return new CustomerStoreInfo.Response(ResponseCode.SELECT_STORE_SUCCESS, customerStoreInfoList);
+		}
+
+
+		//기본적으로 open_close param이 뭐든간에 전부 조회해서 래디스에 저장한다.
+		List<CustomerStoreInfo> customerStoreInfoList = customerStoreMapper.selectList(param);
+
+		CustomerStoreListCache cache;
+		try {
+			cache = CustomerStoreListCache.builder()
+									.id(locationJsonConverter
+										.LocationToJson(new Location(param.getUserLat(), param.getUserLon())))
+									.storeIdList(customerStoreInfoList.stream()
+										.map(CustomerStoreInfo::getId).collect(Collectors.toList()))
+									.distanceKmList(customerStoreInfoList.stream()
+										.map(CustomerStoreInfo::getDistanceKm).collect(Collectors.toList()))
+									.maxCachedDistance(param.getMaxDistanceKm())
+									.build();
+		} catch (JsonProcessingException e) {
+			throw new CustomerException(ResponseCode.INTERNAL_SERVER_ERROR);
+		}
+		redisSelectListRepository.save(cache);
+
+		//Open만 조회할 경우 걸러내기
+		if(param.getOpenType() == SelectStoreOpenType.OPEN) {
+			customerStoreInfoList = customerStoreInfoList.stream()
+				.filter(x -> x.getOpenClose() == StoreOpenCloseStatus.OPEN)
+				.collect(Collectors.toList());
+		}
+
+		return new CustomerStoreInfo.Response(ResponseCode.SELECT_STORE_SUCCESS, customerStoreInfoList);
 	}
+
+	private CustomerStoreListCache getValueIfCacheOk(CustomerStoreInfo.ListParam param) {
+
+		if(!isNullOrEmpty(param.getKeyword()) || param.getSortType() != SortType.DISTANCE) return null;
+		Optional<CustomerStoreListCache> optionalValue;
+		try {
+			optionalValue = redisSelectListRepository.findById(
+				locationJsonConverter.LocationToJson(new Location(param.getUserLat(), param.getUserLon())));
+		} catch (JsonProcessingException e) {
+			throw new CustomerException(ResponseCode.INTERNAL_SERVER_ERROR);
+		}
+
+		if(!optionalValue.isPresent()) return null;
+
+		CustomerStoreListCache value = optionalValue.get();
+
+		if(value.getMaxCachedDistance() < param.getMaxDistanceKm()) return null;
+
+		return value;
+	}
+
+	private boolean isNullOrEmpty(String s) {
+		if(s == null || s.isEmpty()) return true;
+		return false;
+	}
+
 	private void setNull2Default(CustomerStoreInfo.ListParam param)  {
 		//기본값
 		if(param.getMaxDistanceKm() == null) param.setMaxDistanceKm(3.0);
 		if(param.getOpenType() ==null) param.setOpenType(SelectStoreOpenType.OPEN);
 		if(param.getSortType() == null) param.setSortType(SortType.DISTANCE);
+	}
+
+	//검색이 아닌 경우에만 캐싱한다.
+	private boolean isCacheTarget(CustomerStoreInfo.ListParam param) {
+		if(param.getKeyword() != null) return false;
+		return true;
 	}
 
 	@Override

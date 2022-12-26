@@ -11,32 +11,28 @@
         * cos(radians(lat))
         * cos(radians(lon) - RADIANS(#{userLon}))
         + sin (radians(#{userLat})) * sin( radians(lat))
-            )
+        )
         ) AS distanceKm
         FROM STORE
-        WHERE
-            1=1
-        <if test='openType.name().equals("OPEN")'>
-            and
-            open_close = 'open'
-        </if>
 
+        WHERE
+        1=1
+
+        <if test='keyword != null'>
         and
         name like concat('%', #{keyword}, '%')
-
-        <if test='limitDistanceKm != null'>
-            HAVING distanceKm &lt; #{limitDistanceKm}
         </if>
+
+        HAVING distanceKm &lt; #{maxDistanceKm}
 
         ORDER BY
         <choose>
-            <when test='sort.name().equals("RANDOM")'> RAND()</when>
-            <when test='sort.name().equals("DISTANCE")'> distanceKm</when>
-            <when test='sort.name().equals("TIP")'> DELIVERY_TIP</when>
-            <when test='sort.name().equals("ORDER")'> ORDER_COUNT</when>
+            <when test='sortType.name().equals("RANDOM")'> RAND()</when>
+            <when test='sortType.name().equals("DISTANCE")'> distanceKm</when>
+            <when test='sortType.name().equals("TIP")'> DELIVERY_TIP</when>
+            <when test='sortType.name().equals("ORDER")'> ORDER_COUNT</when>
         </choose>
 
-        limit #{offset}, #{limit}
     </select>
 
     <select id="selectStoreById" resultType="zerobase.demo.customer.dto.CustomerStoreInfo">

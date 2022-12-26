@@ -2,6 +2,7 @@ package zerobase.demo.owner.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
@@ -25,6 +26,7 @@ import zerobase.demo.common.type.SoldOutStatus;
 import zerobase.demo.common.type.UserStatus;
 import zerobase.demo.owner.dto.CreateMenu;
 import zerobase.demo.owner.dto.CreateStore;
+import zerobase.demo.owner.dto.DeleteMenu;
 import zerobase.demo.owner.dto.MenuInfo;
 import zerobase.demo.owner.dto.SetSoldOutStatus;
 import zerobase.demo.owner.dto.UpdateMenu;
@@ -351,7 +353,7 @@ class MenuServiceTest {
 	}
 
 
-	private void createMenu(String userId, String storeName, String menuName) {
+	private Integer createMenu(String userId, String storeName, String menuName) {
 		UserDetails loggedUser = userService.loadUserByUsername(userId);
 
 		Store store = storeRepository.findAllByName(storeName).get(0);
@@ -367,6 +369,8 @@ class MenuServiceTest {
 			.build();
 
 		menuService.createMenu(dto);
+		List<Menu> list = menuRepository.findAllByName(menuName);
+		return list.get(0).getId();
 	}
 
 	private void createUser(String userId, UserStatus status) {
@@ -407,6 +411,31 @@ class MenuServiceTest {
 			.build();
 
 		storeService.createStore(dto);
+	}
+
+	@Test
+	@DisplayName("메뉴삭제 성공")
+	void deleteMenuSuccess() throws Exception {
+
+		//given
+		Integer menuId = createMenu("narangd2083", "narangdStore", "cider1");
+
+		String userId = "narangd2083";
+
+		DeleteMenu dto = DeleteMenu.builder()
+			.menuId(menuId)
+			.build();
+
+		UserDetails loggedUser = userService.loadUserByUsername("narangd2083");
+		dto.setLoggedInUser(loggedUser);
+		//when
+		DeleteMenu.Response response = menuService.deleteMenu(dto);
+
+		//then
+		assertEquals(response.getResult(), Result.SUCCESS);
+		assertEquals(response.getCode(), ResponseCode.DELETE_MENU_SUCCESS);
+		assertTrue(menuRepository.findAllByName("cider1").isEmpty());
+
 	}
 
 }

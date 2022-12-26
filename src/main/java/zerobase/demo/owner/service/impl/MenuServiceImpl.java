@@ -16,6 +16,7 @@ import zerobase.demo.common.exception.UserException;
 import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.common.type.SoldOutStatus;
 import zerobase.demo.owner.dto.CreateMenu;
+import zerobase.demo.owner.dto.DeleteMenu;
 import zerobase.demo.owner.dto.MenuInfo;
 import zerobase.demo.owner.dto.SetSoldOutStatus;
 import zerobase.demo.owner.dto.UpdateMenu;
@@ -103,5 +104,20 @@ public class MenuServiceImpl implements MenuService {
 		List<Menu> menuList = menuRepository.findAllByStore(store);
 
 		return new MenuInfo.Response(SELECT_MENU_SUCCESS, menuList);
+	}
+
+	@Override
+	public DeleteMenu.Response deleteMenu(DeleteMenu dto) {
+
+		//존재하지 않는 메뉴인 경우
+		Menu menu = menuRepository.findById(dto.getMenuId()).orElseThrow(() -> new OwnerException(MENU_NOT_FOUND));
+
+		//로그인한 유저가 가게주인이 아닌 경우
+		if(!dto.getLoggedInUser().getUsername().equals(menu.getStore().getUser().getUserId()))
+			throw new OwnerException(NOT_AUTHORIZED);
+
+		menuRepository.delete(menu);
+
+		return new DeleteMenu.Response(DELETE_MENU_SUCCESS);
 	}
 }

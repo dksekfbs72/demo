@@ -2,6 +2,7 @@ package zerobase.demo.owner.service;
 
 import zerobase.demo.owner.dto.CreateStore;
 import zerobase.demo.owner.dto.OpenCloseStore;
+import zerobase.demo.owner.dto.SetCommission;
 import zerobase.demo.owner.dto.StoreInfo;
 import zerobase.demo.owner.dto.UpdateStore;
 
@@ -26,4 +27,11 @@ public interface StoreService {
 	 * 점포 수정
 	 */
 	UpdateStore.Response updateStore(UpdateStore updateStore);
+
+	/**
+	 * 관리자 기능
+	 * 수수료 설정
+	 */
+
+	SetCommission.Response setCommission(SetCommission setCommission);
 }

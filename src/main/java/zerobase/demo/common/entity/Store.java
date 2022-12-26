@@ -30,7 +30,6 @@ import zerobase.demo.owner.dto.UpdateStore;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class Store extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

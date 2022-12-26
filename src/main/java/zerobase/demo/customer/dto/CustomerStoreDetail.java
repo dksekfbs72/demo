@@ -31,7 +31,6 @@ public class CustomerStoreDetail {
 	private String summary;
 	private StoreOpenCloseStatus openClose;
 	private Integer deliveryTip;
-	private Double commission;
 	private LocalDateTime openCloseDt;
 	private LocalDateTime regDt;
 	private Double distanceKm;
@@ -48,7 +47,6 @@ public class CustomerStoreDetail {
 			.summary(customerStoreInfo.getSummary())
 			.openClose(customerStoreInfo.getOpenClose())
 			.deliveryTip(customerStoreInfo.getDeliveryTip())
-			.commission(customerStoreInfo.getCommission())
 			.openCloseDt(customerStoreInfo.getOpenCloseDt())
 			.regDt(customerStoreInfo.getRegDt())
 			.distanceKm(customerStoreInfo.getDistanceKm())

@@ -2,6 +2,8 @@ package zerobase.demo.customer.service;
 
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import zerobase.demo.common.entity.Review;
 import zerobase.demo.customer.dto.CustomerStoreDetail;
 import zerobase.demo.customer.dto.CustomerStoreInfo;
@@ -10,7 +12,7 @@ import zerobase.demo.review.dto.ReviewDto;
 
 public interface CustomerService {
 
-	CustomerStoreInfo.Response getStoreList(CustomerStoreInfo.ListParam listParam);
+	CustomerStoreInfo.Response getStoreList(CustomerStoreInfo.ListParam listParam) throws JsonProcessingException;
 
 	CustomerStoreDetail.Response getStoreDetail(CustomerStoreDetail.Request request);
 

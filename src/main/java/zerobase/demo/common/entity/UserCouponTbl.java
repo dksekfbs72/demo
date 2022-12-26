@@ -15,7 +15,6 @@ import lombok.ToString;
 @Entity
 @Getter
 @Setter
-@ToString
 public class UserCouponTbl extends BaseEntity{
 
 	@Id

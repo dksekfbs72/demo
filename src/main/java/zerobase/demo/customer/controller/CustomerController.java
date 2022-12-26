@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import lombok.RequiredArgsConstructor;
 import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.customer.dto.CustomerStoreDetail;
@@ -30,9 +32,10 @@ public class CustomerController {
 
 	private final CustomerService customerService;
 
-	//매장 조회
+	//매장 리스트 조회
 	@GetMapping("/store")
-	public CustomerStoreInfo.Response getStoreList(CustomerStoreInfo.ListParam listParam) {
+	public CustomerStoreInfo.Response getStoreList(CustomerStoreInfo.ListParam listParam) throws
+		JsonProcessingException {
 
 		return customerService.getStoreList(listParam);
 	}

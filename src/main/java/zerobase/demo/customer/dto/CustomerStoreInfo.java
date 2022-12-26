@@ -3,15 +3,20 @@ package zerobase.demo.customer.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.Id;
+
+import org.springframework.data.redis.core.RedisHash;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import zerobase.demo.common.entity.Store;
 import zerobase.demo.common.model.BaseResponse;
 import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.common.type.SelectStoreOpenType;
-import zerobase.demo.common.type.Sort;
+import zerobase.demo.common.type.SortType;
 import zerobase.demo.common.type.StoreOpenCloseStatus;
 
 @Getter
@@ -30,7 +35,6 @@ public class CustomerStoreInfo {
 	private String summary;
 	private StoreOpenCloseStatus openClose;
 	private Integer deliveryTip;
-	private Double commission;
 	private LocalDateTime openCloseDt;
 	private LocalDateTime regDt;
 	private Double distanceKm;
@@ -44,15 +48,11 @@ public class CustomerStoreInfo {
 		Double userLat;
 		Double userLon;
 
-		Integer offset; //default 0
-		Integer limit; //default 50
-		Sort sort; //default random
-		SelectStoreOpenType openType; //default open
-
 		//Optional
+		Double maxDistanceKm; //default 3km
+		SortType sortType; //default distance
+		SelectStoreOpenType openType; //default open
 		String keyword;
-		Double limitDistanceKm;
-
 	}
 
 	@Getter

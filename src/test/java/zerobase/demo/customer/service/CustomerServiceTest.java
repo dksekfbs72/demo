@@ -2,8 +2,6 @@ package zerobase.demo.customer.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Optional;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,12 +22,13 @@ import zerobase.demo.common.type.SelectStoreOpenType;
 import zerobase.demo.common.type.UserStatus;
 import zerobase.demo.customer.dto.CustomerStoreDetail;
 import zerobase.demo.customer.dto.CustomerStoreInfo;
+import zerobase.demo.customer.service.impl.CustomerServiceImpl;
 import zerobase.demo.owner.dto.CreateMenu;
 import zerobase.demo.owner.dto.CreateStore;
 import zerobase.demo.owner.repository.MenuRepository;
 import zerobase.demo.owner.repository.StoreRepository;
 import zerobase.demo.owner.service.MenuService;
-import zerobase.demo.owner.service.StoreService;
+import zerobase.demo.owner.service.impl.StoreServiceImpl;
 import zerobase.demo.user.repository.UserRepository;
 import zerobase.demo.user.service.UserService;
 
@@ -44,11 +43,11 @@ class CustomerServiceTest {
 	@Autowired
 	private UserService userService;
 	@Autowired
-	private StoreService storeService;
+	private StoreServiceImpl storeService;
 	@Autowired
 	private StoreRepository storeRepository;
 	@Autowired
-	private CustomerService customerService;
+	private CustomerServiceImpl customerService;
 	@Autowired
 	private MenuService menuService;
 	@Autowired
@@ -80,8 +79,8 @@ class CustomerServiceTest {
 	}
 
 	@Test
-	@DisplayName("기본 조회 성공")
-	void createMenuSuccess() throws Exception {
+	@DisplayName("가게 목록 조회 성공 // h2+myBatis 오류로 테스트 불가능항 상황")
+	void selectStoreListSuccess() throws Exception {
 
 		//given
 		CustomerStoreInfo.ListParam listParam =
@@ -89,16 +88,17 @@ class CustomerServiceTest {
 				.userLat(35.0)
 				.userLon(130.0)
 				.openType(SelectStoreOpenType.ALL)
+				.maxDistanceKm(999999.0)
 			.build();
 
 		//when
 		CustomerStoreInfo.Response response = customerService.getStoreList(listParam);
 
-		// System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		// for(CustomerStoreInfo x : response.getList()) {
-		// 	System.out.println(x.getName());
-		// }
-		// System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		for(CustomerStoreInfo x : response.getList()) {
+			System.out.println(x.getDistanceKm());
+		}
+		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
 		//then
 		assertEquals(response.getCode().getResult(), Result.SUCCESS);
@@ -107,8 +107,8 @@ class CustomerServiceTest {
 	}
 
 	@Test
-	@DisplayName("기본 조회 실패 - 좌표 한국 밖")
-	void createMenuBadRequest() throws Exception {
+	@DisplayName("가게 목록 조회 실패 - 좌표 한국 밖")
+	void selectStoreListBadRequest() throws Exception {
 
 		//given
 		CustomerStoreInfo.ListParam listParam =
@@ -127,6 +127,7 @@ class CustomerServiceTest {
 		assertEquals(exception.getResponseCode().getResult(), Result.FAIL);
 		assertEquals(exception.getResponseCode(), ResponseCode.BAD_REQUEST);
 	}
+
 
 	@Test
 	@DisplayName("가게 상세정보 조회 - 성공")
@@ -176,8 +177,8 @@ class CustomerServiceTest {
 		Double commission = 3.5;
 		Double deliveryDistanceKm = 5.0;
 		Integer deliveryTip = 3000;
-		Double lat = 123.4545;
-		Double lon = 92.332;
+		Double lat = 35.5;
+		Double lon = 130.2;
 
 		CreateStore dto = CreateStore.builder()
 			.loggedInUser(loggedUser)
