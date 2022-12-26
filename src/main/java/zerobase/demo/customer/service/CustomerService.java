@@ -51,4 +51,8 @@ public interface CustomerService {
 	 */
 	OrderDto cancelOrder(String username, Integer orderId);
 
+	/**
+	 * 쿠폰 사용
+	 */
+	OrderDto useCoupon(String name, Integer couponId);
 }

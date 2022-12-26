@@ -60,9 +60,9 @@ public class CustomerController {
 	}
 
 	@GetMapping("/{storeId}/review")
-	public ReviewDto.Response getStoreReview(@PathVariable Integer storeId) {
+	public ReviewDto.Response<List<ReviewDto>> getStoreReview(@PathVariable Integer storeId) {
 
-		return new ReviewDto.Response(customerService.getStoreReview(storeId), ResponseCode.GET_STORE_REVIEW_SUCCESS);
+		return new ReviewDto.Response<>(ReviewDto.fromList(customerService.getStoreReview(storeId)), ResponseCode.GET_STORE_REVIEW_SUCCESS);
 	}
 
 	@PostMapping("/{storeId}")
@@ -91,5 +91,11 @@ public class CustomerController {
 	public OrderDto.Response<OrderDto> cancelOrder(Principal principal, @RequestParam Integer orderId) {
 		return new OrderDto.Response<>(customerService.cancelOrder(principal.getName(), orderId),
 			ResponseCode.ORDER_CANCEL_SUCCESS);
+	}
+
+	@PutMapping("/useCoupon")
+	public OrderDto.Response<OrderDto> useCoupon(Principal principal, @RequestParam Integer couponId) {
+		return new OrderDto.Response<>(customerService.useCoupon(principal.getName(), couponId),
+			ResponseCode.USE_COUPON_SUCCESS);
 	}
 }
