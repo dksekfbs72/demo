@@ -1,5 +1,7 @@
 package zerobase.demo.owner.controller;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,6 +29,7 @@ public class MenuController {
 	private final MenuService menuService;
 
 	//메뉴 등록
+	@ApiOperation("점주 - 메뉴 생성")
 	@PostMapping()
 	public CreateMenu.Response createMenu(@RequestBody CreateMenu.Request request,
 		@AuthenticationPrincipal UserDetails loggedInUser) {
@@ -38,6 +41,7 @@ public class MenuController {
 	}
 
 	// 메뉴 품절/판매중 처리
+	@ApiOperation("점주 - 메뉴 품절 처리")
 	@PutMapping("/soldoutstatus")
 	public SetSoldOutStatus.Response setSoldOutStatus(@RequestBody SetSoldOutStatus.Request request,
 		@AuthenticationPrincipal UserDetails loggedInUser) {
@@ -49,6 +53,7 @@ public class MenuController {
 	}
 
 	//메뉴 정보 수정
+	@ApiOperation("점주 - 메뉴 정보 수정")
 	@PutMapping()
 	public UpdateMenu.Response updateMenu(@RequestBody UpdateMenu.Request request,
 		@AuthenticationPrincipal UserDetails loggedInUser) {
@@ -60,12 +65,15 @@ public class MenuController {
 	}
 
 	//매장id로 메뉴 조회
+	@ApiOperation("점주 - 메뉴 조회")
+	@ApiImplicitParam(name = "storeId", value = "점포 번호")
 	@GetMapping()
 	public MenuInfo.Response getMenuInfoByStoreId(@RequestParam Integer storeId) {
 
 		return menuService.getMenuInfoByStoreId(storeId);
 	}
 
+	@ApiOperation("점주 - 메뉴 삭제")
 	@DeleteMapping()
 	public DeleteMenu.Response deleteMenu(@RequestBody DeleteMenu.Request request,
 		@AuthenticationPrincipal UserDetails loggedInUser) {

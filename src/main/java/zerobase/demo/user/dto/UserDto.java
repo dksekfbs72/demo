@@ -1,10 +1,9 @@
 package zerobase.demo.user.dto;
 
+import com.sun.istack.NotNull;
+import io.swagger.annotations.ApiModelProperty;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-
-import com.sun.istack.NotNull;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -60,6 +59,7 @@ public class UserDto {
 	@NoArgsConstructor
 	@Builder
 	public static class Request {
+
 		@NotNull
 		private String userId;
 		@NotNull
@@ -78,11 +78,15 @@ public class UserDto {
 	@Getter
 	@Setter
 	public static class Response<T> extends zerobase.demo.common.model.BaseResponse {
+
+		@ApiModelProperty(example = "결과값 (없으면 null)")
 		private T resultList;
+
 		public Response(T userDto, ResponseCode responseCode) {
 			super(responseCode);
 			this.resultList = userDto;
 		}
+
 		public Response(ResponseCode responseCode) {
 			super(responseCode);
 		}
