@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
 				"[조기요] 회원가입을 축하드립니다.",
 				"<p>회원 가입을 축하드립니다.</p>" +
 				"<p>아래 링크를 클릭하시면 회원 가입이 완료됩니다.</p>" +
-				"<a href='http://localhost:8080/user/emailAuth?emailAuthKey="+uuid+"'>회원가입 완료</a>");
+				"<a href='http://zogiyoapp-env.eba-vh9egqq8.ap-northeast-2.elasticbeanstalk.com/user/emailAuth?emailAuthKey="+uuid+"'>회원가입 완료</a>");
 
 		return true;
 	}
