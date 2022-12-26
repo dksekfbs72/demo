@@ -70,7 +70,9 @@ public enum ResponseCode {
 	SELECT_MENU_SUCCESS(Result.SUCCESS, "메뉴 조회를 성공했습니다."),
 
 	BAD_REQUEST(Result.FAIL, "잘못된 요청입니다."),
-	SELECT_STORE_DETAIL_SUCCESS(Result.SUCCESS, "가게 상세정보 조회 성공");
+	SELECT_STORE_DETAIL_SUCCESS(Result.SUCCESS, "가게 상세정보 조회 성공"),
+
+	DELETE_MENU_SUCCESS(Result.SUCCESS, "메뉴 삭제 성공");
 
 
 

@@ -2,6 +2,7 @@ package zerobase.demo.owner.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import zerobase.demo.owner.dto.CreateMenu;
+import zerobase.demo.owner.dto.DeleteMenu;
 import zerobase.demo.owner.dto.MenuInfo;
 import zerobase.demo.owner.dto.SetSoldOutStatus;
 import zerobase.demo.owner.dto.UpdateMenu;
@@ -58,9 +60,21 @@ public class MenuController {
 	}
 
 	//매장id로 메뉴 조회
-	@GetMapping("/menu")
+	@GetMapping()
 	public MenuInfo.Response getMenuInfoByStoreId(@RequestParam Integer storeId) {
 
 		return menuService.getMenuInfoByStoreId(storeId);
+	}
+
+	@DeleteMapping()
+	public DeleteMenu.Response deleteMenu(@RequestBody DeleteMenu.Request request,
+		@AuthenticationPrincipal UserDetails loggedInUser) {
+
+		DeleteMenu dto = DeleteMenu.builder()
+			.menuId(request.getMenuId())
+			.build();
+		if(loggedInUser != null) dto.setLoggedInUser(loggedInUser);
+
+		return menuService.deleteMenu(dto);
 	}
 }

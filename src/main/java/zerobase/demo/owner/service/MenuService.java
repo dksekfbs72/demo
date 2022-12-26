@@ -1,6 +1,7 @@
 package zerobase.demo.owner.service;
 
 import zerobase.demo.owner.dto.CreateMenu;
+import zerobase.demo.owner.dto.DeleteMenu;
 import zerobase.demo.owner.dto.MenuInfo;
 import zerobase.demo.owner.dto.SetSoldOutStatus;
 import zerobase.demo.owner.dto.UpdateMenu;
@@ -26,5 +27,10 @@ public interface MenuService {
 	 * storeId로 메뉴 목록 조회
 	 */
 	MenuInfo.Response getMenuInfoByStoreId(Integer storeId);
+
+	/**
+	 *메뉴 삭제
+	 */
+	DeleteMenu.Response deleteMenu(DeleteMenu deleteMenu);
 }
 
