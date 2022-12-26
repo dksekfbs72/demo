@@ -18,6 +18,7 @@ import zerobase.demo.common.exception.UserException;
 import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.common.type.StoreOpenCloseStatus;
 import zerobase.demo.common.type.UserStatus;
+import zerobase.demo.owner.dto.SetCommission;
 import zerobase.demo.redis.entity.CustomerStoreInfoCache;
 import zerobase.demo.redis.repository.RedisStoreInfoRepository;
 import zerobase.demo.owner.dto.CreateStore;
@@ -120,5 +121,17 @@ public class RedisStoreServiceImpl implements StoreService {
 		redisStoreInfoRepository.save(CustomerStoreInfoCache.fromEntity(savedStore));
 
 		return new UpdateStore.Response(UPDATE_STORE_SUCCESS);
+	}
+
+	@Override
+	public SetCommission.Response setCommission(SetCommission dto) {
+
+		Store store = storeRepository.findById(dto.getStoreId()).orElseThrow(() -> new OwnerException(STORE_NOT_FOUND));
+		//인증은 SpringSecurity 에서..
+
+		store.setCommission(dto.getCommission());
+		storeRepository.save(store);
+
+		return new SetCommission.Response(UPDATE_STORE_SUCCESS);
 	}
 }

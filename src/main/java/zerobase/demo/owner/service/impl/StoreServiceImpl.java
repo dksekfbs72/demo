@@ -17,6 +17,7 @@ import zerobase.demo.common.exception.UserException;
 import zerobase.demo.common.type.ResponseCode;
 import zerobase.demo.common.type.StoreOpenCloseStatus;
 import zerobase.demo.common.type.UserStatus;
+import zerobase.demo.owner.dto.SetCommission;
 import zerobase.demo.redis.entity.CustomerStoreInfoCache;
 import zerobase.demo.redis.repository.RedisStoreInfoRepository;
 import zerobase.demo.owner.dto.CreateStore;
@@ -33,8 +34,6 @@ public class StoreServiceImpl implements StoreService {
 
 	private final StoreRepository storeRepository;
 	private final UserRepository userRepository;
-
-	private final RedisStoreInfoRepository redisStoreInfoRepository;
 
 	@Override
 	public CreateStore.Response createStore(CreateStore dto) {
@@ -55,7 +54,7 @@ public class StoreServiceImpl implements StoreService {
 		newStore.setOpenCloseDt(LocalDateTime.now());
 		newStore.setUser(user);
 
-		Store savedStore = storeRepository.save(newStore);
+		storeRepository.save(newStore);
 
 		return new CreateStore.Response(CREATE_STORE_SUCCESS);
 	}
@@ -77,8 +76,7 @@ public class StoreServiceImpl implements StoreService {
 		store.setOpenClose(dto.getOpenClose());
 		store.setOpenCloseDt(LocalDateTime.now());
 
-		Store savedStore = storeRepository.save(store);
-
+		storeRepository.save(store);
 
 		if(dto.getOpenClose() == StoreOpenCloseStatus.OPEN)
 			return new OpenCloseStore.Response(OPEN_STORE_SUCCESS);
@@ -108,7 +106,20 @@ public class StoreServiceImpl implements StoreService {
 		if(!loggedInUser.getUsername().equals(store.getUser().getUserId())) throw new OwnerException(NOT_AUTHORIZED);
 
 		store.setFromUpdateStoreDto(dto);
+		storeRepository.save(store);
 
 		return new UpdateStore.Response(UPDATE_STORE_SUCCESS);
+	}
+
+	@Override
+	public SetCommission.Response setCommission(SetCommission dto) {
+
+		Store store = storeRepository.findById(dto.getStoreId()).orElseThrow(() -> new OwnerException(STORE_NOT_FOUND));
+		//인증은 SpringSecurity 에서..
+
+		store.setCommission(dto.getCommission());
+		storeRepository.save(store);
+
+		return new SetCommission.Response(UPDATE_STORE_SUCCESS);
 	}
 }

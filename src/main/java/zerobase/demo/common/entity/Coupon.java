@@ -11,7 +11,6 @@ import lombok.ToString;
 @Entity
 @Getter
 @Setter
-@ToString
 public class Coupon extends BaseEntity{
 
 	@Id

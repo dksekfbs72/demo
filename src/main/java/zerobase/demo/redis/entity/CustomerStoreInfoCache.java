@@ -42,7 +42,6 @@ public class CustomerStoreInfoCache {
 	private String summary;
 	private StoreOpenCloseStatus openClose;
 	private Integer deliveryTip;
-	private Double commission;
 	private LocalDateTime openCloseDt;
 	private LocalDateTime regDt;
 
@@ -57,7 +56,6 @@ public class CustomerStoreInfoCache {
 								.summary(store.getSummary())
 								.openClose(store.getOpenClose())
 								.deliveryTip(store.getDeliveryTip())
-								.commission(store.getCommission())
 								.openCloseDt(store.getOpenCloseDt())
 								.regDt(store.getRegDt())
 								.build();
@@ -74,7 +72,6 @@ public class CustomerStoreInfoCache {
 							.summary(summary)
 							.openClose(openClose)
 							.deliveryTip(deliveryTip)
-							.commission(commission)
 							.openCloseDt(openCloseDt)
 							.regDt(regDt)
 							.distanceKm(distanceKm)

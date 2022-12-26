@@ -26,6 +26,7 @@ import zerobase.demo.common.type.StoreOpenCloseStatus;
 import zerobase.demo.common.type.UserStatus;
 import zerobase.demo.owner.dto.CreateStore;
 import zerobase.demo.owner.dto.OpenCloseStore;
+import zerobase.demo.owner.dto.SetCommission;
 import zerobase.demo.owner.dto.StoreInfo;
 import zerobase.demo.owner.dto.UpdateStore;
 import zerobase.demo.owner.repository.StoreRepository;
@@ -431,4 +432,28 @@ public class StoreServiceTest {
 		assertEquals(exception.getResponseCode(), NOT_AUTHORIZED);
 
 	}
+
+	@Test
+	@DisplayName("관리자/수수료 설정 성공")
+	void setCommissionSuccess() throws Exception {
+
+		//given
+		Store store = createStore("narangd2083");
+
+		SetCommission dto = SetCommission.builder()
+			.storeId(store.getId())
+			.commission(30.0)
+			.build();
+
+		//when
+		SetCommission.Response response = storeService.setCommission(dto);
+
+		//then
+		assertEquals(response.getResult(), Result.SUCCESS);
+
+		Optional<Store> optionalStore = storeRepository.findById(store.getId());
+		assertEquals(optionalStore.get().getCommission(), 30.0);
+
+	}
+
 }

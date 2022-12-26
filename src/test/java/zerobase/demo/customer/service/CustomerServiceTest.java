@@ -82,8 +82,8 @@ class CustomerServiceTest {
 	}
 
 	@Test
-	@DisplayName("기본 조회 성공")
-	void createMenuSuccess() throws Exception {
+	@DisplayName("가게 목록 조회 성공 // h2+myBatis 오류로 테스트 불가능항 상황")
+	void selectStoreListSuccess() throws Exception {
 
 		//given
 		CustomerStoreInfo.ListParam listParam =
@@ -110,8 +110,8 @@ class CustomerServiceTest {
 	}
 
 	@Test
-	@DisplayName("기본 조회 실패 - 좌표 한국 밖")
-	void createMenuBadRequest() throws Exception {
+	@DisplayName("가게 목록 조회 실패 - 좌표 한국 밖")
+	void selectStoreListBadRequest() throws Exception {
 
 		//given
 		CustomerStoreInfo.ListParam listParam =
@@ -131,32 +131,33 @@ class CustomerServiceTest {
 		assertEquals(exception.getResponseCode(), ResponseCode.BAD_REQUEST);
 	}
 
-	// @Test
-	// @DisplayName("가게 상세정보 조회 - 성공")
-	// void getStoreDetail() throws Exception {
-	//
-	//
-	// 	//given
-	// 	Integer storeId = storeRepository.findAllByName("narangdStore").get(0).getId();
-	//
-	// 	CustomerStoreDetail.Request request =
-	// 		CustomerStoreDetail.Request.builder()
-	// 			.storeId(storeId)
-	// 			.userLat(35.0)
-	// 			.userLon(130.0)
-	// 			.build();
-	//
-	// 	//when
-	// 	CustomerStoreDetail.Response response = customerService.getStoreDetail(request);
-	//
-	// 	System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-	// 	System.out.println(response.getCustomerStoreDetail().toString());
-	// 	System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-	//
-	// 	//then
-	// 	assertEquals(response.getCode().getResult(), Result.SUCCESS);
-	// 	assertEquals(response.getCode(), ResponseCode.SELECT_STORE_DETAIL_SUCCESS);
-	// }
+
+	@Test
+	@DisplayName("가게 상세정보 조회 - 성공")
+	void getStoreDetail() throws Exception {
+
+
+		//given
+		Integer storeId = storeRepository.findAllByName("narangdStore").get(0).getId();
+
+		CustomerStoreDetail.Request request =
+			CustomerStoreDetail.Request.builder()
+				.storeId(storeId)
+				.userLat(35.0)
+				.userLon(130.0)
+				.build();
+
+		//when
+		CustomerStoreDetail.Response response = customerService.getStoreDetail(request);
+
+		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println(response.getCustomerStoreDetail().toString());
+		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+		//then
+		assertEquals(response.getCode().getResult(), Result.SUCCESS);
+		assertEquals(response.getCode(), ResponseCode.SELECT_STORE_DETAIL_SUCCESS);
+	}
 
 
 	private void createUser(String userId, UserStatus status) {

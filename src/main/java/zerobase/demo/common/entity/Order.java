@@ -22,7 +22,6 @@ import zerobase.demo.common.type.OrderStatus;
 @Entity(name = "orderTable")
 @Getter
 @Setter
-@ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
