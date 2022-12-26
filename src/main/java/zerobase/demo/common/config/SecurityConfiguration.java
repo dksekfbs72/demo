@@ -34,12 +34,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		http.headers().frameOptions().sameOrigin();
 
 		http.authorizeRequests()
-			.antMatchers(
-				"/**"
-			)
-			.permitAll();
-
-		http.authorizeRequests()
 			.antMatchers("/menu/**")
 			.hasAuthority("ROLE_OWNER")
 			.antMatchers("/store/**")
@@ -54,6 +48,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.passwordParameter("password")
 			.failureHandler(getFailureHandler())
 			.successForwardUrl("/login/success")
+			.permitAll();
+
+		http.authorizeRequests()
+			.antMatchers(
+				"/**"
+			)
 			.permitAll();
 
 		http.logout()
