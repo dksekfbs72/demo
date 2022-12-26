@@ -1,4 +1,4 @@
-package zerobase.demo.customer.service.Impl;
+package zerobase.demo.customer.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
