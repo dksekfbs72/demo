@@ -13,7 +13,7 @@
         + sin (radians(#{userLat})) * sin( radians(lat))
         )
         ) AS distanceKm
-        FROM STORE
+        FROM store
 
         WHERE
         1=1
@@ -44,7 +44,7 @@
         + sin (radians(#{userLat})) * sin( radians(lat))
         )
         ) AS distanceKm
-        FROM STORE
+        FROM store
         WHERE
         id = #{storeId}
     </select>

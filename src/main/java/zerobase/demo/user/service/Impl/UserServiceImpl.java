@@ -66,6 +66,9 @@ public class UserServiceImpl implements UserService {
 			.passwordChangeDt(null)
 			.build();
 
+		//이메일 인증 이슈로 인한 임시 조치
+		user.setEmailAuth(true);
+
 		userRepository.save(user);
 
 
